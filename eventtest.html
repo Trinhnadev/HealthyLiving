@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Event Cards</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<style>
+    body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f4;
+}
+
+.event-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.event-card {
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 0.2s ease-in-out;
+}
+
+.event-card:hover {
+  transform: translateY(-5px);
+}
+
+.event-image {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+
+.event-info {
+  padding: 15px;
+}
+
+.event-info h3 {
+  font-size: 1.1em;
+  margin-bottom: 10px;
+}
+
+.event-location, .event-interest {
+  font-size: 0.9em;
+  color: #666;
+  margin-bottom: 5px;
+}
+
+.event-action {
+  background-color: #ff4081;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.event-action:hover {
+  background-color: #e5376a;
+}
+
+</style>
+<div class="event-container">
+  <!-- Event Card -->
+  <div class="event-card">
+    <img src="sakura-festival.jpg" alt="Sakura Festival" class="event-image">
+    <div class="event-info">
+      <h3>SAKURA FESTIVAL - Lễ hội hoa anh đào Cần Thơ 2024</h3>
+      <p class="event-location">TTC Hotel - Cần Thơ</p>
+      <p class="event-interest">124 người quan tâm - 26 người sẽ tham gia</p>
+      <button class="event-action">Quan tâm</button>
+    </div>
+  </div>
+  <!-- More event cards... -->
+  <div class="event-card">
+    <img src="sakura-festival.jpg" alt="Sakura Festival" class="event-image">
+    <div class="event-info">
+      <h3>SAKURA FESTIVAL - Lễ hội hoa anh đào Cần Thơ 2024</h3>
+      <p class="event-location">TTC Hotel - Cần Thơ</p>
+      <p class="event-interest">124 người quan tâm - 26 người sẽ tham gia</p>
+      <button class="event-action">Quan tâm</button>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

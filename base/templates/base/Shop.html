@@ -1,0 +1,29 @@
+{%extends 'navforshop.html'%}
+
+{% block content%}
+<style>
+
+</style>
+
+
+
+    <div class="product-container">
+        {% for p in products%}
+        <div class="product">
+            <img src="{{p.image.url}}" alt="Sản phẩm 1">
+            <p>{{ p.name|slice:":40" }}...</p>
+            <p>$ {{p.price}}</p>
+            <a href="{%url 'add_to_cart' p.id%}"><button>Mua hàng</button></a>
+            <a href="{%url 'Product_Detail' p.id%}"><button>Chi tiết</button></a>
+        </div>
+        {% endfor %}
+        
+        
+      
+        
+        <!-- Thêm các sản phẩm khác ở đây -->
+    </div>
+
+
+{%endblock%}
+

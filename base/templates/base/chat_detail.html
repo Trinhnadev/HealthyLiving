@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chat App Mockup</title>
+<style>
+  body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    height: 100vh;
+    background-color: #E5E5E5;
+  }
+  .sidebar {
+    width: 250px;
+    background-color: #fff;
+    padding: 10px;
+    border-right: 1px solid #ddd;
+  }
+  .chat-window {
+    flex-grow: 1;
+    padding: 20px;
+    background: #F0F0F0;
+  }
+  .contact-list {
+    list-style: none;
+    padding: 0;
+  }
+  .contact-list li {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    cursor: pointer;
+  }
+  .contact-list li:hover {
+    background-color: #f9f9f9;
+  }
+  .active {
+    background-color: #9BB1FF;
+  }
+  .chat-header, .chat-footer {
+    background-color: #fff;
+    padding: 10px;
+    border: 1px solid #ddd;
+  }
+  .chat-messages {
+    height: calc(100vh - 160px);
+    overflow-y: auto;
+  }
+  .message {
+    padding: 10px;
+    margin: 10px 0;
+    border-radius: 10px;
+    background-color: #fff;
+  }
+  .message.sent {
+    background-color: #9BB1FF;
+    text-align: right;
+  }
+  .chat-footer input {
+    width: calc(100% - 24px);
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin: 2px;
+  }
+
+  .message-avatar {
+  width: 30px; /* Đặt kích thước của avatar */
+  height: 30px;
+  border-radius: 50%; /* Làm cho avatar trở nên tròn */
+  overflow: hidden;
+  margin-right: 10px;
+  display: inline-block;
+  vertical-align: top; /* Căn chỉnh avatar với text */
+}
+
+.message-content {
+  display: inline-block;
+  max-width: calc(100% - 40px); /* Trừ đi kích thước của avatar và margin */
+  padding: 5px 10px;
+  border-radius: 10px;
+  background-color: #fff;
+  vertical-align: top; /* Căn chỉnh nội dung với avatar */
+}
+
+.message.sent .message-content {
+  background-color: #9BB1FF;
+  text-align: left;
+}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <ul class="contact-list">
+    <li class="active"> 
+      <div class="message-avatar"> <img src="https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.facebook.com%2FTravelokaVN%2F&psig=AOvVaw1KKPDKWn8aGqNk-8_yJJz6&ust=1706248817811000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCOD8nKju94MDFQAAAAAdAAAAABAD" alt="hh"><!-- Avatar image --></div>
+      @{{friend.username}}
+    </li>
+    <li>Contact 2</li>
+    <li>Contact 3</li>
+    <!-- Add more contacts here -->
+  </ul>
+</div>
+
+<div class="chat-window">
+  <div class="chat-header">
+    <div class="message-avatar"> <img src="https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.facebook.com%2FTravelokaVN%2F&psig=AOvVaw1KKPDKWn8aGqNk-8_yJJz6&ust=1706248817811000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCOD8nKju94MDFQAAAAAdAAAAABAD" alt="hh"><!-- Avatar image --></div>
+    Chat Header
+  </div>
+  <div class="chat-messages">
+    <!-- Tin nhắn nhận -->
+
+    <div class="message">
+    {% for message in messages %}
+
+    {% if request.user == message.sender %}
+
+      <div class="message-avatar"> <img src="https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.facebook.com%2FTravelokaVN%2F&psig=AOvVaw1KKPDKWn8aGqNk-8_yJJz6&ust=1706248817811000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCOD8nKju94MDFQAAAAAdAAAAABAD" alt="hh"><!-- Avatar image --></div>
+      <div class="message-content">{{message.content}}</div>
+      <span class="thread__date">{{message.timestamp|timesince}} ago</span>
+
+    </div>
+    {%else%}
+    
+    <div class="message sent">
+      <span class="thread__date">{{message.timestamp|timesince}} ago</span>
+
+      <div class="message-content">{{message.content}}</div>
+      <div class="message-avatar"><img src="https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.facebook.com%2FTravelokaVN%2F&psig=AOvVaw1KKPDKWn8aGqNk-8_yJJz6&ust=1706248817811000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCOD8nKju94MDFQAAAAAdAAAAABAD" alt="hh"><!-- Avatar image --></div>
+
+    </div>
+    {%endif%}
+  {% endfor %}
+
+    <!-- Thêm các tin nhắn khác tương tự -->
+  </div>
+
+  <div class="chat-footer">
+    <input type="text" placeholder="Type a message...">
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+  // Lấy tất cả các liên hệ trong danh sách
+  var contacts = document.querySelectorAll('.contact-list li');
+
+  // Thêm sự kiện 'click' cho mỗi liên hệ
+  contacts.forEach(function (contact) {
+    contact.addEventListener('click', function () {
+      // Xóa class 'active' khỏi tất cả các liên hệ
+      contacts.forEach(function (c) {
+        c.classList.remove('active');
+      });
+      
+      // Thêm class 'active' cho liên hệ được nhấp vào
+      contact.classList.add('active');
+    });
+  });
+});
+
+  // JavaScript to handle new messages, switching contacts, etc.
+</script>
+
+</body>
+</html>

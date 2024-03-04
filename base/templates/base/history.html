@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+{%load static%}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Lịch sử mua hàng</title>
+</head>
+<style>
+    /* Thiết kế cho giao diện lịch sử mua hàng */
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #2d2d39;
+    margin: 0;
+    padding: 0;
+    color: #b2bdbd;
+
+}
+
+header {
+    /* Thiết kế cho thanh navigation (nếu cần) */
+}
+
+.order-history {
+    max-width: 1200px;
+    margin: 20px auto;
+    background-color: #3f4156;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+h1 {
+    font-size: 24px;
+    margin: 0;
+}
+
+.order-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.order {
+    border: 1px solid #ddd;
+    margin-bottom: 20px;
+    padding: 20px;
+    background-color: #51546e;
+}
+
+.order-details {
+    margin: 0;
+}
+
+.order-date {
+    font-weight: bold;
+    margin: 0;
+}
+
+.order-details h2 {
+    font-size: 20px;
+    margin: 0;
+}
+
+.order-details p {
+    margin: 10px 0;
+}
+
+footer {
+    /* Thiết kế cho phần chân trang (nếu cần) */
+}
+header {
+    background-color: #3f4156;
+    color: #fff;
+    padding: 10px 0;
+}
+
+nav {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.search {
+    flex: 1;
+    display: flex;
+    margin-right: 20px;
+}
+
+.search input {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+.search button {
+    background-color: #0056b3;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.user-profile img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.menu {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+}
+
+.menu li {
+    margin-right: 20px;
+}
+
+.menu a {
+    text-decoration: none;
+    color: #fff;
+    transition: color 0.3s;
+}
+
+.menu a:hover {
+    color: #0056b3;
+}
+
+
+</style>
+<body>
+    <header>
+        <header>
+            <nav>
+              <a href="{% url 'home' %}" class="header__logo" style="text-decoration: none;">
+                  <!-- <img src="{%static 'images/logo.png'%}" /> -->
+                  <h1 style="font-family: cursive ;color: #b2bdbd;">HealthCare</h1>
+              </a>
+              <form method="GET" action="{%url 'shop'%}">
+                <div class="search">
+                    <input name = 'q' type="text" placeholder="Search">
+                    <button>Search</button>
+                </div>
+              </form>
+                <ul class="menu">
+                  <li><a href="{%url 'home'%}">Home</a></li>
+                  <li><a href="{%url 'cart'%}">Cart</a></li>
+                  <li><a href="{%url 'history'%}">History</a></li>
+              </ul>
+                <div class="user-profile">
+                  <span class="username">{{request.user.name}}</span>
+                  <img src="{{request.user.avatar.url}}" alt="Hình đại diện">
+                </div>
+                
+            </nav>
+        </header>
+    </header>
+
+    <div class="order-history">
+        
+        
+          <h1><a href="{% url 'Shop' %}" style="font-size: 1rem;">
+            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 32 32">
+              <title>arrow-left</title>
+              <path
+                d="M13.723 2.286l-13.723 13.714 13.719 13.714 1.616-1.611-10.96-10.96h27.625v-2.286h-27.625l10.965-10.965-1.616-1.607z">
+              </path>
+            </svg>
+          </a>Lịch sử mua hàng</h1>
+        <ul class="order-list">
+            {%for o in order%}
+            <a href="{%url 'order_detail' o.id%}" style="text-decoration:none; color: #b2bdbd;"><li class="order">
+                <div class="order-details">
+                    <p class="order-date">Mã đơn hàng: {{o.id}}</p>
+                    <p class="order-date">Ngày đặt hàng:{{o.order_date}}</p>
+                    <p>Tổng cộng: $100</p>
+                </div>
+            </li>
+        </a>
+            {%endfor%}
+            
+            <!-- Thêm các đơn hàng khác ở đây -->
+        </ul>
+    </div>
+
+    <footer>
+        <!-- Phần chân trang (nếu cần) -->
+    </footer>
+</body>
+</html>

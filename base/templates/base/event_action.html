@@ -1,0 +1,148 @@
+
+<style>
+
+
+.sidebar {
+  width: 320px;
+  background-color: #333;
+  color: white;
+  height: 100vh;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.search input[type="search"] {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: none;
+  border-radius: 20px;
+}
+
+.menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu-item {
+  display: block;
+  padding: 10px 20px;
+  color: white;
+  text-decoration: none;
+  border-radius: 10px;
+  transition: background 0.3s;
+  position: relative;
+
+}
+
+.menu-item.active,
+.menu-item:hover {
+  background-color: #505050;
+}
+
+.btn-new-event {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin-top: 20px;
+  background-color: #0b79f7;
+  color: white;
+  text-align: center;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.btn-new-event:hover {
+  background-color: #0966d2;
+}
+
+.suggested-events {
+  margin-top: 20px;
+}
+
+.notification-dot {
+    height: 15px;
+    width: 15px;
+    background-color: red;
+    border-radius: 50% ;
+    border: 1px solid #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 5px;
+    right: 0;
+    font-size: 10px; /* Điều chỉnh kích thước font của số */
+    color: white; /* Màu sắc của số */
+}
+
+#requestCount {
+  
+    display: block;
+}
+
+/* Additional styles for suggested events will go here */
+
+/* Add styles for responsiveness as needed */
+
+    </style>
+<div class="topics">
+<div class="sidebar">
+  <form action="{%url 'event'%}" method="GET">
+  <div class="search">
+    <input type="search" name ="q" placeholder="Tìm kiếm sự kiện">
+  </div>
+</form>
+  <div class="menu">
+    <a href="{%url 'event'%}" class="menu-item {% if request.resolver_match.url_name == 'event' %}active{% endif %}">Trang chủ</a>
+    <a href="{%url 'myevent'%}" class="menu-item {% if request.resolver_match.url_name == 'myevent' %}active{% endif %}">Sự kiện của bạn</a>
+    <a href="{%url 'eventJoined'%}" class="menu-item {% if request.resolver_match.url_name == 'eventJoined' %}active{% endif %}">Đang tham gia</a>
+    <a href="{%url 'view_invitations'%}" class="menu-item">Thông báo<span class="notification-dot" id="requestNotificationDot"><span id="requestCount">{{invitations.count}}</span></span></a>
+    <form action="{%url 'create-event'%}">
+    <button class="btn-new-event">+ Tạo sự kiện mới</button>
+  </form>
+  </div>
+  <div class="suggested-events">
+    <!-- Suggested events here -->
+  </div>
+</div>
+</div>
+<script>
+    // Khi một mục menu được nhấp, hãy thêm class 'active' vào nó và loại bỏ từ các mục khác
+    document.addEventListener('DOMContentLoaded', function() {
+      var menuItems = document.querySelectorAll('.menu-item');
+  
+      menuItems.forEach(function(item) {
+        item.addEventListener('click', function() {
+          // Xóa class 'active' khỏi tất cả các mục
+          menuItems.forEach(function(item) {
+            item.classList.remove('active');
+          });
+  
+          // Thêm class 'active' vào mục được nhấp
+          this.classList.add('active');
+        });
+      });
+    });
+
+
+
+
+    let numberOfRequests = document.getElementById('requestCount').textContent;
+
+function checkRequests() {
+    if (numberOfRequests > 0) {
+        document.getElementById('requestNotificationDot').style.display = 'flex';
+    } else {
+        document.getElementById('requestNotificationDot').style.display = 'none';
+    }
+}
+
+// Gọi hàm này khi trang được tải hoặc sau khi cập nhật số lượng yêu cầu
+checkRequests();
+
+
+  </script>

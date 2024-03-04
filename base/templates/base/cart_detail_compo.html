@@ -1,0 +1,116 @@
+<style>
+.cart {
+    width: 1000px;
+    margin: 0 auto;
+    background-color:  #3f4156;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    color: #b2bdbd;
+
+}
+
+h1 {
+    font-size: 24px;
+    margin: 0;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table th, table td {
+    border: 1px solid #fff;
+    padding: 10px;
+    text-align: left;
+}
+
+table th {
+    background-color: #51546e;
+    color: #fff;
+}
+
+table td img {
+    max-width: 50px;
+    height: auto;
+}
+
+.checkout {
+    text-align: right;
+    margin-top: 20px;
+}
+
+button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+</style>
+<div class="room__top">
+        
+    <div class="room__topLeft">
+        <a href="{% url 'shop' %}">
+            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+              <title>arrow-left</title>
+              <path
+                d="M13.723 2.286l-13.723 13.714 13.719 13.714 1.616-1.611-10.96-10.96h27.625v-2.286h-27.625l10.965-10.965-1.616-1.607z">
+              </path>
+            </svg>
+          </a>
+        <h3>Your Cart</h3>
+    </div>
+
+</div>
+<div class="cart">
+    <table>
+        <thead>
+            <tr>
+                <th>Hình ảnh</th>
+                <th>Tên sản phẩm</th>
+                <th>Giá</th>
+                <th>Số lượng</th>
+                <th>Tổng cộng</th>
+                <th>Action</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            {%for c in cart_items%}
+            <tr>
+                <td><img src="{{c.product.image.url}}" alt="Sản phẩm 1"></td>
+                <td>{{c.product.name}}</td>
+                <td>${{c.product.price}}</td>
+                <td>{{c.quantity}}</td>
+                <td>${{c.get_total}}</td>
+                <td>
+                    <a href="{%url 'remove_from_cart' c.id%}" style="color:  #b2bdbd;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                    <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                  </svg>
+                </a>
+            </td>
+            </tr>
+            {%endfor%}
+            <!-- Thêm các sản phẩm khác ở đây -->
+        </tbody>
+        <tfoot>
+            <td  rowspan="2">${{ total_price }}</td>
+        </tfoot>
+    </table>
+    <div class="checkout">
+       <a href="{%url 'shop'%}"> <button>Back to shop</button></a>
+       {%if cart_items%}
+       <a href="{%url 'checkout'%}"> <button>Check Out</button></a>
+       {%endif%}
+    </div>
+</div>

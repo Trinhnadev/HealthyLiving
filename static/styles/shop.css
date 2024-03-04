@@ -1,0 +1,320 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #2d2d39;
+    margin: 0;
+    padding: 0;
+}
+
+.header__logo > h1 {
+    font-weight: 70;
+    font-size: 2rem;
+    color: #b2bdbd;
+  }
+.product-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.product {
+    width: calc(20% - 20px); /* 20% width for each product with 20px spacing in between */
+    background-color: #3f4156;
+    border-radius: 5px solid #3f4156;
+    padding: 20px;
+    margin: 10px 0; /* Add margin between rows of products */
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    color: #b2bdbd;
+}
+
+.product img {
+    max-width: 178px;
+    height: 178px;
+}
+
+button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+
+/* Đoạn CSS này sẽ giúp thiết kế thanh navigation */
+
+/* Đoạn CSS này sẽ giúp thiết kế thanh navigation */
+
+header {
+    background-color: #3f4156;
+    color: #fff;
+    padding: 10px 0;
+}
+
+nav {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.search {
+    flex: 1;
+    display: flex;
+    margin-right: 20px;
+}
+
+.search input {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+.search button {
+    background-color: #0056b3;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.user-profile img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.menu {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+}
+
+.menu li {
+    margin-right: 20px;
+}
+
+.menu a {
+    text-decoration: none;
+    color: #fff;
+    transition: color 0.3s;
+}
+
+.menu a:hover {
+    color: #0056b3;
+}
+
+    /* Thiết kế cho giao diện chi tiết sản phẩm */
+
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #2d2d39;
+        margin: 0;
+        padding: 0;
+    }
+    
+    
+    
+    .product-details {
+        
+        max-width: 1200px;
+        margin: 20px auto;
+        background-color: #3f4156;
+        display: flex;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        color: #b2bdbd;
+    
+    }
+    
+    .product-image {
+        flex: 1;
+        padding: 20px;
+    }
+    
+    .product-image img {
+        max-width: 250px;
+        height: 250px;
+    }
+    
+    .product-info {
+        flex: 1;
+        padding: 20px;
+        
+    }
+    
+    .product-info h1 {
+        font-size: 24px;
+        margin: 0;
+    }
+    
+    .product-info p {
+        margin: 10px 0;
+    }
+    .product-info input {
+        display: block; /* Hiển thị số lượng dọc xuống */
+        margin: 10px; /* Khoảng cách phía trên */
+    }
+
+    button {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    
+    button:hover {
+        background-color: #0056b3;
+    }
+    
+
+        /* Thiết kế cho giao diện giỏ hàng */
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #2d2d39;
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    /* Thiết kế cho thanh navigation (nếu cần) */
+}
+
+.cart {
+    max-width: 1200px;
+    margin: 20px auto;
+    background-color:  #3f4156;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    color: #b2bdbd;
+
+}
+
+h1 {
+    font-size: 24px;
+    margin: 0;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table th, table td {
+    border: 1px solid #fff;
+    padding: 10px;
+    text-align: left;
+}
+
+table th {
+    background-color: #51546e;
+    color: #fff;
+}
+
+table td img {
+    max-width: 50px;
+    height: auto;
+}
+
+.checkout {
+    text-align: right;
+    margin-top: 20px;
+}
+
+button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+footer {
+    /* Thiết kế cho phần chân trang (nếu cần) */
+}
+
+.product-info input[type="number"] {
+    display: block; /* Hiển thị số lượng trên một hàng riêng */
+    margin-top: 10px; /* Khoảng cách phía trên */
+}
+
+
+
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #2d2d39;
+    margin: 0;
+    padding: 0;
+    color: #b2bdbd;
+
+}
+
+header {
+    /* Thiết kế cho thanh navigation (nếu cần) */
+}
+
+.order-history {
+    max-width: 1200px;
+    margin: 20px auto;
+    background-color: #3f4156;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+h1 {
+    font-size: 24px;
+    margin: 0;
+}
+
+.order-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.order {
+    border: 1px solid #ddd;
+    margin-bottom: 20px;
+    padding: 20px;
+    background-color: #51546e;
+}
+
+.order-details {
+    margin: 0;
+}
+
+.order-date {
+    font-weight: bold;
+    margin: 0;
+}
+
+.order-details h2 {
+    font-size: 20px;
+    margin: 0;
+}
+
+.order-details p {
+    margin: 10px 0;
+}

@@ -1,0 +1,206 @@
+<style>
+  .store-container {
+    width: 1000px;
+    background-color: #333;
+    border-radius: 10px;
+    margin: 0 auto;
+    overflow: hidden;
+  }
+
+  .event-container {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px;
+  }
+
+  .event-card {
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.2s ease-in-out;
+  }
+
+  .event-card:hover {
+    transform: translateY(-5px);
+  }
+
+  .event-image {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+  }
+
+  .event-info {
+    padding: 15px;
+  }
+
+  .event-info h3 {
+    font-size: 1.1em;
+    margin-bottom: 10px;
+  }
+
+  .event-location,
+  .event-interest {
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 5px;
+  }
+
+  .event-action {
+    background-color: rgb(94, 179, 244);
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  .event-action:hover {
+    background-color: #516ece;
+  }
+
+  .store-action {
+    display: flex;
+    /* Tạo một flex container */
+    gap: 10px;
+  }
+
+  btn-st {
+    padding: 7px 10px;
+    /* Đệm cho nút */
+    border: none;
+    /* Xóa border mặc định */
+    border-radius: 4px;
+    /* Bo tròn góc */
+    cursor: pointer;
+    /* Con trỏ chuột khi di chuyển vào nút */
+    font-size: 14px;
+    /* Cỡ chữ cho nút */
+    transition: background-color 0.3s;
+    /* Hiệu ứng mượt mà khi thay đổi màu nút */
+    text-decoration: none;
+    color: white;
+    padding: 5px 15px;
+    border: none;
+    border-radius: 5px;
+    /* Bo góc cho nút */
+    cursor: pointer;
+    font-size: 1.2rem;
+  }
+
+
+  .hospital-item {
+    background-color: #fff;
+    margin-top: 10px;
+    display: flex;
+    width: 970px;
+    /* Set the width of the card */
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    overflow: hidden;
+    /* Ensures the image respects the border radius */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    margin-bottom: 10px;
+    /* Space between cards */
+    position: relative;
+    /* For absolute positioning of elements inside */
+  }
+
+  .hospital-photo {
+    width: 180px;
+    /* Set the image width */
+    height: auto;
+    /* Maintain aspect ratio */
+    object-fit: cover;
+    /* Ensure the image covers the area */
+  }
+
+  .hospital-info {
+    padding: 10px;
+    flex-grow: 1;
+    /* Ensure the info section fills the rest of the card */
+  }
+
+  .hospital-rating {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: #0056b3;
+    /* Example rating background color */
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 3px;
+    font-weight: bold;
+  }
+
+  .hospital-name {
+    font-size: 18px;
+    color: #333;
+    margin: 5px 0;
+  }
+
+  .hospital-item p {
+    font-size: 14px;
+    color: #666;
+    margin: 2px 0;
+  }
+
+  .hospital-item p:last-of-type {
+    background-color: #f0f0f0;
+    /* Background for the "ENGLISH AVAILABLE" tag */
+    display: inline-block;
+    padding: 5px;
+    border-radius: 3px;
+    font-weight: bold;
+  }
+</style>
+<div class="room__top">
+  <div class="room__topLeft">
+    <a href="{% url 'home' %}">
+      <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+        <title>arrow-left</title>
+        <path
+          d="M13.723 2.286l-13.723 13.714 13.719 13.714 1.616-1.611-10.96-10.96h27.625v-2.286h-27.625l10.965-10.965-1.616-1.607z">
+        </path>
+      </svg>
+    </a>
+    <h3>Liked</h3>
+  </div>
+
+</div>
+<div class="store-container">
+  <div class="event-container">
+    <!-- Event Card -->
+    <div class="hospital-list " id="hospital-list">
+      {% for p in stores %}
+      <a href="{%url 'store_detail' p.id%}">
+        <div class="hospital-item">
+          <img src="{{p.img.url}}" class="hospital-photo" alt="{{hospital.name}}" />
+          <div class="hospital-info">
+            <div class="hospital-rating">9.5</div>
+
+            <div class="card-header">
+              <div class="rating"></div>
+              <div class="heart">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                  class="bi bi-suit-heart" viewBox="0 0 16 16">
+                  <path
+                    d="m8 6.236-.894-1.789c-.222-.443-.607-1.08-1.152-1.595C5.418 2.345 4.776 2 4 2 2.324 2 1 3.326 1 4.92c0 1.211.554 2.066 1.868 3.37.337.334.721.695 1.146 1.093C5.122 10.423 6.5 11.717 8 13.447c1.5-1.73 2.878-3.024 3.986-4.064.425-.398.81-.76 1.146-1.093C14.446 6.986 15 6.131 15 4.92 15 3.326 13.676 2 12 2c-.777 0-1.418.345-1.954.852-.545.515-.93 1.152-1.152 1.595zm.392 8.292a.513.513 0 0 1-.784 0c-1.601-1.902-3.05-3.262-4.243-4.381C1.3 8.208 0 6.989 0 4.92 0 2.755 1.79 1 4 1c1.6 0 2.719 1.05 3.404 2.008.26.365.458.716.596.992a7.6 7.6 0 0 1 .596-.992C9.281 2.049 10.4 1 12 1c2.21 0 4 1.755 4 3.92 0 2.069-1.3 3.288-3.365 5.227-1.193 1.12-2.642 2.48-4.243 4.38z" />
+                </svg>
+              </div>
+            </div>
+
+            <h2>{{ p.name }}</h2>
+            <p>1.6km Away</p>
+            <p>Open: 8:00 - 22:00</p>
+            <p>Direct Billing Available</p>
+            <p>BY {{p.owner.name| upper}}</p>
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+
+  </div>

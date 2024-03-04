@@ -1,0 +1,51 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'styles/shop.css' %}">
+    <title>Giao diện sản phẩm</title>
+</head>
+
+
+
+<body>
+
+    <header>
+      <nav>
+        <a href="{% url 'shop' %}" class="header__logo" style="text-decoration: none;">
+            <!-- <img src="{%static 'images/logo.png'%}" /> -->
+            <h1 style="font-family: cursive ; font-size: 1.5rem;">HealthCare</h1>
+        </a>
+        <form method="GET" action="{%url 'shop'%}">
+          <div class="search">
+              <input name = 'q' type="text" placeholder="Search">
+              <button>Search</button>
+          </div>
+        </form>
+          <ul class="menu">
+            <li><a href="{%url 'home'%}">Home</a></li>
+            <li><a href="{%url 'cart'%}">Cart</a></li>
+            <li><a href="{%url 'history'%}">History</a></li>
+        </ul>
+          <div class="user-profile">
+            <span class="username">{{request.user.name}}</span>
+            <a href="{%url 'profile' request.user.id%}">
+
+            <img src="{{request.user.avatar.url}}" alt="Hình đại diện">
+          </a>
+          </div>
+          
+      </nav>
+  </header>
+
+
+  {% block content%}
+   
+  {%endblock%}
+
+
+</body>
+</html>

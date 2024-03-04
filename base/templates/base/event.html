@@ -1,0 +1,31 @@
+{%extends 'main.html'%}
+
+{% block content%}
+  <style>
+
+  </style>
+<main class="layout layout--3">
+  <div class="container">
+    <!-- Topics Start -->
+    {% include 'base/event_action.html'%}
+      
+    <!-- Topics End -->
+
+    <!-- Room List Start -->
+    <div class="EventList">
+        {%include 'base/event-compo.html'%}
+    </div>
+    <!-- Room List End -->
+
+    <!-- Activities Start -->
+
+
+    <!-- Activities End -->
+  </div>
+</main>
+
+
+{%endblock%}
+
+{%block scripts%}
+{%endblock%}

@@ -1,0 +1,139 @@
+
+<style>
+
+
+  .sidebar {
+    width: 320px;
+    background-color: #333;
+    color: white;
+    height: 100vh;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+  
+  .search input[type="search"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: none;
+    border-radius: 20px;
+  }
+  
+  .menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .menu-item {
+  border-radius: 5px;
+  display: flex; /* Sử dụng Flexbox */
+  align-items: center; /* Căn chỉnh các items theo trục dọc giữa */
+  text-decoration: none; /* Loại bỏ gạch chân của liên kết */
+  color: inherit; /* Kế thừa màu chữ từ phần tử cha */
+  padding: 10px; /* Thêm một chút đệm */
+}
+
+.avatar {
+  margin-right: 10px; /* Thêm khoảng cách giữa avatar và tên */
+}
+
+.avatar img {
+  display: block;
+  width: 40px; /* Đặt chiều rộng cho avatar */
+  height: 40px; /* Đặt chiều cao cho avatar */
+  border-radius: 50%; /* Làm cho avatar trở nên tròn */
+}
+  
+  .menu-item.active,
+  .menu-item:hover {
+    background-color: #505050;
+  }
+  
+  .btn-new-event {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-top: 20px;
+    background-color: #0b79f7;
+    color: white;
+    text-align: center;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background 0.3s;
+  }
+  
+  .btn-new-event:hover {
+    background-color: #0966d2;
+  }
+  
+  .suggested-events {
+    margin-top: 20px;
+  }
+  .scrollable-container {
+    overflow-y: scroll;
+    height: 110vh;
+    scrollbar-width: none;
+    /* For Firefox */
+  }
+
+  .scrollable-container::-webkit-scrollbar {
+    display: none;
+    /* For Chrome, Safari, and Opera */
+  }
+  
+  /* Additional styles for suggested events will go here */
+  
+  /* Add styles for responsiveness as needed */
+  
+      </style>
+  <div class="topics">
+  <div class="sidebar">
+    <form action="{%url 'chat'%}" method="GET">
+    <div class="search">
+      <input type="search" name ="q" placeholder="Search...">
+    </div>
+  </form>
+  <div class="scrollable-container">
+    <div class="menu">
+      <a href="{%url 'chat'%}" class="menu-item {% if request.resolver_match.url_name == 'chat' %}active{% endif %}">Trang chủ</a>
+      {% for room in chat_rooms %}
+      {%for f in room.members.all%}
+      {% if f != user %}
+      <a href="{%url 'open_chat' room.id%}" class="menu-item ">
+        <div class="avatar avatar--small">
+          <img src="{{f.avatar.url}}" alt="cc"/>
+        </div>
+        {{f.username}}</a>
+      
+      {%endif%}
+      {%endfor%}
+      {%endfor%}
+
+    </div>
+    </div>
+    <div class="suggested-events">
+      <!-- Suggested events here -->
+    </div>
+  </div>
+  </div>
+  <script>
+      // Khi một mục menu được nhấp, hãy thêm class 'active' vào nó và loại bỏ từ các mục khác
+      document.addEventListener('DOMContentLoaded', function() {
+        var menuItems = document.querySelectorAll('.menu-item');
+    
+        menuItems.forEach(function(item) {
+          item.addEventListener('click', function() {
+            // Xóa class 'active' khỏi tất cả các mục
+            menuItems.forEach(function(item) {
+              item.classList.remove('active');
+            });
+    
+            // Thêm class 'active' vào mục được nhấp
+            this.classList.add('active');
+          });
+        });
+      });
+    </script>
+  

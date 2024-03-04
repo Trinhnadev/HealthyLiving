@@ -1,0 +1,74 @@
+{% extends 'main.html' %}
+
+{% block content %}
+<main class="auth layout">
+  <div class="container">
+    <div class="layout__box">
+      <div class="layout__boxHeader">
+        <div class="layout__boxTitle">
+          <h3>Forgot Password</h3>
+        </div>
+      </div>
+      <div class="layout__body">
+         <h1 class="auth__tagline" style="font-family: cursive; font-size: 30px;">HealthCare</h1>
+
+        <form class="form" action="" method="POST">
+          {% csrf_token %}
+          <div class="form__group form__group">
+            <label for="Code">Enter Auth Code</label>
+            <div id="countdown"></div>
+            <input id="code" name="code" type="text" placeholder="J5GTE3" />
+            
+          </div>
+          <button class="btn btn--main" type="submit">
+            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+              <title>lock</title>
+              <path
+                d="M27 12h-1v-2c0-5.514-4.486-10-10-10s-10 4.486-10 10v2h-1c-0.553 0-1 0.447-1 1v18c0 0.553 0.447 1 1 1h22c0.553 0 1-0.447 1-1v-18c0-0.553-0.447-1-1-1zM8 10c0-4.411 3.589-8 8-8s8 3.589 8 8v2h-16v-2zM26 30h-20v-16h20v16z">
+              </path>
+              <path
+                d="M15 21.694v4.306h2v-4.306c0.587-0.348 1-0.961 1-1.694 0-1.105-0.895-2-2-2s-2 0.895-2 2c0 0.732 0.413 1.345 1 1.694z">
+              </path>
+            </svg>
+            Submit
+          </button>
+          
+        </form>
+        
+        
+        {% if error %}
+        <div class="error">{{ error }}</div>
+        {% endif %}
+
+        <div class="auth__action">
+            <p>Tôi Đã nhớ mật khẩu <a href="{% url 'login' %}" class="btn btn--link">Login</a></p>
+          </div>
+      </div>
+    </div>
+  </div>
+  {{ sent_at|json_script:"sent-at" }}
+  <script>
+    // Tính toán thời gian kết thúc dựa trên thời gian gửi mã và thêm 60 giây
+    const sentAtData = JSON.parse(document.getElementById('sent-at').textContent);
+    const sentAt = new Date(sentAtData * 1000);
+    const endTime = new Date(sentAt.getTime() + 60 * 1000);  // Thêm 1 phút
+
+    const countdown = setInterval(function() {
+        const now = new Date().getTime();
+        const distance = endTime - now;
+        
+        // Tính toán số giây còn lại
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        
+        // Hiển thị bộ đếm ngược
+        document.getElementById("countdown").innerHTML = seconds + "s ";
+        
+        // Nếu hết thời gian, dừng bộ đếm ngược và hiển thị thông báo
+        if (distance < 0) {
+            clearInterval(countdown);
+            document.getElementById("countdown").innerHTML = "EXPIRED";
+        }
+    }, 1000);
+</script>
+</main>
+{% endblock content %}

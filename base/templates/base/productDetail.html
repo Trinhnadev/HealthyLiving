@@ -1,0 +1,30 @@
+{%extends 'navforshop.html'%}
+
+{% block content%}
+<style>
+
+
+
+</style>
+
+
+    <div class="product-details">
+       
+        <div class="product-image">
+            <img src="{{product.image.url}}" alt="Sản phẩm">
+        </div>
+        <div class="product-info">
+            <h1>{{product.name}}</h1>
+            <p>Giá: ${{product.price}}</p>
+            <p>{{product.description}}</p>
+            <p><input type="number" name="quantity" id="quantity" value="1" min="1"></p>
+            <a href="{%url 'shop'%}"><button>Back</button></a>
+
+            <a href="{%url 'add_to_cart' product.id%}"><button>Thêm vào giỏ hàng</button></a>
+    </div>
+
+    <footer>
+        <!-- Phần chân trang (nếu cần) -->
+    </footer>
+{%endblock%}
+

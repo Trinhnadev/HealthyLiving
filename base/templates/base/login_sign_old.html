@@ -1,0 +1,30 @@
+{%include 'navbar.html'%}
+
+
+
+{%block content%}
+<!-- <h1>{{r.id}}</h1> -->
+{%if page == 'login'%}
+<div>
+    <form action=""method ="POST">
+        {%csrf_token%}
+        <label for="">username</label>
+        <input type="text" name="username" id="" >
+        <label for="">Password</label>
+        <input type="password" name="password" id="" >
+        <input type="submit" name="" id="" value="Login">
+    </form>
+    <a href="{% url 'sign' %}">sign up</a>
+</div>
+
+{%else%}
+<div>
+    <form action=""method ="POST">
+        {%csrf_token%}
+        {{form.as_p}}
+        <input type="submit" name="" id="" value="Sign">
+    </form>
+</div>
+{%endif%}
+
+{%endblock%}

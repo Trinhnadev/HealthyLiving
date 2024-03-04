@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interface</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            padding: 10px;
+            background-color: #f1f1f1;
+            margin-bottom: 5px;
+        }
+
+        .friend-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .friend-item {
+            padding: 10px;
+            background-color: #f1f1f1;
+            margin: 5px;
+            cursor: pointer;
+        }
+
+        .confirm-button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+        }
+
+        .confirm-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Tăng Tốc Kết Bạn</h1>
+        <p>Mục Tiêu: Gắn kết 500 người bạn.</p>
+        <div class="friend-list">
+            <div class="friend-item">1. Văn Mỹ</div>
+            <div class="friend-item">2. Văn Hiệu</div>
+            <div class="friend-item">3. My My</div>
+            <div class="friend-item">4. Trương Thị Mỹ Dung</div>
+        </div>
+        <button class="confirm-button">Xác Nhận Bạn Bè</button>
+    </div>
+    <script>
+        // Write JavaScript code here to handle button click event and perform actions such as adding friend to list, deleting friend request, etc.
+    </script>
+</body>
+</html>

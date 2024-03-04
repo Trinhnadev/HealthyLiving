@@ -1,0 +1,272 @@
+<!-- chat/open_chat.html -->
+
+{% extends 'main.html' %}
+
+{% block content %}
+<style>
+  /* CSS cho giao diện chat */
+/* CSS cho giao diện chat */
+/* CSS cho giao diện chat */
+.room__conversation__chat{
+    margin-top: -10rem;
+    margin-bottom: 4rem;
+    height: 80%;
+
+}
+
+.thread {
+  margin-bottom: 16px; /* Khoảng cách giữa các tin nhắn */
+}
+
+.thread {
+  display: flex;
+  flex-direction: column; /* Đặt các tin nhắn về bên phải */
+}
+.room__top svg,
+.thread__top_chat svg {
+  width: 1.6rem;
+  height: 1.6rem;
+  fill: var(--color-light);
+  cursor: pointer;
+}
+
+.thread__top_chat {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+.thread__authorInfo {
+  color: #ffffff; /* Màu chữ cho thông tin người gửi */
+  display: flex;
+  justify-content: flex-end; /* Đặt thông tin người gửi về phía bên phải */
+}
+
+.thread__date {
+  color: #aaaaaa; /* Màu chữ cho thời gian gửi */
+}
+
+.sender-message {
+  background-color: #333333; /* Màu nền cho tin nhắn của người gửi */
+  color: #ffffff; /* Màu chữ cho tin nhắn của người gửi */
+  border-radius: 8px; /* Bo góc cho khung tin nhắn */
+  padding: 8px; /* Khoảng cách từ chữ đến viền khung */
+  text-align:right; /* Đặt tin nhắn về phía bên phải */
+  max-width: 300px; /* Giới hạn độ rộng lớn nhất của tin nhắn */
+  display: inline-block; /* Đặt display là inline-block để cho phép co dãn */
+  word-wrap: break-word; 
+  float: right;/* Đặt tin nhắn về phía bên phải */
+}
+
+.receiver-message {
+  background-color: #4d4d4d; /* Màu nền cho tin nhắn của người nhận */
+  color: #ffffff; /* Màu chữ cho tin nhắn của người nhận */
+  border-radius: 8px; /* Bo góc cho khung tin nhắn */
+  padding: 8px; 
+  text-align:left; /* Đặt tin nhắn về phía bên phải */
+  max-width: 300px; /* Giới hạn độ rộng lớn nhất của tin nhắn */
+  display: inline-block; /* Đặt display là inline-block để cho phép co dãn */
+  word-wrap: break-word; 
+  float: left;/* Khoảng cách từ chữ đến viền khung */
+}
+
+
+
+</style>
+<main class="profile-page layout layout--2">
+  <div class="container">
+    {% include 'base/chat_list.html'%}
+    <!-- Room Start -->
+    <div class="room-container" style="width: 1000px;">
+    <div class="room">
+      <div class="room__top">
+        <div class="room__topLeft">
+          <a href="{% url 'home' %}">
+            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+              <title>arrow-left</title>
+              <path
+                d="M13.723 2.286l-13.723 13.714 13.719 13.714 1.616-1.611-10.96-10.96h27.625v-2.286h-27.625l10.965-10.965-1.616-1.607z">
+              </path>
+            </svg>
+          </a>
+          <h3>Room Chat</h3>
+        </div>
+
+      </div>
+      {% if request.path != '/chat/' %}
+      <div class="room__box scroll">
+        
+        <div class="room__header scroll">
+          <div class="room__hosted">
+            <a href="{% url 'profile' friend.id%}" class ="thread__author">
+              <div class="avatar avatar--small">
+                <img src="{{friend.avatar.url}}">
+              </div>
+              <span>@{{friend.username}}</span>
+            </a>
+          </div>
+        </div>
+
+        <div class="room__conversation__chat">
+          <div class="threads scroll" id ="chat-container">
+            {% for message in messages %}
+            <div class="thread">
+              <div class="thread__top_chat">
+                {% if request.user == message.sender %}
+                <a href="{%url 'delete_message_chat' message.id%}">
+                  <div class="thread__delete">
+                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                      <title>remove</title>
+                      <path
+                        d="M27.314 6.019l-1.333-1.333-9.98 9.981-9.981-9.981-1.333 1.333 9.981 9.981-9.981 9.98 1.333 1.333 9.981-9.98 9.98 9.98 1.333-1.333-9.98-9.98 9.98-9.981z">
+                      </path>
+                    </svg>
+                  </div>
+                </a>
+                {% endif %}
+                {% if request.user == message.sender %}
+                <div class="thread__author" style=" flex-direction: row-reverse;">
+                  
+                  <a href="{% url 'profile' message.sender.id%}" class="thread__authorInfo">
+                    <span>@{{message.sender.username}}</span>
+                    <div class="avatar avatar--small">
+                      <img src="{{message.sender.avatar.url}}" />
+                    </div>
+                    
+                  </a>
+                  <span class="thread__date">{{message.timestamp|timesince}} ago</span>
+                </div>
+                {%else%}
+                <div class="thread__author">
+                  <a href=" {% url 'profile' message.sender.id%}" class="thread__authorInfo">
+                    <div class="avatar avatar--small">
+                      <img src="{{message.sender.avatar.url}}" />
+                    </div>
+                    <span>@{{message.sender.username}}</span>
+                  </a>
+                  <span class="thread__date">{{message.timestamp|timesince}} ago</span>
+                </div>
+                {% endif %}
+              </div>
+              <div class="thread__details">
+                {% if request.user == message.sender %}
+                <div class="sender-message">
+                  {{message.content}}
+                </div>
+                {% else %}
+                <div class="receiver-message">
+                  {{message.content}}
+                </div>
+                {% endif %}
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        
+        
+        
+        
+      </div>
+      
+      <div class="room__message">
+        <form action="" method="POST">
+          {% csrf_token %}
+          <input name="body" id = "chat-input" placeholder="Write your message here..." />
+          <button type="submit" id = "chat-submit" hidden>submit
+          </button>
+        </form>
+      </div>
+      {%endif%}
+    </div>
+  </div>
+<!-- Thêm vào cuối file HTML của bạn -->
+
+{{ chat_room.id|json_script:"json-roomid" }}
+{{ request.user.username|json_script:"json_username"}}
+{{ request.user.username|json_script:"json_username"}}
+
+
+
+<script>
+
+const chat_id = JSON.parse(document.getElementById('json-roomid').textContent);
+const userName = JSON.parse(document.getElementById('json_username').textContent);
+
+console.log(chat_id);
+const ChatSocket = new WebSocket(
+      'ws://' 
+      + window.location.host 
+      + '/ws/open_chat/' 
+      + chat_id 
+      + '/'
+      );
+  
+  
+      ChatSocket.onmessage = function (e) {
+  
+      console.log('onmessage');
+      const data = JSON.parse(e.data);
+  
+      if(data.message){
+        console.log('hih');
+      
+        var messageContainer = document.getElementById('chat-container');
+        var newMessage = document.createElement('div');
+        newMessage.className = 'thread';
+        newMessage.innerHTML = `
+            <div class="thread__top">
+                <div class="thread__author">
+                    <a href="" class="thread__authorInfo">
+                        <div class="avatar avatar--small">
+                            <img src="" />
+                        </div>
+                        <span>@${userName}</span>
+                    </a>
+                    <span class="thread__date"></span>
+                </div>
+                <a href="" class="thread__delete">
+                  <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                      <title>remove</title>
+                      <path
+                        d="M27.314 6.019l-1.333-1.333-9.98 9.981-9.981-9.981-1.333 1.333 9.981 9.981-9.981 9.98 1.333 1.333 9.981-9.98 9.98 9.98 1.333-1.333-9.98-9.98 9.98-9.981z">
+                      </path>
+                    </svg>
+                </a>
+            </div>
+            <div class="thread__details">
+                ${data.message}
+            </div>
+        `;
+        messageContainer.appendChild(newMessage);
+        messageContainer.scrollTop = messageContainer.scrollHeight;
+          }else{
+            console.log('lỗi');
+          }
+    }
+  
+  
+  
+    ChatSocket.onclose = function (event) {
+      console.log('WebSocket connection closed:', event);
+  };
+  
+  // Additional code for sending messages through the WebSocket
+  document.querySelector('#chat-submit').onclick = function (event) {
+      event.preventDefault();
+      
+      const messageInputDom = document.querySelector('#chat-input');
+      const message = messageInputDom.value;
+  
+      ChatSocket.send(JSON.stringify({
+          'message': message,
+          'username': userName,
+          'chat_id':chat_id,
+          
+      }));
+  
+      messageInputDom.value = '';
+      return false;
+  };
+  
+</script>
+{% endblock %}

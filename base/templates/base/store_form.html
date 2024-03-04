@@ -1,0 +1,69 @@
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+<main class="create-room layout">
+  <div class="container">
+    <div class="layout__box">
+      <div class="layout__boxHeader">
+        <div class="layout__boxTitle">
+          <a href="{{request.META.HTTP_REFERER}}">
+            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+              <title>arrow-left</title>
+              <path
+                d="M13.723 2.286l-13.723 13.714 13.719 13.714 1.616-1.611-10.96-10.96h27.625v-2.286h-27.625l10.965-10.965-1.616-1.607z">
+              </path>
+            </svg>
+          </a>
+          <h3>Create/Update Store</h3>
+        </div>
+      </div>
+      <div class="layout__body">
+        <form class="form" action="" method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+
+          
+          <div class="form__group">
+            <label for="room_name">Store Name</label>
+            {{form.name}}
+          </div>
+
+          <div class="form__group">
+            <label for="room_description">Store Description</label>
+            {{form.description}}
+          </div>
+
+          <div class="form__group">
+            <img id = "selectedImage" name="img" alt="selected Image"  height="220px">
+            <p id = "imageInput" name="img" accept = "image*/"> {{form.img}}</p>
+          </div>
+
+          <div class="form__action">
+            <a class="btn btn--dark" href="{{request.META.HTTP_REFERER}}">Cancel</a>
+            <button class="btn btn--main" type="submit">Submit</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script>
+    var defaultImageURL = "{% static 'images/bannerstore.jpg' %}";
+
+// Lắng nghe sự kiện khi người dùng chọn hình ảnh
+document.getElementById('imageInput').addEventListener('change', function (event) {
+    // Kiểm tra xem người dùng đã chọn hình mới hay chưa
+    if (event.target.files.length > 0) {
+        // Nếu có hình mới, lấy đường dẫn của hình ảnh mới
+        var imageURL = URL.createObjectURL(event.target.files[0]);
+        document.getElementById('selectedImage').src = imageURL;
+    } else {
+        // Nếu không có hình mới, hiển thị hình ảnh mặc định
+        document.getElementById('selectedImage').src = defaultImageURL;
+    }
+});
+
+// Thiết lập hình ảnh mặc định ban đầu
+document.getElementById('selectedImage').src = defaultImageURL;
+ </script>
+</main>
+
+{% endblock content %}

@@ -1,0 +1,87 @@
+
+
+
+
+<style>
+    .order-history {
+    width: 1000px;
+    margin: 0 auto;
+    background-color: #3f4156;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+h1 {
+    font-size: 24px;
+    margin: 0;
+}
+
+.order-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.order {
+    width: 950px;
+    border: 1px solid #ddd;
+    margin-bottom: 20px;
+    padding: 20px;
+    background-color: #51546e;
+}
+
+.order-details {
+    margin: 0;
+}
+
+.order-date {
+    font-weight: bold;
+    margin: 0;
+}
+
+.order-details h2 {
+    font-size: 20px;
+    margin: 0;
+}
+
+.order-details p {
+    margin: 10px 0;
+}
+</style>
+
+<div class="topics">
+    <div class="room__top">
+        
+        <div class="room__topLeft">
+            <a href="{% url 'shop' %}">
+                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                  <title>arrow-left</title>
+                  <path
+                    d="M13.723 2.286l-13.723 13.714 13.719 13.714 1.616-1.611-10.96-10.96h27.625v-2.286h-27.625l10.965-10.965-1.616-1.607z">
+                  </path>
+                </svg>
+              </a>
+            <h3>Order history for {{store.name}}</h3>
+        </div>
+
+    </div>
+<div class="order-history">
+        
+        
+
+  <ul class="order-list">
+      {%for order in orders%}
+      <a href="" style="text-decoration:none; color: #b2bdbd;"><li class="order">
+          <div class="order-details">
+            <h3>Order #{{ order.id }}</h3>
+            <p>Date: {{ order.order_date }}</p>
+            <p>Customer: {{ order.user.name }}</p>
+            <p>Total Items: {{ order.orderdetail_set.count }}</p>
+            <p>Total Price: ${{ order.get_total_price }}</p> <!-- Assuming you have such a method -->
+          </div>
+      </li>
+  </a>
+      {%endfor%}
+      
+      <!-- Thêm các đơn hàng khác ở đây -->
+  </ul>
+</div>

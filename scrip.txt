@@ -1,0 +1,29 @@
+{{ rooms.id|json_script:"json_roomid" }}
+
+{{ request.user.username|json_script:"json_username"}}
+
+
+  <script >
+  const roomId = JSON.parse(document.getElementById('json_roomid').textContent);
+
+  var chatSocket = new WebSocket(
+    'ws://' + window.location.host + '/ws/room/' + roomId + '/'
+);
+
+chatSocket.onmessage = function(e) {
+    var data = JSON.parse(e.data);
+    var message = data['message'];
+    document.querySelector('#chat-messages').innerHTML += ('<p>' + message + '</p>');
+};
+
+chatSocket.onclose = function(e) {
+    console.error('Chat socket closed unexpectedly');
+};
+
+document.querySelector('#message-submit').onclick = function(e) {
+    var messageInputDom = document.querySelector('#message-input');
+    var message = messageInputDom.value;
+    chatSocket.send(JSON.stringify({'message': message}));
+    messageInputDom.value = '';
+};
+</script>

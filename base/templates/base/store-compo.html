@@ -1,0 +1,138 @@
+<style>
+  .store-container {
+    width: 1000px;
+    background-color: #333;
+    border-radius: 10px;
+    margin: 0 auto;
+    overflow: hidden;
+  }
+
+  .event-container {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px;
+  }
+
+  .event-card {
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.2s ease-in-out;
+  }
+
+  .event-card:hover {
+    transform: translateY(-5px);
+  }
+
+  .event-image {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+  }
+
+  .event-info {
+    padding: 15px;
+  }
+
+  .event-info h3 {
+    font-size: 1.1em;
+    margin-bottom: 10px;
+  }
+
+  .event-location,
+  .event-interest {
+    font-size: 0.9em;
+    color: #666;
+    margin-bottom: 5px;
+  }
+
+  .event-action {
+    background-color: rgb(94, 179, 244);
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+
+  .event-action:hover {
+    background-color: #516ece;
+  }
+  .store-action{
+    display: flex;
+    /* Tạo một flex container */
+    gap: 10px;
+  }
+  btn-st{
+    padding: 7px 10px;
+    /* Đệm cho nút */
+    border: none;
+    /* Xóa border mặc định */
+    border-radius: 4px;
+    /* Bo tròn góc */
+    cursor: pointer;
+    /* Con trỏ chuột khi di chuyển vào nút */
+    font-size: 14px;
+    /* Cỡ chữ cho nút */
+    transition: background-color 0.3s;
+    /* Hiệu ứng mượt mà khi thay đổi màu nút */
+    text-decoration: none;
+    color: white;
+    padding: 5px 15px;
+    border: none;
+    border-radius: 5px;
+    /* Bo góc cho nút */
+    cursor: pointer;
+    font-size: 1.2rem;
+  }
+</style>
+<div class="room__top">
+  <div class="room__topLeft">
+    <a href="{% url 'home' %}">
+      <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+        <title>arrow-left</title>
+        <path
+          d="M13.723 2.286l-13.723 13.714 13.719 13.714 1.616-1.611-10.96-10.96h27.625v-2.286h-27.625l10.965-10.965-1.616-1.607z">
+        </path>
+      </svg>
+    </a>
+    <h3>Product</h3>
+  </div>
+
+</div>
+<div class="store-container">
+  <div class="event-container">
+    <!-- Event Card -->
+    {%for p in products%}
+    <div class="event-card">
+      <img src="{{p.image.url}}" alt="Sakura Festival" class="event-image">
+      <div class="event-info">
+        <a href="{%url 'product_detail' store_id=p.store.id product_id=p.id%}">
+          <h3>{{p.name}}</h3>
+        </a> <br>
+        <a href="{%url 'store_detail' p.store.id%}">
+          <h3>By {{p.store.name}}</h3>
+        </a>
+
+        <p class="event-location">${{p.price}}</p>
+        <div class="store-action">
+        <form action="{%url 'product_detail' store_id=p.store.id product_id=p.id%}">
+          <button class="btn-st event-action">Detail</button>
+          {%if p.quantity > 0%}
+        </form>
+        <form action="{% url 'add_to_cart' p.id %}">
+          {% csrf_token%}
+          <button class="btn-st event-action">Buy</button>
+        </form>
+        {%else%}
+        <button class="btn-st event-action" disabled>Soldout</button>
+
+        {%endif%}
+      </div>
+      </div>
+    </div>
+    {%endfor%}
+
+  </div>

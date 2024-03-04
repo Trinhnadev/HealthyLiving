@@ -1,0 +1,39 @@
+{%extends 'navforshop.html'%}
+
+{% block content%}
+
+</style>
+    <div class="cart">
+        <h1>Hóa Đơn</h1>
+        <h1>Chi tiết đơn hàng #{{ order.id }}</h1>
+        <p>Ngày đặt hàng: {{ order.order_date }}</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Hình ảnh</th>
+                    <th>Tên sản phẩm</th>
+                    <th>Giá</th>
+                    <th>Số lượng</th>
+                    <th>Tổng cộng</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                {%for c in order_details%}
+                <tr>
+                    <td><img src="{{c.product.image.url}}" alt="Sản phẩm 1"></td>
+                    <td>{{c.product.name}}</td>
+                    <td>${{c.product.price}}</td>
+                    <td>{{c.quantity}}</td>
+                    <td>${{c.subtotal}}</td>
+                </tr>
+                {%endfor%}
+                <!-- Thêm các sản phẩm khác ở đây -->
+            </tbody>
+        </table>
+        <div class="checkout">
+           <a href="{%url 'shop'%}"> <button>Back to shop</button></a>
+
+    </div>
+
+    {%endblock%}

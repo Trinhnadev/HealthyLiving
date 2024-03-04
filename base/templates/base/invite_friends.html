@@ -1,0 +1,120 @@
+
+<style>
+
+
+.chat-container {
+    width: 1000px;
+    background-color: #333;
+    border-radius: 10px;
+    margin: 0 auto;
+    overflow: hidden;
+}
+
+.search-container {
+    padding: 10px;
+    background-color: #333;
+}
+
+.search-input {
+    width: calc(100% - 20px);
+    padding: 10px;
+    border: none;
+    border-radius: 20px;
+    font-size: 0.9em;
+    color: #333;
+    background-color: #fff;
+}
+
+.chat-header {
+    background-color: #444;
+    padding: 10px;
+    text-align: left;
+    font-size: 1em;
+    border-bottom: 1px solid #555;
+}
+
+.chat-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.chat-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #555;
+}
+
+.chat-avatar {
+    width: 40px;
+    height: 40px;
+    background-color: #666;
+    border-radius: 20px;
+    margin-right: 10px;
+}
+
+.chat-name {
+    flex-grow: 1;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.chat-send {
+    padding: 5px 15px;
+    background-color: #5cb85c;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+}
+
+.chat-send:hover {
+    background-color: #4cae4c;
+}
+
+  </style>
+  
+<div class="chat-container">
+    <div class="room__top" style="background-color: #333;">
+        <div class="room__topLeft">
+          <a href="{% url 'event' %}">
+            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+              <title>arrow-left</title>
+              <path
+                d="M13.723 2.286l-13.723 13.714 13.719 13.714 1.616-1.611-10.96-10.96h27.625v-2.286h-27.625l10.965-10.965-1.616-1.607z">
+              </path>
+            </svg>
+          </a>
+          <h3>Invite</h3>
+        </div>
+
+      </div>
+    <div class="search-container">
+        <form method="get" action="{% url 'events' event.id %}">
+            <input type="text" class = "search-input" name="search" placeholder="Search friends..." value="{{ search_query }}">
+        </form>
+    </div>
+    <div class="chat-header">{{event.title}}</div>
+    <div class="chat-list">
+        <!-- Repeat for each chat item -->
+        {%for i in non_participating_friends%}
+        <div class="chat-item">
+            <img class="chat-avatar" src="{{i.avatar.url}}" alt="">
+            <div class="chat-name">{{i.name}}</div>
+            {% if i.id in invited_ids %}
+            <button class="chat-send" disabled>Đã gửi</button>
+                {% else %}
+            <form method="post" action="{% url 'send_invitation' event_id=event.id user_id=i.id %}">
+                {% csrf_token %}
+                <button type="submit" class="chat-send">Gửi</button>
+            </form>
+                {% endif %}
+        </div>
+        {%endfor%}
+        <!-- More chat items -->
+    </div>
+</div>
+
+

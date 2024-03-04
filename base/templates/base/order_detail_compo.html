@@ -1,0 +1,115 @@
+
+<style>
+    .cart {
+    width: 1000px;
+    margin: 20px auto;
+    background-color:  #3f4156;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    color: #b2bdbd;
+
+}
+
+h1 {
+    font-size: 24px;
+    margin: 0;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+table th, table td {
+    border: 1px solid #fff;
+    padding: 10px;
+    text-align: left;
+}
+
+table th {
+    background-color: #51546e;
+    color: #fff;
+}
+
+table td img {
+    max-width: 50px;
+    height: auto;
+}
+
+.checkout {
+    text-align: right;
+    margin-top: 20px;
+}
+
+button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+    .order {
+    border: 1px solid #ddd;
+    margin-bottom: 20px;
+    padding: 20px;
+    background-color: #51546e;
+}
+
+.order-details {
+    margin: 0;
+}
+
+.order-date {
+    font-weight: bold;
+    margin: 0;
+}
+
+.order-details h2 {
+    font-size: 20px;
+    margin: 0;
+}
+
+.order-details p {
+    margin: 10px 0;
+}
+
+</style>
+    <div class="cart">
+        <h1>Hóa Đơn</h1>
+        <h1>Chi tiết đơn hàng #{{ order.id }}</h1>
+        <p>Ngày đặt hàng: {{ order.order_date }}</p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Hình ảnh</th>
+                    <th>Tên sản phẩm</th>
+                    <th>Giá</th>
+                    <th>Số lượng</th>
+                    <th>Tổng cộng</th>
+
+                </tr>
+            </thead>
+            <tbody>
+                {%for c in order_items %}
+                <tr>
+                    <td><img src="{{c.product.image.url}}" alt="Sản phẩm 1"></td>
+                    <td>{{c.product.name}}</td>
+                    <td>${{c.product.price}}</td>
+                    <td>{{c.quantity}}</td>
+                    <td>${{c.subtotal}}</td>
+                </tr>
+                {%endfor%}
+                <!-- Thêm các sản phẩm khác ở đây -->
+            </tbody>
+        </table>
+        <div class="checkout">
+           <a href="{%url 'shop'%}"> <button>Back to shop</button></a>
+
+    </div>
+
