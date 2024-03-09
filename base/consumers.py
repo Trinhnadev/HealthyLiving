@@ -1,5 +1,6 @@
 # consumers.py
-
+import base64
+from django.core.files.base import ContentFile
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
@@ -96,8 +97,13 @@ class ChatFriendConsumer(AsyncWebsocketConsumer):
 
     async def receive(self, text_data):
         data = json.loads(text_data)
+
         message = data['message']
         username = data['username']
+        image_data = data.get('image')
+
+
+        await self.save_message(username, message, image_data)
 
 
         # Save message to the database
@@ -108,12 +114,16 @@ class ChatFriendConsumer(AsyncWebsocketConsumer):
             self.room_group_name,
             {
                 'type': 'chat_message',
+                'image': image_data,
+
                 'message': message,
                 'username': username,
             }
         )
 
     async def chat_message(self, event):
+        image = event['image']
+
         message = event['message']
         username = event['username']
 
@@ -121,6 +131,8 @@ class ChatFriendConsumer(AsyncWebsocketConsumer):
 
         # Send message to WebSocket
         await self.send(text_data=json.dumps({
+            'image': image,
+
             'message': message,
             'username': username,
 
@@ -128,10 +140,26 @@ class ChatFriendConsumer(AsyncWebsocketConsumer):
         }))
 
     @database_sync_to_async
-    def save_message(self, username, message):
+    def save_message(self, username, message,image =None):
         user = User.objects.get(username=username)
         chat_room = ChatRoom.objects.get(id=self.chat_id)
     
     # Giả sử ChatRoom chỉ dành cho hai người và bạn muốn xác định người nhận
         receiver = chat_room.members.exclude(id=user.id).first()
-        Chat.objects.create(sender=user, receiver=receiver, content=message, roomchat=chat_room)
+
+        if image:
+        # Giải mã chuỗi base64 và tạo ContentFile
+            format, imgstr = image.split(';base64,')
+            ext = format.split('/')[-1]
+            image = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
+            chat_message = Chat.objects.create(
+            roomchat=chat_room, sender=user,receiver=receiver, content=message, image=image
+            )
+            return chat_message
+        
+        else:
+            chat_message = Chat.objects.create(
+            roomchat=chat_room, sender=user,receiver=receiver, content=message
+            )
+            return chat_message
+

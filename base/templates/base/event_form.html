@@ -42,14 +42,16 @@
             
           </div>
           <div class="form__group">
-            <input type="text" name="title" placeholder="Title" required>
+            <label for="title">Title</label>
+            {{form.title}}
 
           </div>
 
           <div class="form__group">
             <!-- <label for="room_description">Event Description</label> -->
             <!-- <p placeholder="Description">{{form.description}}</p> -->
-            <input type="text" name="description" placeholder="Description" required>
+            <label for="Description">Description</label>
+            {{form.description}}
 
           </div>
           <div class="form__group">
@@ -70,17 +72,18 @@
             </select>
           </div>
           <div class="form__group">
-            <input type="text" name="location" placeholder="Location" required>
+            <label for="Location">Location</label>
+            {{form.location}}
 
           </div>
           <div class="form__group">
             <label for="room_anwser">Start date</label>
-            <input type="datetime-local" name="start_time" placeholder="Start time">
+            {{form.start_time}}
 
           </div>
           <div class="form__group">
             <label for="room_anwser">End date</label>
-            <input type="datetime-local" name="end_time" placeholder="End time" required>
+            {{form.end_time}}
 
           </div>
           <div class="form__action">

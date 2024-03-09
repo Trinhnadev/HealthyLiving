@@ -53,6 +53,51 @@ button {
 button:hover {
     background-color: #0056b3;
 }
+.checkout {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+
+.search-form {
+    display: flex;
+    gap: 10px; /* Adjust the space between the search input and the button */
+}
+
+.search-input {
+    width: 400px; /* As specified in your inline style */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.search-button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #5cb85c;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.search-button:hover {
+    background-color: #4cae4c; /* Darker green on hover */
+}
+
+.create-account-btn {
+    padding: 10px 20px;
+    background-color: #337ab7;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    display: inline-block; /* To allow padding and margin */
+    cursor: pointer;
+}
+
+.create-account-btn:hover {
+    background-color: #286090; /* Darker blue on hover */
+}
 </style>
 <div class="topics">
     <div class="room__top">
@@ -74,13 +119,10 @@ button:hover {
     <div class="cart">
         <div class="checkout">
             <form action="{%url 'store_products' store.id %}" method="GET">
-                <div class="search">
-                    <input type="search" name="q" placeholder="Tìm kiếm Product" style="width: 400px">
-                    
-                </div>
-                
-            </form>
-            <a href="{%url 'product_create' store.id%}"> <button> + Create new product</button></a>
+                <input type="search" name="q" placeholder="Tìm kiếm Product" class="search-input">
+          <button type="submit" class="search-button" hidden>Search</button>
+      </form>
+      <a href="{% url 'product_create' store.id%}" class="create-account-btn"> + Create new Product</a>
             
          </div>
         <table>

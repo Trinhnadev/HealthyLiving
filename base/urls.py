@@ -122,5 +122,18 @@ urlpatterns = [
     path('enter_reset_code/', views.enter_reset_code, name='enter_reset_code'),
     path('reset_password/', views.reset_password, name='reset_password'),
     path('change_password/', views.change_password, name='change_password'),
+    path('report/<int:mess_id>/', views.report_mess, name='report_mess'),
+    path('manage/', views.manageUser, name='manage'),
+    path('ban-user/<int:user_id>/', views.ban_user, name='ban_user'),
+    path('unban-user/<int:user_id>/', views.unban_user, name='unban_user'),
+    path('manageUserBan/', views.manageUserBanned, name='manageUserBan'),
+    path('manageRoom/', views.manageRoom, name='manageRoom'),
+
+    path('reports/messages/', views.reported_messages, name='reported_messages'),
+    path('create_account/', views.create_account, name='create_account'),
+
+
+
+
 
 ]

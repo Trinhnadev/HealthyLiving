@@ -1,0 +1,54 @@
+{% extends 'main.html' %}
+
+{% block content %}
+<main class="auth layout">
+
+  <div class="container">
+    <div class="layout__box">
+      <div class="layout__boxHeader">
+        <div class="layout__boxTitle">
+          <h3>Create Account</h3>
+        </div>
+      </div>
+      <div class="layout__body">
+         <h1 class="auth__tagline" style="font-family: cursive; font-size: 30px;">HealthCare</h1>
+
+         <form class="form" action="{%url 'create_account' %}" method="POST">
+            {% csrf_token %}
+            <div class="form__group">
+              <label for="email">Email</label>
+              <input id="email" name="email" type="email" placeholder="youremail@example.com"/>
+            </div>
+            <div class="form__group">
+              <label for="name">Name</label>
+              <input id="name" name="name" type="text" placeholder="Your Name"/>
+            </div>
+            <div class="form__group">
+              <label for="password1">Password</label>
+              <input id="password1" name="password1" type="password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"/>
+            </div>
+            <div class="form__group">
+              <label for="password2">Confirm Password</label>
+              <input id="password2" name="password2" type="password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"/>
+            </div>
+            <div class="form__group">
+                <label for="role">Role</label>
+                <select id="role" name="role">
+                    <option value="US">User</option>
+                    <option value="AD">Admin</option>
+                </select>
+            </div>
+            <button class="btn btn--main" type="submit">Create Account</button>
+          </form>
+
+        <div class="auth__action">
+          <a href="{%url 'manage'%}" class="btn btn--link">Back</a>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+  {%endblock%}

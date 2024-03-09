@@ -1,0 +1,81 @@
+<!-- report_user.html -->
+{% extends 'main.html' %}
+
+{% block content %}
+<style>
+    .report-container {
+    background-color: #eceff1;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.report-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.help-text {
+    color: grey;
+    font-size: small;
+}
+
+.submit-btn {
+    background-color: #03a9f4;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.submit-btn:hover {
+    background-color: #0288d1;
+}
+
+/* Style the checkboxes if necessary */
+.form-group input[type="checkbox"] {
+    margin-right: 5px;
+}
+.report-title{
+    text-align: center;
+    color: black;
+    background-color: #0288d1;
+}
+
+/* You can add more styles based on your preference */
+
+</style>
+<div class="report-container">
+    <div class="report-title">
+    <h2>Report {{ reported_mess.body }}</h2>
+</div>
+
+    <form method="post" class="report-form">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="form-group">
+                {{ field.errors }}
+                {{ field.label_tag }}<br>
+                {{ field }}
+                {% if field.help_text %}
+                    <small class="help-text">{{ field.help_text }}</small>
+                {% endif %}
+            </div>
+        {% endfor %}
+        <button type="submit" class="submit-btn">Submit Report</button>
+    </form>
+</div>
+
+{% endblock %}

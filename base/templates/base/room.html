@@ -1,6 +1,83 @@
 {% extends 'main.html' %}
 {% load static %}
 {% block content %}
+<style>
+  .form {
+    max-width: 1000px;
+    background-color: #f4f4f4;
+    border-radius: 25px;
+    border: 1px solid #dddddd;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  .form input[type="text"] {
+    margin-top: 2px;
+    flex-grow: 1;
+    border: none;
+    outline: none;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: #f4f4f4;
+  }
+
+  .form button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    outline: none;
+  }
+
+  .form button:focus,
+  .form input[type="text"]:focus {
+    outline: none;
+  }
+
+  /* Đặt biểu tượng gửi hoặc một nút gửi nếu bạn muốn */
+  .form button::before {
+    content: '\21A9';
+    /* Biểu tượng "enter" trên bàn phím */
+    font-size: 1.5em;
+    color: #555555;
+  }
+
+  .image-upload-label {
+    cursor: pointer;
+    /* Thêm các thuộc tính CSS khác để định dạng icon tải lên của bạn */
+  }
+
+  .image-upload-label img {
+    width: 45px;
+    /* hoặc kích thước bạn muốn */
+    height: auto;
+  }
+
+  #image-upload {
+    display: none;
+    /* Ẩn input tệp tin */
+  }
+
+
+  .receiver-message {
+    color: #ffffff;
+    /* Màu chữ cho tin nhắn của người nhận */
+    border-radius: 8px;
+    /* Bo góc cho khung tin nhắn */
+    padding: 8px;
+    text-align: left;
+    /* Đặt tin nhắn về phía bên phải */
+    max-width: 300px;
+    /* Giới hạn độ rộng lớn nhất của tin nhắn */
+    display: inline-block;
+    /* Đặt display là inline-block để cho phép co dãn */
+    word-wrap: break-word;
+    float: left;
+    /* Khoảng cách từ chữ đến viền khung */
+  }
+</style>
 <main class="profile-page layout layout--2">
   <div class="container">
     <!-- Room Start -->
@@ -54,12 +131,12 @@
         <div class="room__header scroll">
           <div class="room__info">
             <h3>{{rooms.name}}</h3>
-            <span id ="room-id" name ="room-id">{{room.name}}</span>
+            <span id="room-id" name="room-id">{{room.name}}</span>
             <span>{{rooms.created|timesince}} ago</span>
           </div>
           <div class="room__hosted">
             <p>Hosted By</p>
-            <a href="{%url 'profile' rooms.host.id%}" class ="thread__author">
+            <a href="{%url 'profile' rooms.host.id%}" class="thread__author">
               <div class="avatar avatar--small">
                 <img src="{{ rooms.host.avatar.url }}" />
               </div>
@@ -69,10 +146,10 @@
           <span class="room__topics">{{rooms.topic}}</span>
         </div>
 
-        <div class="room__conversation" >
-          <div class="threads scroll" id ="message-container">
+        <div class="room__conversation">
+          <div class="threads scroll" id="message-container">
             {% for message in message %}
-            <div class="thread" >
+            <div class="thread">
               <div class="thread__top">
                 <div class="thread__author">
                   <a href="{% url 'profile' message.user.id %}" class="thread__authorInfo">
@@ -82,9 +159,9 @@
                     <span>@{{message.user.username}}</span>
                   </a>
                   <span class="thread__date">{{message.created|timesince}} ago</span>
-                  
-                </div>
 
+                </div>
+                
                 {% if request.user == message.user %}
                 <a href="{% url 'delete-message' message.id %}">
                   <div class="thread__delete">
@@ -96,13 +173,26 @@
                     </svg>
                   </div>
                 </a>
+                {%else%}
+                <a href="{%url 'report_mess' message.id %}">
+                  <div class="thread__delete">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-triangle" viewBox="0 0 16 16">
+                      <path d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.15.15 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.2.2 0 0 1-.054.06.1.1 0 0 1-.066.017H1.146a.1.1 0 0 1-.066-.017.2.2 0 0 1-.054-.06.18.18 0 0 1 .002-.183L7.884 2.073a.15.15 0 0 1 .054-.057m1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767z"/>
+                      <path d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z"/>
+                    </svg>
+                  </div>
+                </a>
                 {% endif %}
               </div>
               <div class="thread__details">
 
-                {{message.body}}
+                <div class="receiver-message">
+                  {{message.body}}
+                  {% if message.image %}
+                  <img src="{{ message.image.url }}" alt="Sent image">
+                  {% endif %}
+                </div>
 
-                
               </div>
             </div>
             {% endfor %}
@@ -111,10 +201,21 @@
 
       </div>
       <div class="room__message">
-        <form action="" method="POST">
+        <form class="form" action="" method="POST" enctype="multipart/form-data">
           {% csrf_token %}
-          <input name="body" id = "message-input" placeholder="Write your message here..." />
-          <button type="submit" id = "message-submit" hidden>submib
+          <label for="image-upload" class="image-upload-label">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-card-image"
+              viewBox="0 0 16 16">
+              <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" />
+              <path
+                d="M1.5 2A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2zm13 1a.5.5 0 0 1 .5.5v6l-3.775-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12v.54L1 12.5v-9a.5.5 0 0 1 .5-.5z" />
+            </svg>
+
+          </label>
+          <input type="file" name="image" id="image-upload" hidden>
+          <div class="image-preview-container" id="image-preview-container"></div>
+          <input name="body" id="message-input" placeholder="Write your message here..." />
+          <button type="submit" id="message-submit" hidden>submib
           </button>
         </form>
       </div>
@@ -147,123 +248,138 @@
 
   {%block scripts %}
   {{ rooms.id|json_script:"json-roomid" }}
-  
+
   {{ request.user.username|json_script:"json_username"}}
   {{ request.user.id|json_script:"json_userID"}}
   {{ request.user.avatar.url|json_script:"json_userAvatar"}}
-  {{ created_at|timesince|json_script:"json_createdAt" }}  {# Include the created time in JSON script #}
+  {{ created_at|timesince|json_script:"json_createdAt" }} {# Include the created time in JSON script #}
   {{ message_id|json_script:"json_messageID" }}
 
- 
 
 
 
-  
+
+
   <script>
-    
-    var room_id = JSON.parse(document.getElementById('json-roomid').textContent);
-    const roomId = JSON.parse(document.getElementById('json-roomid').textContent);
-    const userName = JSON.parse(document.getElementById('json_username').textContent);
-    const userID = JSON.parse(document.getElementById('json_userID').textContent);
-    const userAvatar = JSON.parse(document.getElementById('json_userAvatar').textContent);
-    const messageID = JSON.parse(document.getElementById('json_messageID').textContent);
-    console.log('Message ID:', messageID);
-    const createdAtScript = document.getElementById('json_createdAt');
-    const createdAtData = JSON.parse(createdAtScript.textContent);
-    console.log(createdAtData)
+
+    //   var room_id = JSON.parse(document.getElementById('json-roomid').textContent);
+    //   const roomId = JSON.parse(document.getElementById('json-roomid').textContent);
+    //   const userName = JSON.parse(document.getElementById('json_username').textContent);
+    //   const userID = JSON.parse(document.getElementById('json_userID').textContent);
+    //   const userAvatar = JSON.parse(document.getElementById('json_userAvatar').textContent);
+    //   const messageID = JSON.parse(document.getElementById('json_messageID').textContent);
+    //   console.log('Message ID:', messageID);
+    //   const createdAtScript = document.getElementById('json_createdAt');
+    //   const createdAtData = JSON.parse(createdAtScript.textContent);
+    //   console.log(createdAtData)
 
 
 
-    console.log('Room ID:', roomId);
-    console.log('Window Location Host:', window.location.host);
-    console.log(userName)
-  
-    // Connect to WebSocket
-  
-    const MessagesSocket = new WebSocket(
-      'ws://' 
-      + window.location.host 
-      + '/ws/room/' 
-      + room_id 
-      + '/'
-      );
-  
-  
-    MessagesSocket.onmessage = function (e) {
-  
-      console.log('onmessage');
-      const data = JSON.parse(e.data);
-  
-      if (data.message) {
-        var messageContainer = document.getElementById('message-container');
-        var newMessage = document.createElement('div');
-        newMessage.className = 'thread';
-        newMessage.innerHTML = `
-            <div class="thread__top">
-                <div class="thread__author">
-                    <a href="/profile/${userID}" class="thread__authorInfo">
-                        <div class="avatar avatar--small">
-                            <img src="${userAvatar}" />
-                        </div>
-                        <span>@${data.username}</span>
-                    </a>
-                    <span class="thread__date">${createdAtData}</span>
-                </div>
-                <a href="/delete-message/${messageID}" class="thread__delete">
-                  <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-                      <title>remove</title>
-                      <path
-                        d="M27.314 6.019l-1.333-1.333-9.98 9.981-9.981-9.981-1.333 1.333 9.981 9.981-9.981 9.98 1.333 1.333 9.981-9.98 9.98 9.98 1.333-1.333-9.98-9.98 9.98-9.981z">
-                      </path>
-                    </svg>
-                </a>
-            </div>
-            <div class="thread__details">
-                ${data.message}
-            </div>
-        `;
-        messageContainer.appendChild(newMessage);
-        messageContainer.scrollTop = messageContainer.scrollHeight;
-      } else {
-          alert('The message was empty');
+    //   console.log('Room ID:', roomId);
+    //   console.log('Window Location Host:', window.location.host);
+    //   console.log(userName)
+
+    //   // Connect to WebSocket
+
+    //   const MessagesSocket = new WebSocket(
+    //     'ws://' 
+    //     + window.location.host 
+    //     + '/ws/room/' 
+    //     + room_id 
+    //     + '/'
+    //     );
+
+
+    //   MessagesSocket.onmessage = function (e) {
+
+    //     console.log('onmessage');
+    //     const data = JSON.parse(e.data);
+
+    //     if (data.message) {
+    //       var messageContainer = document.getElementById('message-container');
+    //       var newMessage = document.createElement('div');
+    //       newMessage.className = 'thread';
+    //       newMessage.innerHTML = `
+    //           <div class="thread__top">
+    //               <div class="thread__author">
+    //                   <a href="/profile/${userID}" class="thread__authorInfo">
+    //                       <div class="avatar avatar--small">
+    //                           <img src="${userAvatar}" />
+    //                       </div>
+    //                       <span>@${data.username}</span>
+    //                   </a>
+    //                   <span class="thread__date">${createdAtData}</span>
+    //               </div>
+    //               <a href="/delete-message/${messageID}" class="thread__delete">
+    //                 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+    //                     <title>remove</title>
+    //                     <path
+    //                       d="M27.314 6.019l-1.333-1.333-9.98 9.981-9.981-9.981-1.333 1.333 9.981 9.981-9.981 9.98 1.333 1.333 9.981-9.98 9.98 9.98 1.333-1.333-9.98-9.98 9.98-9.981z">
+    //                     </path>
+    //                   </svg>
+    //               </a>
+    //           </div>
+    //           <div class="thread__details">
+    //               ${data.message}
+    //           </div>
+    //       `;
+    //       messageContainer.appendChild(newMessage);
+    //       messageContainer.scrollTop = messageContainer.scrollHeight;
+    //     } else {
+    //         alert('The message was empty');
+    //     }
+    //   }
+
+
+
+    //   MessagesSocket.onclose = function (event) {
+    //     console.log('WebSocket connection closed:', event);
+    // };
+
+    // // Additional code for sending messages through the WebSocket
+    // document.querySelector('#message-submit').onclick = function (event) {
+    //     event.preventDefault();
+
+    //     const messageInputDom = document.querySelector('#message-input');
+    //     const message = messageInputDom.value;
+
+    //     MessagesSocket.send(JSON.stringify({
+    //         'message': message,
+    //         'username': userName,
+    //         'room': roomId,
+    //     }));
+
+    //     messageInputDom.value = '';
+    //     return false;
+    // };
+
+    //   function scrollToBottom() {
+    //     const objdiv = document.querySelector('#chat-message');
+    //     objdiv.scrollTop = objdiv.scrollHeight
+    //   }
+
+
+
+    document.getElementById('image-upload').addEventListener('change', function (event) {
+      var imageContainer = document.getElementById('image-preview-container');
+      imageContainer.innerHTML = '';  // Xóa bất kỳ hình ảnh xem trước nào đã có
+
+      var file = event.target.files[0];  // Lấy file hình ảnh đã chọn
+      if (file) {
+        var reader = new FileReader();  // Tạo một FileReader
+        reader.onload = function (e) {
+          var img = new Image();  // Tạo một thẻ img
+          img.src = e.target.result;  // Đặt nguồn của img là dữ liệu của hình ảnh đã chọn
+          img.style.maxWidth = '100px';  // Đặt kích thước tối đa cho hình ảnh xem trước
+          img.style.maxHeight = '100px';
+          imageContainer.appendChild(img);  // Thêm img vào container
+        };
+        reader.readAsDataURL(file);  // Đọc nội dung của file như là một Data URL
       }
-    }
-  
-  
-  
-    MessagesSocket.onclose = function (event) {
-      console.log('WebSocket connection closed:', event);
-  };
-  
-  // Additional code for sending messages through the WebSocket
-  document.querySelector('#message-submit').onclick = function (event) {
-      event.preventDefault();
-      
-      const messageInputDom = document.querySelector('#message-input');
-      const message = messageInputDom.value;
-  
-      MessagesSocket.send(JSON.stringify({
-          'message': message,
-          'username': userName,
-          'room': roomId,
-      }));
-  
-      messageInputDom.value = '';
-      return false;
-  };
-  
-    function scrollToBottom() {
-      const objdiv = document.querySelector('#chat-message');
-      objdiv.scrollTop = objdiv.scrollHeight
-    }
-  
-  
+    });
+
   </script>
-{% endblock %}
+  {% endblock %}
 </main>
 
 {% endblock content %}
-
-
-
-

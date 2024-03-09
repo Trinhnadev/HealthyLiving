@@ -3,14 +3,30 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
+    class UserRole(models.TextChoices):
+        ADMIN = 'AD', 'Admin'
+        USER = 'US', 'User'
     name = models.CharField(max_length = 200, null = True)
     email =models.EmailField(unique = True,null =True)
     bio = models.TextField(null = True)
 
     avatar = models.ImageField(default='defaut1.png',null=True)
-
+    role = models.CharField(
+        max_length=2,
+        choices=UserRole.choices,
+        default=UserRole.USER,
+        null =True
+    )
+    is_banned = models.BooleanField(default=False)
     USERNAME_FIELD ='email'
     REQUIRED_FIELDS = []
+    def is_admin(self):
+        return self.role == self.UserRole.ADMIN
+
+
+
+
+
 
 
 
@@ -43,6 +59,7 @@ class Room(models.Model):
 class Message(models.Model):
     user = models.ForeignKey(User,on_delete=models.CASCADE)
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
+    image = models.ImageField(blank=True, null=True)
     body = models.TextField()
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
@@ -52,7 +69,31 @@ class Message(models.Model):
         return seft.body[0:50]
     
 
+class MessageReport(models.Model):
+    class ReportReasons(models.TextChoices):
+        SPAM = 'SP', 'Spam or misleading'
+        HARASSMENT = 'HR', 'Harassment or bullying'
+        INAPPROPRIATE_CONTENT = 'IC', 'Inappropriate content'
+        COPYRIGHT = 'CR', 'Copyright violation'
+        OTHER = 'OT', 'Other'
 
+    reported_message = models.ForeignKey(Message, related_name='reports_received', on_delete=models.CASCADE)
+    reporting_users = models.ManyToManyField(User, related_name='reports_made',blank=True)
+    reason = models.TextField()
+    detail = models.TextField(null=True, blank=True)  # Optional: for additional details if 'Other' is selected
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f' reports {self.reported_message}'
+    
+    def __str__(self):
+        reporting_users = ', '.join(user.username for user in self.reporting_users.all())
+        return f'{reporting_users} reports {self.reported_message}'
+
+    
 
 #friend
 class Friendship(models.Model):
@@ -76,6 +117,7 @@ class Chat(models.Model):
     roomchat = models.ForeignKey(ChatRoom, on_delete=models.CASCADE, related_name='messages',null =True)
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sender_messages')
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='receiver_messages')
+    image = models.ImageField(blank=True, null=True)
     content = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
 

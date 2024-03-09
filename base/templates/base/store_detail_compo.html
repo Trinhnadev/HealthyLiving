@@ -318,6 +318,7 @@
       <div class="event-container">
         <!-- Event Card -->
         {%for p in products%}
+        <form action="{% url 'add_to_cart' p.id %}">
         <div class="event-card-product">
           <img src="{{p.image.url}}" alt="Sakura Festival" class="event-image">
           <div class="event-info">
@@ -326,31 +327,48 @@
             <button class="event-action">Buy</button>
           </div>
         </div>
+      </form>
         {%endfor%}
       </div>
     </div>
   </div>
   <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      var dropdown = document.getElementById('dropdownMenuButton');
-      dropdown.onclick = function (event) {
-        event.stopPropagation();
-        var dropdownMenu = dropdown.nextElementSibling;
-        dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
-      };
+  document.addEventListener('DOMContentLoaded', function () {
+        var menuItems = document.querySelectorAll('.menu-item');
 
-      // Close the dropdown if clicked outside
-      window.onclick = function (event) {
-        if (!event.target.matches('.dropdown-toggle')) {
-          var dropdownMenus = document.getElementsByClassName('dropdown-menu');
-          for (var i = 0; i < dropdownMenus.length; i++) {
-            var openDropdown = dropdownMenus[i];
-            if (openDropdown.style.display === 'block') {
-              openDropdown.style.display = 'none';
-            }
-          }
-        }
-      };
+        menuItems.forEach(function (item) {
+            item.addEventListener('click', function () {
+                // Xóa class 'active' khỏi tất cả các mục
+                menuItems.forEach(function (item) {
+                    item.classList.remove('active');
+                });
+
+                // Thêm class 'active' vào mục được nhấp
+                this.classList.add('active');
+            });
+        });
     });
 
+
+    document.addEventListener('DOMContentLoaded', function () {
+    var dropdown = document.getElementById('dropdownMenuButton');
+    dropdown.onclick = function (event) {
+      event.stopPropagation();
+      var dropdownMenu = dropdown.nextElementSibling;
+      dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
+    };
+
+    // Close the dropdown if clicked outside
+    window.onclick = function (event) {
+      if (!event.target.matches('.dropdown-toggle')) {
+        var dropdownMenus = document.getElementsByClassName('dropdown-menu');
+        for (var i = 0; i < dropdownMenus.length; i++) {
+          var openDropdown = dropdownMenus[i];
+          if (openDropdown.style.display === 'block') {
+            openDropdown.style.display = 'none';
+          }
+        }
+      }
+    };
+  });
   </script>

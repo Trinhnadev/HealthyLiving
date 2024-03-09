@@ -3,10 +3,10 @@ import random
 from django.shortcuts import render,redirect
 from django.contrib import messages
 from django.http import HttpResponse
-from .models import Room, Topic, Message ,User , Friendship ,Chat ,Product,Order,OrderDetail, Cart , CartItem , Event,Invitation,Store,ChatRoom
+from .models import Room, Topic, Message ,User , Friendship ,Chat ,Product,Order,OrderDetail, Cart , CartItem , Event,Invitation,Store,ChatRoom,MessageReport
 from django.db.models import Q
-from django.contrib.auth.decorators import login_required
-from .forms import RoomForm, UserForm ,ProfileForm ,MyUserCreationForm,EventsForm,StoreForm,ProductForm,CheckoutForm
+from django.contrib.auth.decorators import login_required ,user_passes_test
+from .forms import RoomForm, UserForm ,ProfileForm ,MyUserCreationForm,EventsForm,StoreForm,ProductForm,CheckoutForm,ReportForm
 # from django.contrib.auth.forms import UserCreationForm
 # from django.contrib.auth.models import User
 from django.contrib.auth import authenticate,login ,logout
@@ -21,18 +21,16 @@ import string
 from django.contrib.auth.hashers import make_password
 from django.utils.timezone import now
 from django.contrib.auth import update_session_auth_hash
+from django.db.models import Count ,Prefetch
+from collections import defaultdict
 
 
 
-# ]
-# Create your views here.
-
-#Home Page
+@login_required
 def home(request):
     q = request.GET.get('q') if request.GET.get('q') != None else ''
     topic =Topic.objects.all()[0:5]
     current_user = request.user
-    #search
     rooms = Room.objects.filter(
         Q(topic__name__icontains =q) |
         Q(name__icontains = q)
@@ -65,23 +63,15 @@ def home(request):
 
     return render(request,'base/home.html',context)
 
-#End Homepage
 
-
-#Authenticate and Profile
+@login_required
 def userProfile(request,pk):
     user = User.objects.get(id=pk)
-    # user_profile = Profile.objects.get(user=user)
-    # img = user.profile.objects.proImg
-
     friendship = Friendship.objects.filter(
         Q(sender=request.user, receiver=user) | Q(sender=user, receiver=request.user)
     ).first()
-    #hien thi cac request for addfr
     sent = Friendship.objects.filter(receiver=request.user, status='pending')
 
-
-    #cac ban be trong trang thai da accepted
     accepted_friends = Friendship.objects.filter(Q(sender=request.user, status='accepted') | Q(receiver=request.user, status='accepted'))
 
 
@@ -122,27 +112,27 @@ def update_avatar(request):
 
 
 def loginPage(request):
-
     page = 'login'
     if request.method == 'POST':
         username = request.POST.get('username').lower()
         password = request.POST.get('password')
 
-        try:
-            user = User.objects.get(username=username)
-        except:
-            messages.error(request,'')
-
-
-        user = authenticate(request,username = username,password = password)
+        # Sử dụng authenticate để kiểm tra thông tin đăng nhập
+        user = authenticate(request, username=username, password=password)
+        
         if user is not None:
-            login(request,user)
-            return redirect('home')
-        else :
-            messages.error(request,'wrong')
+            # Thêm bước kiểm tra để xem người dùng có bị cấm không
+            if user.is_banned:
+                messages.error(request, 'Tài khoản của bạn đã bị cấm. Vui lòng liên hệ với quản trị viên để biết thêm thông tin.')
+                return redirect('login')  # Hoặc bất kỳ đâu bạn muốn chuyển hướng họ
+            else:
+                login(request, user)
+                return redirect('home')
+        else:
+            messages.error(request, 'Tên đăng nhập hoặc mật khẩu không chính xác.')
 
-    context = {'page':page}
-    return render(request,'base/login_sign.html',context)
+    context = {'page': page}
+    return render(request, 'base/login_sign.html', context)
 
 
 def logoutUser(request):
@@ -162,8 +152,6 @@ def sign(request):
             user.save()
             login(request,user)
 
-            # new_profile = Profile.objects.create(user=user)
-            # new_profile.save()
             return redirect('home')
         else:
             messages.error(request,"sai")
@@ -188,19 +176,18 @@ def updateUser(request):
 #End profile
 
 #Room Function
-
+@login_required
 def room(request,pk):
     room = Room.objects.get(id=pk)
     pa = room.participants.all()
-    # print(participants)
     messages = room.message_set.all()
-    # print(messages)
     if request.user == room.host or room.is_private==False or request.user in pa:
         if request.method == 'POST':
             message = Message.objects.create(
                 user = request.user,
                 room = room,
-                 body =request.POST.get('body'),
+                body =request.POST.get('body'),
+                image =request.FILES.get('image'),
             )
             room.participants.add(request.user)
             return redirect('room',pk=room.id)
@@ -236,9 +223,7 @@ def createRoom(request):
     topic = Topic.objects.all()
 
 
-    # Lấy chuỗi các từ khóa và loại bỏ khoảng trắng dư thừa
     answer_keywords = request.POST.get('answer', '').strip()
-        # Tùy chọn: bạn có thể xử lý chuỗi để đảm bảo việc nhập không có khoảng trắng thừa giữa các từ khóa và dấu phẩy
     answer_keywords = ','.join([keyword.strip() for keyword in answer_keywords.split(',')])
 
 
@@ -254,8 +239,6 @@ def createRoom(request):
             is_private = request.POST.get('is_private'),
             question = request.POST.get('question'),
             answer = answer_keywords,
-
-            # password = request.POST.get('password'),
         )
         return redirect('home')
     context = {'form':form,"topic":topic}
@@ -296,11 +279,10 @@ def deleteRoom(request,pk):
 def deleteMessage(request,pk):
     message = Message.objects.get(id = pk)
     # message = get_object_or_404(Message, id=pk)
-    if request.user != message.user:
-        return HttpResponse("this is not your comment")
-    if request.method == 'POST':
-        message.delete()
-        return redirect('room',pk=message.room.id)
+    if request.user == message.user or request.user.is_admin:
+        if request.method == 'POST':
+            message.delete()
+            return redirect('room',pk=message.room.id)
     return render(request,'base/delete.html',{'obj':message})
 
 
@@ -311,7 +293,7 @@ def topicsPage(request):
     return render(request,'base/topics.html',{'topics':topics})
 
 #FriendShip Function
-
+@login_required
 def friendPages(request):
     q = request.GET.get('q', '')
     current_user = request.user
@@ -335,7 +317,7 @@ def friendPages(request):
     })
 
 
-
+@login_required
 def myFriends(request):
     q = request.GET.get('q', '')  # Use an empty string as default if 'q' is not present
     current_user = request.user
@@ -352,16 +334,13 @@ def activityPages(request):
 
 
 
-
+@login_required
 #add friend
 def sentRequest(request,pk):
     receiver = get_object_or_404(User, pk=pk)
-
-    # Check if there is any previous friendship request (including rejected ones)
     previous_request = Friendship.objects.filter(sender=request.user, receiver=receiver).first()
 
     if previous_request:
-        # If there is a previous request, resend it
         previous_request.status = 'pending'
         previous_request.save()
         messages.success(request, 'Friend request resent successfully.')
@@ -373,7 +352,7 @@ def sentRequest(request,pk):
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
-
+@login_required
 def acceptRequest(request,pk):
     sender = User.objects.get(pk=pk)
 
@@ -397,7 +376,7 @@ def acceptRequest(request,pk):
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
-
+@login_required
 def reject(request, pk):
     sender = get_object_or_404(User, pk=pk)
 
@@ -424,17 +403,12 @@ def reject(request, pk):
 
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
-
+@login_required
 #Chat with Friend function
 def chat(request):
     user = request.user
     query = request.GET.get('q', '')
-
-    # Lấy tất cả các ChatRoom mà người dùng hiện tại là thành viên
     chat_rooms = ChatRoom.objects.filter(members=user)
-
-    # Nếu có từ khóa tìm kiếm, bạn có thể muốn lọc các phòng chat dựa trên tiêu chí tìm kiếm
-    # Ví dụ: tìm các phòng chat có thành viên có username chứa từ khóa tìm kiếm
     if query:
         chat_rooms = chat_rooms.filter(members__username__icontains=query).distinct()
 
@@ -454,8 +428,9 @@ def chat(request):
 @login_required
 def open_chat(request, pk):
     chat_room = get_object_or_404(ChatRoom, id=pk)
+    chat_rooms = ChatRoom.objects.filter(members=request.user)
     messages = Chat.objects.filter(roomchat=chat_room).order_by('timestamp')
-
+    
     # Lấy người bạn duy nhất trong phòng chat này
     friend = chat_room.members.exclude(id=request.user.id).first()
 
@@ -463,18 +438,21 @@ def open_chat(request, pk):
 
     if request.method == 'POST' and friend:
         content = request.POST.get('body', '').strip()
-        if content:
+        image = request.FILES.get('image')
+        if content or image:
             # Đảm bảo friend là một instance cụ thể của User
             Chat.objects.create(
                 roomchat=chat_room,
                 sender=request.user,
                 receiver=friend,  # friend giờ là một instance của User
                 content=content,
+                image=image,
             )
         return redirect('open_chat', pk=pk)
 
     return render(request, 'base/chat.html', {
         'chat_room': chat_room,
+        'chat_rooms':chat_rooms,
         'messages': messages,
         'friend': friend,  # Chuyển friend dưới dạng một instance của User
         'accepted_friends': accepted_friends
@@ -482,6 +460,7 @@ def open_chat(request, pk):
 
 def delete_message_chat(request, message_id):
     message = get_object_or_404(Chat, id=message_id)
+    chat_rooms = ChatRoom.objects.filter(members=request.user)
 
     # Check if the user has permission to delete the message
     if request.user == message.sender:
@@ -491,7 +470,7 @@ def delete_message_chat(request, message_id):
         messages.error(request, 'You do not have permission to delete this message.')
 
     # Redirect back to the chat room or any other appropriate page
-    return redirect('open_chat', pk=message.receiver.id)
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
 #End chat function
@@ -520,19 +499,18 @@ def shopping (request):
 @login_required
 def create_store(request):
     if request.method == 'POST':
-        form = StoreForm(request.POST)
+        # Thêm request.FILES để xử lý các tệp được tải lên
+        form = StoreForm(request.POST, request.FILES)
         if form.is_valid():
             store = form.save(commit=False)
-            store.owner = request.user
+            store.owner = request.user  # Thiết lập người sở hữu cho cửa hàng là người dùng hiện tại
             store.save()
-            return redirect('shop')
+            # Đảm bảo form m2m được lưu nếu có
+            form.save_m2m()
+            return redirect('shop')  # Thay 'shop' bằng tên URL đích sau khi tạo cửa hàng thành công
     else:
         form = StoreForm()
     return render(request, 'base/store_form.html', {'form': form})
-
-
-
-
 
 
 
@@ -736,18 +714,36 @@ def checkout(request):
     return render(request, 'base/checkout_form.html', {'form': form})
 
 
-
+#dơn hang cua shop
 @login_required
 def store_order_history(request, store_id):
     stores = Store.objects.filter(owner=request.user)
+    try:
+        store = Store.objects.get(id=store_id)
+    except Store.DoesNotExist:
+        messages.error(request, "Store not found.")
+        return redirect('store_order_history')
 
-    store = get_object_or_404(Store, id=store_id)
-    
-    
-    orders = Order.objects.filter(store=store).order_by('-order_date')
-    
-    
-    return render(request, 'base/store_order_history.html', {'store': store, 'orders': orders ,'stores':stores})
+    # Lấy tất cả đơn hàng có chứa ít nhất một sản phẩm từ cửa hàng này
+    orders = Order.objects.filter(orderdetail__product__store=store).distinct().order_by('-order_date').prefetch_related('orderdetail_set__product__store')
+
+    # Tổ chức dữ liệu đơn hàng và chi tiết đơn hàng theo cửa hàng
+    store_orders = defaultdict(lambda: {'orders': [], 'total': 0, 'details': defaultdict(list)})
+
+    for order in orders:
+        # Khởi tạo tổng giá và chi tiết cho từng cửa hàng trong đơn hàng
+        for detail in order.orderdetail_set.all():
+            product_store = detail.product.store
+            if product_store.id == store_id:  # Chỉ xử lý sản phẩm thuộc cửa hàng được chỉ định
+                store_orders[product_store]['orders'].append(order)
+                store_orders[product_store]['details'][order].append(detail)
+                store_orders[product_store]['total'] += float(detail.subtotal)
+
+    # Chuyển kết quả từ defaultdict sang dict để tránh lỗi khi truyền vào template
+    store_orders = dict((store, {'orders': data['orders'], 'total': data['total'], 'details': dict(data['details'])}) for store, data in store_orders.items())
+
+    # Render kết quả ra template, ví dụ 'store_order_history.html'
+    return render(request, 'base/store_order_history.html', {'store': store, 'orders': orders ,'stores':stores,'store_orders': store_orders})
 
 
 
@@ -755,15 +751,16 @@ def history(request):
     # Lấy tất cả các đơn hàng của người dùng hiện tại
     order = Order.objects.filter(user=request.user).order_by('-order_date')
     return render(request, 'base/history.html', {'order': order})
-
+#cac dơn hang cua khach
 @login_required
 def order_history(request):
     stores = Store.objects.filter(owner=request.user)
 
     orders = Order.objects.filter(user=request.user).order_by('-order_date')  # Get all orders for the user, ordered by date
+    
     return render(request, 'base/order_history.html', {'orders': orders ,'stores':stores})
 
-
+#chi tiet don hang
 def order_detail(request, order_id):
     stores = Store.objects.filter(owner=request.user)
 
@@ -1099,3 +1096,151 @@ def change_password(request):
         return redirect('change_password')
 
     return render(request, 'base/password_change_form.html')
+
+
+
+
+@login_required
+def report_mess(request, mess_id):
+    reported_message = get_object_or_404(Message, id=mess_id)
+    if request.method == 'POST':
+        form = ReportForm(request.POST)
+        if form.is_valid():
+            reason = form.cleaned_data['reason']  # Giả sử reason là một chuỗi
+
+            # Kiểm tra xem đã có báo cáo nào cho tin nhắn này chưa, không quan tâm tới reason
+            existing_reports = MessageReport.objects.filter(reported_message=reported_message)
+
+            # Kiểm tra xem reason đã tồn tại trong bất kỳ báo cáo nào không
+            report_with_reason = existing_reports.filter(reason=reason).first()
+
+            if report_with_reason:
+                # Nếu reason đã tồn tại, chỉ thêm người dùng vào báo cáo đó nếu họ chưa có
+                if not report_with_reason.reporting_users.filter(id=request.user.id).exists():
+                    report_with_reason.reporting_users.add(request.user)
+                    messages.info(request, "You have been added to the existing report for this reason.")
+                else:
+                    messages.info(request, "You have already reported this message for this reason.")
+            else:
+                # Nếu reason chưa tồn tại, tạo báo cáo mới hoặc thêm vào báo cáo hiện có
+                if existing_reports.exists():
+                    # Chọn một báo cáo hiện có để thêm reason mới (nếu có thể)
+                    report = existing_reports.first()
+                else:
+                    # Không có báo cáo nào, tạo báo cáo mới
+                    report = form.save(commit=False)
+                    report.reported_message = reported_message
+                    report.reason = reason
+                    report.save()
+
+                report.reporting_users.add(request.user)
+                messages.success(request, "Your report has been successfully submitted.")
+
+            return redirect('home')
+    else:
+        form = ReportForm()
+
+    context = {'form': form, 'reported_message': reported_message}
+    return render(request, 'base/report_user.html', context)
+
+
+
+def manageUser(request):
+    query = request.GET.get('q', '')
+    users = User.objects.exclude(id=request.user.id).exclude(is_banned=True)
+    
+    if query:
+        users = users.filter(username__icontains=query).distinct()
+    return render(request,'base/manage.html',{'users':users})
+
+
+
+
+
+@login_required
+def ban_user(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
+    user.is_banned = True
+    user.save()
+    Message.objects.filter(user=user).delete()
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+@login_required
+def unban_user(request, user_id):
+    user = get_object_or_404(User, pk=user_id)
+    user.is_banned = False
+    user.save()
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+
+
+def manageUserBanned(request):
+    query = request.GET.get('q', '')
+    users = User.objects.exclude(id=request.user.id).exclude(is_banned=False)
+    
+    if query:
+        users = users.filter(username__icontains=query).distinct()
+    return render(request,'base/manage-ban.html',{'users':users})
+
+
+
+def reported_messages(request):
+    query = request.GET.get('q', '')
+
+    reports = MessageReport.objects.prefetch_related(
+        Prefetch('reporting_users', queryset=User.objects.all()),
+        'reported_message__room',
+    ).annotate(report_count=Count('reporting_users', distinct=True))  # Ensure we're counting unique users
+
+    if query:
+        reports = reports.filter(
+            Q(reason__icontains=query) | 
+            Q(detail__icontains=query) | 
+            Q(reported_message__body__icontains=query) |
+            Q(reporting_users__username__icontains=query)
+        ).distinct()
+
+    return render(request, 'base/manage-report.html', {'reports': reports, 'query': query})
+
+
+
+
+def manageRoom(request):
+    q = request.GET.get('q') if request.GET.get('q') != None else ''
+    rooms = Room.objects.filter(
+        Q(topic__name__icontains =q) |
+        Q(name__icontains = q)
+    )
+
+
+    return render(request,'base/manage-room.html',{'rooms':rooms})
+
+
+
+def create_account(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        name = request.POST.get('name')
+        password1 = request.POST.get('password1')
+        password2 = request.POST.get('password2')
+
+        if password1 != password2:
+            messages.error(request, "Passwords do not match.")
+            return render(request, 'base/create-account.html')
+        
+        try:
+            user = User.objects.create_user(username=email, email=email, password=password1)
+            user.name = name 
+            role = request.POST.get('role')
+            if role in [choice[0] for choice in User.UserRole.choices]:  # Validate role choice
+                user.role = role
+            else:
+                messages.error(request, "Invalid role selected.")
+                return render(request, 'base/create-account.html')
+            user.save()
+            return redirect('manage')  # Adjust 'home' to your home URL name
+        except Exception as e:
+            messages.error(request, str(e))
+            return render(request, 'base/create-account.html')
+    
+    return render(request, 'base/create-account.html')
