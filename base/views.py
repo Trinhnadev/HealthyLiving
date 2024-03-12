@@ -1,3 +1,4 @@
+import json
 import os
 import random
 from django.shortcuts import render,redirect
@@ -23,6 +24,9 @@ from django.utils.timezone import now
 from django.contrib.auth import update_session_auth_hash
 from django.db.models import Count ,Prefetch
 from collections import defaultdict
+from django.db.models import Sum, F 
+from django.db.models.functions import ExtractMonth
+
 
 
 
@@ -123,13 +127,13 @@ def loginPage(request):
         if user is not None:
             # Thêm bước kiểm tra để xem người dùng có bị cấm không
             if user.is_banned:
-                messages.error(request, 'Tài khoản của bạn đã bị cấm. Vui lòng liên hệ với quản trị viên để biết thêm thông tin.')
+                messages.error(request, 'Your account has been banned. Please contact the administrator for more information.')
                 return redirect('login')  # Hoặc bất kỳ đâu bạn muốn chuyển hướng họ
             else:
                 login(request, user)
                 return redirect('home')
         else:
-            messages.error(request, 'Tên đăng nhập hoặc mật khẩu không chính xác.')
+            messages.error(request, 'Username or password incorrect.')
 
     context = {'page': page}
     return render(request, 'base/login_sign.html', context)
@@ -668,6 +672,8 @@ def remove_from_cart(request, item_id):
     return redirect('cart_detail')
 
 #cbi cxoas
+@login_required
+
 def checkout(request):
     cart = request.user.cart
     if request.method == 'POST':
@@ -717,6 +723,28 @@ def checkout(request):
 #dơn hang cua shop
 @login_required
 def store_order_history(request, store_id):
+    store = get_object_or_404(Store, id=store_id, owner=request.user)
+
+    orders = Order.objects.filter(orderdetail__product__store=store).distinct().order_by('-order_date').prefetch_related('orderdetail_set__product__store')
+
+    # Tính toán tổng số tiền cho mỗi hóa đơn
+    order_totals = defaultdict(float)  # Sử dụng float để lưu trữ tổng số tiền
+    for order in orders:
+        for detail in order.orderdetail_set.all():
+            if detail.product.store == store:  # Kiểm tra xem sản phẩm có thuộc cửa hàng này không
+                order_totals[order.id] += float(detail.subtotal)
+
+    # Chuyển kết quả từ defaultdict sang dict để tránh lỗi khi truyền vào template
+    order_totals = dict(order_totals)
+
+    return render(request, 'base/store_order_history.html', {
+        'store': store,
+        'orders': orders,
+        'order_totals': order_totals,
+    })
+
+@login_required
+def revenue(request, store_id):
     stores = Store.objects.filter(owner=request.user)
     try:
         store = Store.objects.get(id=store_id)
@@ -741,9 +769,58 @@ def store_order_history(request, store_id):
 
     # Chuyển kết quả từ defaultdict sang dict để tránh lỗi khi truyền vào template
     store_orders = dict((store, {'orders': data['orders'], 'total': data['total'], 'details': dict(data['details'])}) for store, data in store_orders.items())
+    monthly_revenue = orders.annotate(month=ExtractMonth('order_date'))\
+                        .values('month')\
+                        .annotate(total_revenue=Sum('orderdetail__subtotal'))\
+                        .order_by('month')
 
+# Chuẩn bị dữ liệu cho biểu đồ (Giả sử doanh thu cho những tháng không có đơn hàng là 0)
+    revenue_per_month = [0] * 12
+    for revenue in monthly_revenue:
+        revenue_per_month[revenue['month'] - 1] = revenue['total_revenue']
+
+
+    revenue_per_month_float = [float(revenue) for revenue in revenue_per_month]
     # Render kết quả ra template, ví dụ 'store_order_history.html'
-    return render(request, 'base/store_order_history.html', {'store': store, 'orders': orders ,'stores':stores,'store_orders': store_orders})
+    return render(request, 'base/revenue.html', {'store': store, 'orders': orders ,'stores':stores,'store_orders': store_orders,'revenue_per_month': revenue_per_month_float,})
+
+
+@login_required
+def dashboard(request, store_id):
+    stores = Store.objects.filter(owner=request.user)
+    try:
+        store = Store.objects.get(id=store_id)
+    except Store.DoesNotExist:
+        messages.error(request, "Store not found.")
+        return redirect('store_order_history')
+
+    # Lấy tất cả đơn hàng có chứa ít nhất một sản phẩm từ cửa hàng này
+    orders = Order.objects.filter(orderdetail__product__store=store).distinct().order_by('-order_date').prefetch_related('orderdetail_set__product__store')
+
+    # Tổ chức dữ liệu đơn hàng và chi tiết đơn hàng theo cửa hàng
+    store_orders = defaultdict(lambda: {'orders': [], 'total': 0, 'details': defaultdict(list)})
+
+    for order in orders:
+        # Khởi tạo tổng giá và chi tiết cho từng cửa hàng trong đơn hàng
+        for detail in order.orderdetail_set.all():
+            product_store = detail.product.store
+            if product_store.id == store_id:  # Chỉ xử lý sản phẩm thuộc cửa hàng được chỉ định
+                store_orders[product_store]['orders'].append(order)
+                store_orders[product_store]['details'][order].append(detail)
+                store_orders[product_store]['total'] += float(detail.subtotal)
+
+    # Chuyển kết quả từ defaultdict sang dict để tránh lỗi khi truyền vào template
+    store_orders = dict((store, {'orders': data['orders'], 'total': data['total'], 'details': dict(data['details'])}) for store, data in store_orders.items())
+    top_products = OrderDetail.objects.filter(product__store=store)\
+                .values('product__name')\
+                .annotate(total_sold=Sum('quantity'))\
+                .order_by('-total_sold')[:5]
+    product_names = [product['product__name'] for product in top_products]
+    product_sales = [product['total_sold'] for product in top_products]
+    # Render kết quả ra template, ví dụ 'store_order_history.html'
+    return render(request, 'base/dashboard.html', {'store': store, 'orders': orders ,'stores':stores,'store_orders': store_orders,'product_names': product_names,
+    'product_sales': product_sales,})
+
 
 
 
@@ -1009,8 +1086,8 @@ def password_reset_request(request):
             
             # Gửi email
             send_mail(
-                'Mã Xác Nhận Đặt Lại Mật Khẩu',
-                f'Mã xác nhận của bạn là: {code}',
+                'Password Reset Confirmation Code',
+                f'Your confirmation code is: {code}',
                 'from@example.com',
                 [email],
                 fail_silently=False,
@@ -1081,7 +1158,7 @@ def change_password(request):
 
         if new_password != confirm_password:
             # Nếu mật khẩu mới và xác nhận mật khẩu không khớp
-            messages.error(request, 'Mật khẩu mới và xác nhận mật khẩu không khớp.')
+            messages.error(request, 'New password and confirm password do not match.')
             return redirect('change_password')
 
         # Cập nhật mật khẩu mới
@@ -1092,7 +1169,7 @@ def change_password(request):
         # Cập nhật session để người dùng không bị đăng xuất sau khi đổi mật khẩu
         update_session_auth_hash(request, user)
 
-        messages.success(request, 'Mật khẩu đã được cập nhật thành công.')
+        messages.success(request, 'Password has been updated successfully.')
         return redirect('change_password')
 
     return render(request, 'base/password_change_form.html')

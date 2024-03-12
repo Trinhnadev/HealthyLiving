@@ -93,16 +93,16 @@
 <div class="sidebar">
   <form action="{%url 'event'%}" method="GET">
   <div class="search">
-    <input type="search" name ="q" placeholder="Tìm kiếm sự kiện">
+    <input type="search" name ="q" placeholder="Search...">
   </div>
 </form>
   <div class="menu">
-    <a href="{%url 'event'%}" class="menu-item {% if request.resolver_match.url_name == 'event' %}active{% endif %}">Trang chủ</a>
-    <a href="{%url 'myevent'%}" class="menu-item {% if request.resolver_match.url_name == 'myevent' %}active{% endif %}">Sự kiện của bạn</a>
-    <a href="{%url 'eventJoined'%}" class="menu-item {% if request.resolver_match.url_name == 'eventJoined' %}active{% endif %}">Đang tham gia</a>
-    <a href="{%url 'view_invitations'%}" class="menu-item">Thông báo<span class="notification-dot" id="requestNotificationDot"><span id="requestCount">{{invitations.count}}</span></span></a>
+    <a href="{%url 'event'%}" class="menu-item {% if request.resolver_match.url_name == 'event' %}active{% endif %}">Home Page</a>
+    <a href="{%url 'myevent'%}" class="menu-item {% if request.resolver_match.url_name == 'myevent' %}active{% endif %}">My Event</a>
+    <a href="{%url 'eventJoined'%}" class="menu-item {% if request.resolver_match.url_name == 'eventJoined' %}active{% endif %}">Joined</a>
+    <a href="{%url 'view_invitations'%}" class="menu-item">Notification<span class="notification-dot" id="requestNotificationDot"><span id="requestCount">{{invitations.count}}</span></span></a>
     <form action="{%url 'create-event'%}">
-    <button class="btn-new-event">+ Tạo sự kiện mới</button>
+    <button class="btn-new-event">+ Create New Event</button>
   </form>
   </div>
   <div class="suggested-events">

@@ -1,84 +1,110 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dropdown Menu Example</title>
-<link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <style>
-        body {
-  font-family: 'Arial', sans-serif;
-  margin: 0;
+
+
+
+
+<style>
+  .order-history {
+  width: 1000px;
+  margin: 0 auto;
+  background-color: #3f4156;
   padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.dropdown {
-  position: relative;
-  display: inline-block;
+h1 {
+  font-size: 24px;
+  margin: 0;
 }
 
-.dropdown-toggle {
-  cursor: pointer;
-  font-size: 24px; /* Adjust size as needed */
-  user-select: none;
+.order-list {
+  list-style-type: none;
+  padding: 0;
 }
 
-.dropdown-menu {
-  display: none;
-  position: absolute;
-  background-color: #f9f9f9;
-  min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  z-index: 1;
+.order {
+  width: 950px;
+  border: 1px solid #ddd;
+  margin-bottom: 20px;
+  padding: 20px;
+  background-color: #51546e;
 }
 
-.dropdown-menu a {
-  color: black;
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
+.order-details {
+  margin: 0;
 }
 
-.dropdown-menu a:hover {
-  background-color: #f1f1f1;
+.order-date {
+  font-weight: bold;
+  margin: 0;
 }
 
-    </style>
+.order-details h2 {
+  font-size: 20px;
+  margin: 0;
+}
 
-<div class="dropdown">
-  <div class="dropdown-toggle" id="dropdownMenuButton">
-    <span>⋮</span>
+.order-details p {
+  margin: 10px 0;
+}
+</style>
+
+<div class="topics">
+  <div class="room__top">
+      
+      <div class="room__topLeft">
+          <a href="{% url 'shop' %}">
+              <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                <title>arrow-left</title>
+                <path
+                  d="M13.723 2.286l-13.723 13.714 13.719 13.714 1.616-1.611-10.96-10.96h27.625v-2.286h-27.625l10.965-10.965-1.616-1.607z">
+                </path>
+              </svg>
+            </a>
+          <h3>Order history for {{store.name}}</h3>
+      </div>
+
   </div>
-  <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-    <a class="dropdown-item" href="#">Sửa</a>
-    <a class="dropdown-item" href="#">Xóa</a>
-  </div>
-</div>
+<div class="order-history">
+      
+      
 
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    var dropdown = document.getElementById('dropdownMenuButton');
-    dropdown.onclick = function(event) {
-      event.stopPropagation();
-      var dropdownMenu = dropdown.nextElementSibling;
-      dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
-    };
-  
-    // Close the dropdown if clicked outside
-    window.onclick = function(event) {
-      if (!event.target.matches('.dropdown-toggle')) {
-        var dropdownMenus = document.getElementsByClassName('dropdown-menu');
-        for (var i = 0; i < dropdownMenus.length; i++) {
-          var openDropdown = dropdownMenus[i];
-          if (openDropdown.style.display === 'block') {
-            openDropdown.style.display = 'none';
+  <h1>Top 5 Sản Phẩm Bán Chạy Nhất</h1>
+  <div>
+      <canvas id="topProductsChart" width="400" height="400"></canvas>
+  </div>
+  <script>
+      var ctx = document.getElementById('topProductsChart').getContext('2d');
+      var topProductsChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+              labels: {{ product_names|safe }},
+              datasets: [{
+                  label: 'Số lượng bán ra',
+                  data: {{ product_sales|safe }},
+                  backgroundColor: [
+                      'rgba(255, 99, 132, 0.2)',
+                      'rgba(54, 162, 235, 0.2)',
+                      'rgba(255, 206, 86, 0.2)',
+                      'rgba(75, 192, 192, 0.2)',
+                      'rgba(153, 102, 255, 0.2)',
+                  ],
+                  borderColor: [
+                      'rgba(255, 99, 132, 1)',
+                      'rgba(54, 162, 235, 1)',
+                      'rgba(255, 206, 86, 1)',
+                      'rgba(75, 192, 192, 1)',
+                      'rgba(153, 102, 255, 1)',
+                  ],
+                  borderWidth: 1
+              }]
+          },
+          options: {
+              scales: {
+                  y: {
+                      beginAtZero: true
+                  }
+              }
           }
-        }
-      }
-    };
-  });
+      });
   </script>
-</body>
-</html>
+</div>

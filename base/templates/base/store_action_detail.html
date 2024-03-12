@@ -160,19 +160,23 @@
     <div class="sidebar">
         <form action="{%url 'shop'%}" method="GET">
             <div class="search">
-                <input type="search" name="q" placeholder="Tìm kiếm sản phẩm">
+                <input type="search" name="q" placeholder="Search...">
             </div>
         </form>
         {%if request.user == store.owner%}
         <div class="menu">
-            <a href=" {%url 'store_detail' store.id%}" class="menu-item ">Trang chủ</a>
+            <a href=" {%url 'store_detail' store.id%}" class="menu-item ">Home Page</a>
             <a href="{%url 'store_products' store.id%}" class="menu-item ">Product Manage</a>
             <a href="{%url 'store_order_history' store.id%}" class="menu-item ">Manage bill</a>
+            <a href="{%url 'dashboard' store.id%}" class="menu-item ">Best Seller</a>
+            <a href="{%url 'revenue' store.id%}" class="menu-item ">Revenue</a>
+
+
         </div>
         {%else%}
         <div class="menu">
-            <a href="{%url 'shop'%}" class="menu-item ">Trang chủ</a>
-            <a href="" class="menu-item ">Shop đã thích</a>
+            <a href="{%url 'shop'%}" class="menu-item ">Home Page</a>
+            <a href="" class="menu-item ">Favorite store</a>
             <a href="{%url 'cart_detail'%}" class="menu-item ">Cart</a>
             <a href="{%url 'order_history'%}" class="menu-item">History</a>
             
@@ -194,7 +198,7 @@
         <div class="sidebar">
             <form action="{%url 'shop'%}" method="GET">
                 <div class="search">
-                    <input type="search" name="q" placeholder="Tìm kiếm Store">
+                    <input type="search" name="q" placeholder="Search...">
                 </div>
             </form>
             <div class="menu">

@@ -1,0 +1,136 @@
+
+
+
+
+
+<style>
+    .dashboard {
+    width: 1000px;
+    margin: 0 auto;
+    background-color: #3f4156;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    height: 640px;
+  }
+  
+  h1 {
+    font-size: 24px;
+    margin: 0;
+  }
+  
+  .order-list {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .order {
+    width: 950px;
+    border: 1px solid #ddd;
+    margin-bottom: 20px;
+    padding: 20px;
+    background-color: #51546e;
+  }
+  
+  .order-details {
+    margin: 0;
+  }
+  
+  .order-date {
+    font-weight: bold;
+    margin: 0;
+  }
+  
+  .order-details h2 {
+    font-size: 20px;
+    margin: 0;
+  }
+  
+  .order-details p {
+    margin: 10px 0;
+  }
+  </style>
+  
+  <div class="topics">
+    <div class="room__top">
+        
+        <div class="room__topLeft">
+            <a href="{% url 'shop' %}">
+                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                  <title>arrow-left</title>
+                  <path
+                    d="M13.723 2.286l-13.723 13.714 13.719 13.714 1.616-1.611-10.96-10.96h27.625v-2.286h-27.625l10.965-10.965-1.616-1.607z">
+                  </path>
+                </svg>
+              </a>
+            <h3>Monthly Revenue Chart {{store.name}}</h3>
+        </div>
+  
+    </div>
+  <div class="dashboard">
+        
+    <h1></h1>
+    <label for="monthFilter">Filter by Month:</label>
+    <select id="monthFilter">
+        <option value="0">All Months</option>
+        <option value="1">January</option>
+        <option value="2">February</option>
+        <option value="3">March</option>
+        <option value="4">April</option>
+        <option value="5">May</option>
+        <option value="6">June</option>
+        <option value="7">July</option>
+        <option value="8">August</option>
+        <option value="9">September</option>
+        <option value="10">October</option>
+        <option value="11">November</option>
+        <option value="12">December</option>
+    </select>
+
+    <canvas id="revenueChart" width="600" height="350"></canvas>
+
+    <script>
+        const revenuePerMonth = JSON.parse('{{ revenue_per_month|safe }}').map(Number);
+
+        const ctx = document.getElementById('revenueChart').getContext('2d');
+        let revenueChart;
+
+        function drawChart(month, data) {
+            if (revenueChart) {
+                revenueChart.destroy();
+            }
+            revenueChart = new Chart(ctx, {
+                type: 'bar', // Or 'line', depending on your preference
+                data: {
+                    labels: month === 0 ? ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'] : ['Month ' + month],
+                    datasets: [{
+                        label: 'Revenue',
+                        data: month === 0 ? revenuePerMonth : [data],
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        document.getElementById('monthFilter').addEventListener('change', function() {
+            const selectedMonth = parseInt(this.value);
+            if (selectedMonth > 0) {
+                drawChart(selectedMonth, revenuePerMonth[selectedMonth - 1]);
+            } else {
+                drawChart(0, revenuePerMonth);
+            }
+        });
+
+        // Initialize the chart with all months' data
+        drawChart(0, revenuePerMonth);
+    </script>
+  </div>
+  
