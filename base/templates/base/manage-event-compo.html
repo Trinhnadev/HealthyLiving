@@ -1,0 +1,276 @@
+
+    
+    <style>
+        .cart {
+            width: 1000px;
+            margin: 0 auto;
+            background-color:  #3f4156;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            color: #b2bdbd;
+            height: 70vh;
+        
+        }
+        
+        h1 {
+            font-size: 24px;
+            margin: 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        table th, table td {
+            border: 1px solid #fff;
+            padding: 10px;
+            text-align: left;
+        }
+        
+        table th {
+            background-color: #51546e;
+            color: #fff;
+        }
+        
+        table td img {
+            max-width: 50px;
+            height: auto;
+        }
+        
+        .checkout {
+            text-align: right;
+            margin-top: 20px;
+        }
+        
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #0056b3;
+        }
+        
+      
+        .checkout {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 10px;
+      }
+      
+      .search-form {
+          display: flex;
+          gap: 10px; /* Adjust the space between the search input and the button */
+      }
+      
+      .search-input {
+          width: 400px; /* As specified in your inline style */
+          padding: 10px;
+          border: 1px solid #ccc;
+          border-radius: 4px;
+      }
+      
+      .search-button {
+          padding: 10px 20px;
+          border: none;
+          background-color: #5cb85c;
+          color: white;
+          border-radius: 4px;
+          cursor: pointer;
+      }
+      
+      .search-button:hover {
+          background-color: #4cae4c; /* Darker green on hover */
+      }
+      
+      .create-account-btn {
+          padding: 10px 20px;
+          background-color: #337ab7;
+          color: white;
+          text-decoration: none;
+          border-radius: 4px;
+          display: inline-block; /* To allow padding and margin */
+          cursor: pointer;
+      }
+      
+      .create-account-btn:hover {
+          background-color: #286090; /* Darker blue on hover */
+      }
+      
+      .pagination {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center; /* Căn giữa theo chiều ngang */
+}
+
+.pagination a {
+    padding: 5px 10px;
+    margin: 0 5px;
+    background-color: #51546e;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.pagination a.active {
+    background-color: #007bff;
+}
+        </style>
+        <div class="room__top">
+                
+            <div class="room__topLeft">
+                <a href="">
+                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                      <title>arrow-left</title>
+                      <path
+                        d="M13.723 2.286l-13.723 13.714 13.719 13.714 1.616-1.611-10.96-10.96h27.625v-2.286h-27.625l10.965-10.965-1.616-1.607z">
+                      </path>
+                    </svg>
+                  </a>
+                <h3>Message Event</h3>
+            </div>
+        
+        </div>
+        
+        <div class="cart">
+          <div class="checkout">
+            <form action="" method="GET" class="search-form">
+                <input type="search" name="q" placeholder="Search Account" class="search-input">
+                <button type="submit" class="search-button" hidden>Search</button>
+            </form>
+            
+            
+         </div>
+         <div class="chat-header">{{event.count}} {%if event.count == 1 or event.count == 0%}Event{%else%} Events{%endif%}</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Owner</th>
+                        <th>Action</th>
+      
+      
+                    </tr>
+                </thead>
+                <tbody style="max-height: 300px; overflow-y: auto;">
+                    {%for e in event%}
+                    <tr>
+                        <td>{{e.title}}</td>
+                        <td>{{e.description}}</td>
+                        <td><a href="{%url 'profile' e.host.id%}">{{e.host.name}}</a></td>
+      
+                        <td>
+                            <a href="{%url 'reject_event' e.id%}" style="color:  #b2bdbd;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                                    <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+                                  </svg>
+                        </a>
+                        <a href="{%url 'approve_event' e.id%}"  style="color:  #b2bdbd;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-check2" viewBox="0 0 16 16">
+                                <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0"/>
+                              </svg>
+                        </a>
+                    </td>
+                    </tr>
+                    {%endfor%}
+                    <!-- Thêm các sản phẩm khác ở đây -->
+                </tbody>
+               
+            </table>
+        </div>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+              const rowsPerPage = 4;
+              const table = document.querySelector("table");
+              const tbody = table.querySelector("tbody");
+              const rows = tbody.querySelectorAll("tr");
+              const numPages = Math.ceil(rows.length / rowsPerPage);
+              let currentPage = 1;
+          
+              function showRows(page) {
+                const start = (page - 1) * rowsPerPage;
+                const end = start + rowsPerPage;
+                rows.forEach((row, index) => {
+                  if (index >= start && index < end) {
+                    row.style.display = "table-row";
+                  } else {
+                    row.style.display = "none";
+                  }
+                });
+              }
+          
+              function createNavigation() {
+            const nav = document.createElement("div");
+            nav.classList.add("pagination");
+        
+            const prevPageLink = document.createElement("a");
+            prevPageLink.textContent = "\u00AB"; // Unicode for "«"
+            prevPageLink.href = "#";
+            prevPageLink.classList.add("prev-page");
+            prevPageLink.addEventListener("click", function(event) {
+                event.preventDefault();
+                if (currentPage > 1) {
+                    currentPage--;
+                    showRows(currentPage);
+                    updateActivePage();
+                }
+            });
+            nav.appendChild(prevPageLink);
+        
+            // Tạo liên kết cho trang hiện tại và các trang trước và sau
+            for (let i = Math.max(1, currentPage - 3); i <= Math.min(numPages, currentPage + 3); i++) {
+                const pageLink = document.createElement("a");
+                pageLink.textContent = i;
+                pageLink.href = "#";
+                pageLink.addEventListener("click", function(event) {
+                    event.preventDefault();
+                    currentPage = i;
+                    showRows(currentPage);
+                    updateActivePage();
+                });
+                nav.appendChild(pageLink);
+            }
+        
+            const nextPageLink = document.createElement("a");
+            nextPageLink.textContent = "\u00BB"; // Unicode for "»"
+            nextPageLink.href = "#";
+            nextPageLink.classList.add("next-page");
+            nextPageLink.addEventListener("click", function(event) {
+                event.preventDefault();
+                if (currentPage < numPages) {
+                    currentPage++;
+                    showRows(currentPage);
+                    updateActivePage();
+                }
+            });
+            nav.appendChild(nextPageLink);
+        
+            table.insertAdjacentElement("afterend", nav);
+        }
+          
+              function updateActivePage() {
+                const pageLinks = document.querySelectorAll(".pagination a");
+                pageLinks.forEach(link => {
+                  if (parseInt(link.textContent) === currentPage) {
+                    link.classList.add("active");
+                  } else {
+                    link.classList.remove("active");
+                  }
+                });
+              }
+          
+              showRows(currentPage);
+              createNavigation();
+              updateActivePage();
+            });
+          </script>

@@ -1,7 +1,7 @@
 <style>
   .store-container {
     width: 1000px;
-    background-color: #333;
+    background-color:#004643;
     border-radius: 10px;
     margin: 0 auto;
     overflow: hidden;
@@ -174,7 +174,7 @@
   <div class="event-container">
     <!-- Event Card -->
     <div class="hospital-list " id="hospital-list">
-      {% for p in stores %}
+      {% for p in store %}
       <a href="{%url 'store_detail' p.id%}">
         <div class="hospital-item">
           <img src="{{p.img.url}}" class="hospital-photo" alt="{{hospital.name}}" />
@@ -192,11 +192,12 @@
               </div>
             </div>
 
-            <h2>{{ p.name }}</h2>
-            <p>1.6km Away</p>
+            <h2 style="color: black;">{{ p.name }}</h2>
             <p>Open: 8:00 - 22:00</p>
-            <p>Direct Billing Available</p>
-            <p>BY {{p.owner.name| upper}}</p>
+            <p>Phone: {{p.phone}}</p>
+
+            <p>Address: {{p.address}}</p>
+            <p>BY {{p.owner.username| upper}}</p>
           </div>
         </div>
       </a>

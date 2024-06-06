@@ -33,6 +33,7 @@
     margin-bottom: 15px;
     /* Khoảng cách giữa các hàng */
     box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+    background-color: #004643;
     /* Bóng đổ cho box */
 
   }
@@ -73,18 +74,23 @@
     flex-direction: column;
     /* Các nút xếp chồng lên nhau theo chiều dọc */
     width: 100%;
+    
     /* Các nút chiếm toàn bộ chiều rộng */
 
   }
+  .friend-actions_s .btn{
+    background-color: #f9bc60;
+  }
 
   .btn--primary {
+    
     border: none;
     border-radius: 4px;
     padding: 8px 0;
     /* Đệm cho nút */
     margin-bottom: 8px;
     /* Khoảng cách giữa các nút */
-    color: white;
+    color: #001e1d;
     text-transform: uppercase;
     /* Viết hoa chữ trên nút */
     font-weight: bold;
@@ -101,6 +107,31 @@
   .topics__item_s:hover {
     transform: translateY(-5px);
   }
+
+  .header__search_s > label {
+  background-color: #004643;
+  padding: 1.3rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  border-radius: 4px;
+ 
+}
+
+.header__search_s svg {
+  fill: #020826;
+  width: 2rem;
+  height: 2rem;
+  margin-left: 1rem;
+}
+
+.header__search_s input {
+  width: 30rem;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #020826;
+}
 </style>
 
 {% extends 'main.html' %}
@@ -124,7 +155,7 @@
       </div>
 
       <div class="topics-page layout__body">
-        <form action="" method="GET" class="header__search">
+        <form action="" method="GET" class="header__search_s">
           <label>
             <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
               <title>search</title>

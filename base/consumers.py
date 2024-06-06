@@ -107,7 +107,7 @@ class ChatFriendConsumer(AsyncWebsocketConsumer):
 
 
         # Save message to the database
-        await self.save_message(username, message)
+        # await self.save_message(username, message)
 
         # Send message to room group
         await self.channel_layer.group_send(

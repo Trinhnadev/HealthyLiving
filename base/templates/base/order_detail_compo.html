@@ -2,7 +2,7 @@
 <style>
     .cart {
     width: 1000px;
-    margin: 20px auto;
+    /* margin: 20px auto; */
     background-color:  #3f4156;
     padding: 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -81,17 +81,17 @@ button:hover {
 
 </style>
     <div class="cart">
-        <h1>Hóa Đơn</h1>
-        <h1>Chi tiết đơn hàng #{{ order.id }}</h1>
-        <p>Ngày đặt hàng: {{ order.order_date }}</p>
+        <h1>Bill</h1>
+        <h1>Order details #{{ order.id }}</h1>
+        <p>Order date: {{ order.order_date }}</p>
         <table>
             <thead>
                 <tr>
-                    <th>Hình ảnh</th>
-                    <th>Tên sản phẩm</th>
-                    <th>Giá</th>
-                    <th>Số lượng</th>
-                    <th>Tổng cộng</th>
+                    <th>Image</th>
+                    <th>Product's name</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                    <th>Total</th>
 
                 </tr>
             </thead>

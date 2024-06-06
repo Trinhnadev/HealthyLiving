@@ -4,11 +4,12 @@
 
 .sidebar {
   width: 320px;
-  background-color: #333;
+  /* background-color: #333; */
   color: white;
   height: 100vh;
   padding: 20px;
   box-sizing: border-box;
+  box-shadow: 1px 1px 3px 1px rgba(0, 0, 0, 0.15);
 }
 
 .search input[type="search"] {
@@ -144,5 +145,19 @@ function checkRequests() {
 // Gọi hàm này khi trang được tải hoặc sau khi cập nhật số lượng yêu cầu
 checkRequests();
 
+document.querySelector('.search input').addEventListener('input', function() {
+    // Lấy giá trị nhập vào
+    var searchTerm = this.value.trim().toLowerCase(); // Chuyển đổi giá trị nhập vào thành chữ thường
 
+    // Lặp qua danh sách tên người dùng và ẩn/hiển thị tùy thuộc vào kết quả tìm kiếm
+    var menuItems = document.querySelectorAll('.event-container .event-card');
+    menuItems.forEach(function(item) {
+      var username = item.textContent.trim().toLowerCase(); // Lấy tên người dùng và chuyển thành chữ thường
+      if (username.includes(searchTerm)) {
+        item.style.display = 'block'; // Hiển thị menu-item nếu tên người dùng chứa từ khóa tìm kiếm
+      } else {
+        item.style.display = 'none'; // Ẩn menu-item nếu tên người dùng không chứa từ khóa tìm kiếm
+      }
+    });
+  });
   </script>

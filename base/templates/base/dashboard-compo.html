@@ -62,7 +62,7 @@
                   </path>
                 </svg>
               </a>
-            <h3>Top 5 Sản Phẩm Bán Chạy Nhất {{store.name}}</h3>
+            <h3>Top 5 Best Selling Products {{store.name}}</h3>
         </div>
   
     </div>
@@ -78,7 +78,7 @@
             data: {
                 labels: {{ product_names|safe }},
                 datasets: [{
-                    label: 'Số lượng bán ra',
+                    label: 'Sell ​​quantity',
                     data: {{ product_sales|safe }},
                     backgroundColor: [
                         'rgba(255, 99, 132, 0.2)',

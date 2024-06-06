@@ -4,7 +4,7 @@ import random
 from django.shortcuts import render,redirect
 from django.contrib import messages
 from django.http import HttpResponse
-from .models import Room, Topic, Message ,User , Friendship ,Chat ,Product,Order,OrderDetail, Cart , CartItem , Event,Invitation,Store,ChatRoom,MessageReport
+from .models import Room, Topic, Message ,User , Friendship ,Chat ,Product,Order,OrderDetail, Cart , CartItem , Event,Invitation,Store,ChatRoom,MessageReport,EventMessage
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required ,user_passes_test
 from .forms import RoomForm, UserForm ,ProfileForm ,MyUserCreationForm,EventsForm,StoreForm,ProductForm,CheckoutForm,ReportForm
@@ -34,7 +34,8 @@ from django.db.models.functions import ExtractMonth
 def home(request):
     q = request.GET.get('q') if request.GET.get('q') != None else ''
     topic =Topic.objects.all()[0:5]
-    current_user = request.user
+    user = request.user
+    chat_rooms = ChatRoom.objects.filter(members=user)
     rooms = Room.objects.filter(
         Q(topic__name__icontains =q) |
         Q(name__icontains = q)
@@ -48,21 +49,20 @@ def home(request):
     accepted_friends = Friendship.objects.filter(Q(sender=request.user, status='accepted') | Q(receiver=request.user, status='accepted'))
 
 
-    all_users = User.objects.exclude(
-        Q(id=current_user.id) |
-        Q(friendship_sent__receiver=current_user, friendship_sent__status='accepted') |
-        Q(friendship_received__sender=current_user, friendship_received__status='accepted') |
-        Q(friendship_sent__sender=current_user, friendship_sent__status='pending')
-    ).exclude(
-        Q(friendship_sent__receiver=current_user, friendship_sent__status='pending') |
-        Q(friendship_received__sender=current_user, friendship_received__status='pending')
-    ).exclude(
-        Q(friendship_sent__receiver=current_user, friendship_sent__status='accepted') |
-        Q(friendship_received__sender=current_user, friendship_received__status='accepted')
-    ).filter(username__icontains=q)
-    
-    random_users = random.sample(list(all_users), min(4, len(all_users)))
-    context = {'rooms':rooms,'topic':topic, 
+    users_in_same_rooms = User.objects.filter(room__participants=user).exclude(id=user.id)
+
+    # Đếm số lần mỗi người dùng khác xuất hiện trong các phòng mà user tham gia
+    user_counts = users_in_same_rooms.values('id').annotate(room_count=Count('room')).order_by('-room_count')
+
+    # Lấy các người dùng xuất hiện nhiều nhất trong các phòng mà user tham gia
+    top_users = [entry['id'] for entry in user_counts]
+
+    # Lấy danh sách bạn bè của user
+    user_friends = user.friendship_sent.filter(status='accepted').values_list('receiver_id', flat=True)
+
+    # Loại bỏ các người dùng đã là bạn bè của user
+    random_users = User.objects.filter(id__in=top_users).exclude(id__in=user_friends)[:10]
+    context = {'rooms':rooms,'topic':topic, 'chat_rooms':chat_rooms,
                'room_count':room_count,'room_message':room_message ,'random_users':random_users,'users':accepted_friends,'sent':sent}
 
     return render(request,'base/home.html',context)
@@ -489,12 +489,13 @@ def shopping (request):
     # Tìm kiếm sản phẩm trong store của người dùng hiện tại
     products = Product.objects.filter(
         Q(description__icontains=q) | 
-        Q(name__icontains=q)
+        Q(name__icontains=q),
+        status='approved'
     )
-    user_store = Store.objects.filter(owner=request.user)
+    user_store = Store.objects.filter(owner=request.user,status='approved')
     # Tìm kiếm cửa hàng của người dùng hiện tại
     stores = user_store.filter(
-        Q(name__icontains=q)
+        Q(name__icontains=q),
     )
     context = {'products': products, 'stores': stores}
     return render(request, 'base/store.html', context)
@@ -507,7 +508,8 @@ def create_store(request):
         form = StoreForm(request.POST, request.FILES)
         if form.is_valid():
             store = form.save(commit=False)
-            store.owner = request.user  # Thiết lập người sở hữu cho cửa hàng là người dùng hiện tại
+            store.owner = request.user  
+            store.status = "waiting"# Thiết lập người sở hữu cho cửa hàng là người dùng hiện tại
             store.save()
             # Đảm bảo form m2m được lưu nếu có
             form.save_m2m()
@@ -524,6 +526,8 @@ def update_store(request, pk):
     if request.method == 'POST':
         form = StoreForm(request.POST, request.FILES, instance=store)
         if form.is_valid():
+            store = form.save(commit=False)
+            store.status = "waiting"
             form.save()
             return redirect('shop')
     else:
@@ -544,7 +548,7 @@ def delete_store(request, pk):
 def store_detail(request,pk):
     store = get_object_or_404(Store, id=pk)
     products = Product.objects.filter(store=store)
-    stores = Store.objects.filter(owner=request.user)
+    stores = Store.objects.filter(owner=request.user,status ="approved")
     # Tìm kiếm cửa hàng của người dùng hiện tại
 
     context = {'store':store, 'products':products ,'stores':stores}
@@ -555,13 +559,13 @@ def store_detail(request,pk):
 def store_products(request, store_id):
     store = get_object_or_404(Store, id=store_id)
     query = request.GET.get('q')
-    stores = Store.objects.filter(owner=request.user)
+    stores = Store.objects.filter(owner=request.user,status='approved')
 
     if query:
         # Lọc sản phẩm dựa trên từ khóa tìm kiếm trong tên hoặc mô tả sản phẩm
         products = Product.objects.filter(
             Q(store=store),
-            Q(name__icontains=query) | Q(description__icontains=query)
+            Q(name__icontains=query) | Q(description__icontains=query),status ="approved"
         )
     else:
         products = Product.objects.filter(store=store)
@@ -591,6 +595,8 @@ def product_update(request, store_id, product_id):
     if request.method == "POST":
         form = ProductForm(request.POST, request.FILES, instance=product)
         if form.is_valid():
+            product = form.save(commit=False)
+            product.status = "waiting"
             form.save()
             return redirect('store_products', store_id=store.id)
     else:
@@ -647,7 +653,7 @@ def add_to_cart(request, product_id):
 
 
 def cart_detail(request):
-    stores = Store.objects.filter(owner=request.user)
+    stores = Store.objects.filter(owner=request.user,status='approved')
 
     if request.user.is_authenticated:
         cart, created = Cart.objects.get_or_create(user=request.user)
@@ -723,6 +729,7 @@ def checkout(request):
 #dơn hang cua shop
 @login_required
 def store_order_history(request, store_id):
+    stores = Store.objects.filter(owner = request.user,status='approved')
     store = get_object_or_404(Store, id=store_id, owner=request.user)
 
     orders = Order.objects.filter(orderdetail__product__store=store).distinct().order_by('-order_date').prefetch_related('orderdetail_set__product__store')
@@ -738,6 +745,7 @@ def store_order_history(request, store_id):
     order_totals = dict(order_totals)
 
     return render(request, 'base/store_order_history.html', {
+        'stores':stores,
         'store': store,
         'orders': orders,
         'order_totals': order_totals,
@@ -745,7 +753,7 @@ def store_order_history(request, store_id):
 
 @login_required
 def revenue(request, store_id):
-    stores = Store.objects.filter(owner=request.user)
+    stores = Store.objects.filter(owner=request.user,status='approved')
     try:
         store = Store.objects.get(id=store_id)
     except Store.DoesNotExist:
@@ -787,7 +795,7 @@ def revenue(request, store_id):
 
 @login_required
 def dashboard(request, store_id):
-    stores = Store.objects.filter(owner=request.user)
+    stores = Store.objects.filter(owner=request.user,status ="approved")
     try:
         store = Store.objects.get(id=store_id)
     except Store.DoesNotExist:
@@ -831,7 +839,7 @@ def history(request):
 #cac dơn hang cua khach
 @login_required
 def order_history(request):
-    stores = Store.objects.filter(owner=request.user)
+    stores = Store.objects.filter(owner=request.user,status='approved')
 
     orders = Order.objects.filter(user=request.user).order_by('-order_date')  # Get all orders for the user, ordered by date
     
@@ -861,10 +869,12 @@ def toggle_like(request, store_id):
 @login_required
 def liked_stores(request):
     # Lấy tất cả cửa hàng mà người dùng hiện tại thích
-    stores = Store.objects.filter(liker=request.user).order_by('name')
+    store = Store.objects.filter(liker=request.user).order_by('name')
+    stores = Store.objects.filter(owner=request.user,status ="approved").order_by('name')
+
     
     # Truyền kết quả vào template
-    return render(request, 'base/liked_stores.html', {'stores': stores})
+    return render(request, 'base/liked_stores.html', {'stores': stores,'store':store})
 #Event Funtion Start
 
 def event(request):
@@ -874,7 +884,8 @@ def event(request):
     event = Event.objects.filter(
         Q(title__icontains =q) |
         Q(location__icontains = q),
-        is_private = False
+        is_private = False,
+        status='approved'
     )
     context = {'event':event,'invitations':invitations}
 
@@ -885,8 +896,21 @@ def event(request):
 #hiển thị event chi tiết
 def eventDetail(request,pk):
     event = Event.objects.get(id=pk)
+
+    messages = event.messages.all()
+    if request.method == 'POST':
+        message = EventMessage.objects.create(
+            user = request.user,
+            event = event,
+            body =request.POST.get('body'),
+            image =request.FILES.get('image'),
+            )
+        return redirect('event_detail',pk=event.id)
+        # context = {'rooms':room, 'message':messages,
+        #            'created_at': datetime.now(),  # Dummy value, replace it with the actual creation time
+        #             'message_id': None}
     
-    context = {'event':event}
+    context = {'event':event ,'message':messages,}
 
     return render(request,'base/event-detail.html',context)
 
@@ -941,6 +965,7 @@ def createEvent(request):
     if request.method == 'POST':
         if form.is_valid():
             event = form.save(commit=False)
+            event.status = "waiting"
             event.host = request.user
             event.save()
             event.par.add(request.user)  # Add the host to the participants
@@ -959,8 +984,10 @@ def update_event(request, pk):
     if request.method == 'POST':
         form = EventsForm(request.POST, request.FILES, instance=event)
         if form.is_valid():
+            event = form.save(commit=False)
+            event.status = "waiting"
             form.save()
-            return redirect('event-detail', pk=event.id)
+            return redirect('event_detail', pk=event.id)
     else:
         form = EventsForm(instance=event)
     return render(request, 'base/event_form.html', {'form': form})
@@ -1292,7 +1319,16 @@ def manageRoom(request):
 
     return render(request,'base/manage-room.html',{'rooms':rooms})
 
+def manageStore(request):
+    q = request.GET.get('q') if request.GET.get('q') != None else ''
+    stores = Store.objects.filter(
+        Q(owner__name__icontains =q) |
+        Q(description__icontains =q) |
+        Q(name__icontains = q),status = "waiting"
+    )
 
+
+    return render(request,'base/manage_store.html',{'stores':stores})
 
 def create_account(request):
     if request.method == 'POST':
@@ -1321,3 +1357,89 @@ def create_account(request):
             return render(request, 'base/create-account.html')
     
     return render(request, 'base/create-account.html')
+
+
+def ManageEvent(request):
+    invitations = Invitation.objects.filter(invitee=request.user, accepted=False)
+
+    q = request.GET.get('q') if request.GET.get('q') != None else ''
+    event = Event.objects.filter(
+        Q(title__icontains =q) |
+        Q(location__icontains = q),
+        is_private = False,
+        status='waiting'
+    )
+    context = {'event':event,'invitations':invitations}
+
+    return render(request,'base/manage-event.html',context)
+
+
+def approve_event(request, pk):
+    event = get_object_or_404(Event, pk=pk)
+    event.status = 'approved'
+    event.save()
+    return redirect('manage_event')
+
+def reject_event(request, pk):
+    event = get_object_or_404(Event, pk=pk)
+    event.status = 'rejected'
+    event.save()
+    return redirect('manage_event')
+
+def approve_store(request, pk):
+    store = get_object_or_404(Store, pk=pk)
+    store.status = 'approved'
+    store.save()
+    return redirect('manage_stores')
+
+def reject_store(request, pk):
+    store = get_object_or_404(Store, pk=pk)
+    store.status = 'rejected'
+    store.save()
+    return redirect('manage_stores')
+
+
+def manageProduct(request):
+    q = request.GET.get('q') if request.GET.get('q') != None else ''
+    products = Product.objects.filter(
+        Q(store__name__icontains =q) |
+        Q(description__icontains =q) |
+        Q(name__icontains = q),status = "waiting"
+    )
+
+
+    return render(request,'base/manage_product.html',{'products':products})
+
+
+def approve_product(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    product.status = 'approved'
+    product.save()
+    return redirect('manage_products')
+
+def reject_product(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    product.status = 'rejected'
+    product.save()
+    return redirect('manage_products')
+
+
+
+def user_suggestions(request):
+    query = request.GET.get('query', '')
+    users = User.objects.filter(username__icontains=query)[:5]
+    suggestions = [{'id': user.id, 'username': user.username} for user in users]
+    return JsonResponse({'suggestions': suggestions})
+
+
+def delete_event_message(request, event_id, message_id):
+    # Lấy tin nhắn cụ thể
+    message = get_object_or_404(EventMessage, id=message_id)
+    
+    # Kiểm tra quyền truy cập: chỉ người tạo tin nhắn mới có thể xóa nó
+    if request.user == message.user:
+        # Xóa tin nhắn
+        message.delete()
+    
+    # Chuyển hướng người dùng đến trang chi tiết sự kiện sau khi xóa tin nhắn
+    return redirect('event_detail', pk=event_id)

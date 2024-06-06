@@ -31,9 +31,9 @@
           {% for field in form %}
           
           <div class="form__group">
-            <label for="profile_pic">{{field.label}}</label>
-            <img id = "selectedImage" alt="selected Image">
-            <p id = "imageInput" accept = "image*/"> {{field}}</p>
+            <label for="profile_pic" style="color: #001e1d;">{{field.label}}</label>
+            <img id = "selectedImage" alt="selected Image" style="color: #001e1d;">
+            <p id = "imageInput" accept = "image*/" style="color: #001e1d;"> {{field}}</p>
             
           </div>
           {% endfor %}

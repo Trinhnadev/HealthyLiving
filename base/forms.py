@@ -32,7 +32,7 @@ class EventsForm(ModelForm):
     class Meta:
         model = Event
         fields = '__all__'
-        exclude =['host','par']
+        exclude =['host','par','status']
         widgets = {
             'start_time': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
             'end_time': forms.DateTimeInput(attrs={'type': 'datetime-local'}),
@@ -44,7 +44,7 @@ class StoreForm(ModelForm):
     class Meta:
         model = Store
         fields = '__all__'
-        exclude =['owner','liker']
+        exclude =['owner','liker','status']
 
 
 

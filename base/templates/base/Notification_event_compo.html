@@ -1,10 +1,12 @@
 <style>
     .chat-container {
         width: 1000px;
-        background-color: #333;
+        /* background-color: #333; */
         border-radius: 10px;
         margin: 0 auto;
         overflow: hidden;
+  box-shadow: 1px 1px 3px 1px rgba(0, 0, 0, 0.15);
+
     }
 
     .search-container {
@@ -85,7 +87,7 @@
 </style>
 
 <div class="chat-container">
-    <div class="room__top" style="background-color: #333;">
+    <div class="room__top" style="background-color: #004643;">
         <div class="room__topLeft">
             <a href="{% url 'event' %}">
                 <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
@@ -105,14 +107,14 @@
             {%for i in invitations%}
             <div class="chat-item">
                 <img class="chat-avatar" src="{{i.event.host.avatar.url}}" alt="">
-                <div class="chat-name">{{i.event.host.name}} mời bạn tham gia vào event " {{i.event.title}} " </div>
+                <div class="chat-name">{{i.event.host.name}} invite you to participate in the event " {{i.event.title}} " </div>
                 <form method="post" action="{%url 'accept_invitation' i.id%}">
                     {% csrf_token %}
-                    <button type="submit" class="chat-send">Đồng ý</button>
+                    <button type="submit" class="chat-send">Agree</button>
                 </form>
                 <form method="post" action="{% url 'decline_invitation' i.id %}">
                     {% csrf_token %}
-                    <button type="submit" style="margin-left: 10px;" class="chat-send">Từ chối</button>
+                    <button type="submit" style="margin-left: 10px;" class="chat-send">Refuse</button>
                 </form>
 
             </div>

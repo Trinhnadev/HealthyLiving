@@ -1,14 +1,18 @@
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap");
 
 :root {
-  --color-main: #71c6dd;
+  --color-main: #b5bbf6;
   --color-main-light: #e1f6fb;
-  --color-dark: #3f4156;
+  /* header */
+  --color-dark: #6370e8;
+
   --color-dark-medium: #51546e;
   --color-dark-light: #696d97;
   --color-light: #e5e5e5;
   --color-gray: #8b8b8b;
-  --color-light-gray: #b2bdbd;
+  /* container: ; */
+  --color-light-gray: #e1f6fb;
+
   --color-bg: #2d2d39;
   --color-success: #5dd693;
   --color-error: #fc4b0b;
@@ -1014,7 +1018,7 @@ a {
 
 .room__hosted p {
   text-transform: uppercase;
-  color: var(--color-gray);
+  color: #abd1c6;
   font-size: 1.2rem;
   font-weight: 700;
   line-height: 2;

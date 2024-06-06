@@ -33,6 +33,15 @@
   color: inherit; /* Kế thừa màu chữ từ phần tử cha */
   padding: 10px; /* Thêm một chút đệm */
 }
+.menu-item-t {
+  border-radius: 5px;
+  display: flex; /* Sử dụng Flexbox */
+  align-items: center; /* Căn chỉnh các items theo trục dọc giữa */
+  text-decoration: none; /* Loại bỏ gạch chân của liên kết */
+  color: inherit; /* Kế thừa màu chữ từ phần tử cha */
+  padding: 10px; /* Thêm một chút đệm */
+}
+
 
 .avatar {
   margin-right: 10px; /* Thêm khoảng cách giữa avatar và tên */
@@ -47,6 +56,10 @@
   
   .menu-item.active,
   .menu-item:hover {
+    background-color: #505050;
+  }
+  .menu-item-t.active,
+  .menu-item-t:hover {
     background-color: #505050;
   }
   
@@ -97,7 +110,7 @@
   </form>
   <div class="scrollable-container">
     <div class="menu">
-      <a href="{%url 'chat'%}" class="menu-item {% if request.resolver_match.url_name == 'chat' %}active{% endif %}">Trang chủ</a>
+      <a href="{%url 'chat'%}" class="menu-item-t {% if request.resolver_match.url_name == 'chat' %}active{% endif %}">Trang chủ</a>
       {% for room in chat_rooms %}
       {%for f in room.members.all%}
       {% if f != user %}
@@ -135,5 +148,22 @@
           });
         });
       });
+
+
+      document.querySelector('.search input').addEventListener('input', function() {
+    // Lấy giá trị nhập vào
+    var searchTerm = this.value.trim().toLowerCase(); // Chuyển đổi giá trị nhập vào thành chữ thường
+
+    // Lặp qua danh sách tên người dùng và ẩn/hiển thị tùy thuộc vào kết quả tìm kiếm
+    var menuItems = document.querySelectorAll('.menu .menu-item');
+    menuItems.forEach(function(item) {
+      var username = item.textContent.trim().toLowerCase(); // Lấy tên người dùng và chuyển thành chữ thường
+      if (username.includes(searchTerm)) {
+        item.style.display = 'block'; // Hiển thị menu-item nếu tên người dùng chứa từ khóa tìm kiếm
+      } else {
+        item.style.display = 'none'; // Ẩn menu-item nếu tên người dùng không chứa từ khóa tìm kiếm
+      }
+    });
+  });
     </script>
   

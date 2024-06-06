@@ -41,8 +41,8 @@
   }
 
   .event-action {
-    background-color: #ff4081;
-    color: white;
+    background-color: #f9bc60;
+    color: #001e1d;
     border: none;
     padding: 10px;
     border-radius: 5px;
@@ -73,7 +73,7 @@
     <img src="{{e.img.url}}" alt="Sakura Festival" class="event-image">
     <div class="event-info">
       <a href="{%url 'event_detail' e.id%}">
-        <h3>{{e.title}}</h3>
+        <h3 style="color:#001e1d">{{e.title}}</h3>
       </a>
       <p class="event-location">
         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-geo-alt"
@@ -93,6 +93,7 @@
         {{e.par.count}} Joined
       </p>
       {%if request.user == e.host %}
+      {% if e.status != "rejected" %}
       <form action="{%url 'events' e.id%}">
         <button class="event-action">
            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-envelope" viewBox="0 -2 16 16">
@@ -100,6 +101,7 @@
         </svg>
         Mời</button>
       </form>
+      {%endif%}
       {%else%}
       {%if user in e.par.all%}
       <form action="{%url 'discareAbout' e.id%}">

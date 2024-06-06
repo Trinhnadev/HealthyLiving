@@ -51,6 +51,11 @@ INSTALLED_APPS = [
     'channels',
 ]
 
+CRONJOBS = [
+    ('*/1 * * * *', 'base.tasks.send_event_notifications'),
+    ('*/1 * * * *', 'base.tasks.delete_finished_events'),
+]
+
 ASGI_APPLICATION = 'studybud.asgi.application'
 
 
@@ -170,5 +175,8 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'nguyenanhtrinh05@gmail.com'  # Thay thế bằng email Gmail của bạn
 EMAIL_HOST_PASSWORD = 'azmsffbcrfwvwysl'  # Thay thế bằng mật khẩu của bạn
 
+
+
+# settings.py
 
 

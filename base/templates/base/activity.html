@@ -152,7 +152,7 @@
       </div>
 
       <div class="activities__boxContent">
-        <p>replied to post “<a href="{%url 'room' m.room.id%}">{{m.room}}</a>”</p>
+        <p>replied to room “<a href="{%url 'room' m.room.id%}">{{m.room}}</a>”</p>
         <div class="activities__boxRoomContent">
           {% if m.body|length > 5 %}
           {{ m.body|slice:":30" }}...

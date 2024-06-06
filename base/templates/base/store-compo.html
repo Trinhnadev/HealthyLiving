@@ -2,7 +2,6 @@
   .store-container {
     width: 1000px;
     background-color: #333;
-    border-radius: 10px;
     margin: 0 auto;
     overflow: hidden;
   }
@@ -12,6 +11,7 @@
     grid-template-columns: repeat(3, minmax(250px, 1fr));
     gap: 20px;
     padding: 20px;
+    background-color: #abd1c6;
   }
 
   .event-card {
@@ -87,6 +87,17 @@
     cursor: pointer;
     font-size: 1.2rem;
   }
+  .store-container {
+    overflow-y: scroll;
+    height: 635px;
+    scrollbar-width: none;
+    /* For Firefox */
+  }
+
+  .store-container::-webkit-scrollbar {
+    display: none;
+    /* For Chrome, Safari, and Opera */
+  }
 </style>
 <div class="room__top">
   <div class="room__topLeft">
@@ -110,13 +121,13 @@
       <img src="{{p.image.url}}" alt="Sakura Festival" class="event-image">
       <div class="event-info">
         <a href="{%url 'product_detail' store_id=p.store.id product_id=p.id%}">
-          <h3>{{p.name}}</h3>
+          <h3 style="color:#001e1d;">{{p.name}}</h3>
         </a> <br>
         <a href="{%url 'store_detail' p.store.id%}">
-          <h3>By {{p.store.name}}</h3>
+          <h3 style="color:#001e1d;">By {{p.store.name}}</h3>
         </a>
 
-        <p class="event-location">${{p.price}}</p>
+        <p class="event-location" style="color:#001e1d;">${{p.price}}</p>
         <div class="store-action">
         <form action="{%url 'product_detail' store_id=p.store.id product_id=p.id%}">
           <button class="btn-st event-action">Detail</button>

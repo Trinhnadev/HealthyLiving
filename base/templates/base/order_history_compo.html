@@ -2,7 +2,7 @@
     .order-history {
     width: 1000px;
     margin: 0 auto;
-    background-color: #3f4156;
+    background-color: #004643;
     padding: 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
@@ -46,11 +46,11 @@ h1 {
 </style>
 
 
-<div class="order-history">
+
         
     <div class="room__top">
         <div class="room__topLeft">
-          <a href="{% url 'event' %}">
+          <a href="{{request.META.HTTP_REFERER}}">
             <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
               <title>arrow-left</title>
               <path
@@ -62,13 +62,13 @@ h1 {
         </div>
 
       </div>
-    
+      <div class="order-history">
   <ul class="order-list">
       {%for o in orders%}
       <a href="{%url 'order_detail' o.id%}" style="text-decoration:none; color: #b2bdbd;"><li class="order">
           <div class="order-details">
-              <p class="order-date">Mã đơn hàng: {{o.id}}</p>
-              <p class="order-date">Ngày đặt hàng:{{o.order_date}}</p>
+              <p class="order-date">Code orders: {{o.id}}</p>
+              <p class="order-date">Order date:{{o.order_date}}</p>
               <p></p>
           </div>
       </li>

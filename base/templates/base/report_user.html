@@ -4,11 +4,12 @@
 {% block content %}
 <style>
     .report-container {
-    background-color: #eceff1;
+    background-color: #abd1c6;
     padding: 20px;
     border-radius: 8px;
-    max-width: 400px;
+    max-width: 370px;
     margin: 0 auto;
+    color: #001e1d;
 }
 
 .report-form {
@@ -31,7 +32,7 @@
 }
 
 .submit-btn {
-    background-color: #03a9f4;
+    background-color: #004643;
     color: white;
     border: none;
     padding: 10px;
@@ -58,9 +59,17 @@
 
 </style>
 <div class="report-container">
-    <div class="report-title">
-    <h2>Report {{ reported_mess.body }}</h2>
-</div>
+    <div class="room__topLeft">
+        <a href="{% url 'home' %}">
+          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+            <title>arrow-left</title>
+            <path
+              d="M13.723 2.286l-13.723 13.714 13.719 13.714 1.616-1.611-10.96-10.96h27.625v-2.286h-27.625l10.965-10.965-1.616-1.607z">
+            </path>
+          </svg>
+        </a>
+        <h3>Report</h3>
+      </div>
 
     <form method="post" class="report-form">
         {% csrf_token %}

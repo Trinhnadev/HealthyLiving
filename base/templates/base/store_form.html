@@ -1,6 +1,19 @@
 {% extends 'main.html' %}
 {% load static %}
 {% block content %}
+<style>
+  .scrollable-container {
+  overflow-y: scroll;
+  height: 90vh;
+  scrollbar-width: none;
+  /* For Firefox */
+}
+
+.scrollable-container::-webkit-scrollbar {
+  display: none;
+  /* For Chrome, Safari, and Opera */
+}
+</style>
 <main class="create-room layout">
   <div class="container">
     <div class="layout__box">
@@ -17,6 +30,7 @@
           <h3>Create/Update Store</h3>
         </div>
       </div>
+      <div class="scrollable-container">
       <div class="layout__body">
         <form class="form" action="" method="POST" enctype="multipart/form-data">
           {% csrf_token %}
@@ -33,6 +47,15 @@
           </div>
 
           <div class="form__group">
+            <label for="room_description">Store Address</label>
+            {{form.address}}
+          </div>
+
+          <div class="form__group">
+            <label for="room_description">Store Phone</label>
+            {{form.phone}}
+          </div>
+          <div class="form__group">
             <img id = "selectedImage" name="img" alt="selected Image"  height="220px">
             <p id = "imageInput" name="img" accept = "image*/"> {{form.img}}</p>
           </div>
@@ -43,6 +66,7 @@
           </div>
         </form>
       </div>
+    </div>
     </div>
   </div>
   <script>

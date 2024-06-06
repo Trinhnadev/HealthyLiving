@@ -18,7 +18,17 @@ input[type=password] {
     right: 10px;
     cursor: pointer;
 }
+.scrollable-container {
+        overflow-y: scroll;
+        height: 80vh;
+        scrollbar-width: none;
+        /* For Firefox */
+    }
 
+    .scrollable-container::-webkit-scrollbar {
+        display: none;
+        /* For Chrome, Safari, and Opera */
+    }
 </style>
 <main class="auth layout">
 
@@ -64,7 +74,7 @@ input[type=password] {
 
         <div class="auth__action">
           <a href="{% url 'password_reset_request' %}" class="btn btn--link">Forgot password?</a>
-          <p>Haven't signed up yet? <a href="{% url 'sign' %}" class="btn btn--link">Sign Up</a></p>
+          <p style="color: #001e1d;">Haven't signed up yet? <a href="{% url 'sign' %}" class="btn btn--link">Sign Up</a></p>
           
           <br>
           {% if messages %}
@@ -87,9 +97,8 @@ input[type=password] {
           <h3>Register</h3>
         </div>
       </div>
+      <div class="scrollable-container">
       <div class="layout__body">
-        <h2 class="auth__tagline">Find your study partner</h2>
-
         <form class="form" action="" method="POST">
           {% csrf_token %}
 
@@ -117,10 +126,11 @@ input[type=password] {
         </form>
 
         <div class="auth__action">
-          <p>Already signed up yet?</p>
+          <p style="color: #001e1d;">Already signed up yet?</p>
           <a href="{% url 'login' %}" class="btn btn--link">Sign Up</a>
         </div>
       </div>
+    </div>
     </div>
   </div>
   {% endif %}

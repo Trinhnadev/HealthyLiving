@@ -286,113 +286,114 @@
 
     <script>
 
-      // const chat_id = JSON.parse(document.getElementById('json-roomid').textContent);
-      // const userName = JSON.parse(document.getElementById('json_username').textContent);
+      const chat_id = JSON.parse(document.getElementById('json-roomid').textContent);
+      const userName = JSON.parse(document.getElementById('json_username').textContent);
 
-      // console.log(chat_id);
-      // const ChatSocket = new WebSocket(
-      //   'ws://'
-      //   + window.location.host
-      //   + '/ws/open_chat/'
-      //   + chat_id
-      //   + '/'
-      // );
+      console.log(chat_id);
+      const ChatSocket = new WebSocket(
+        'ws://'
+        + window.location.host
+        + '/ws/open_chat/'
+        + chat_id
+        + '/'
+      );
 
 
-      // ChatSocket.onmessage = function (e) {
+      ChatSocket.onmessage = function (e) {
 
-      //   console.log('onmessage');
-      //   const data = JSON.parse(e.data);
+        console.log('onmessage');
+        const data = JSON.parse(e.data);
 
-      //   if (data.message || data.image) {
-      //     console.log('hih');
+        if (data.message || data.image) {
+          console.log('hih');
 
-      //     var messageContainer = document.getElementById('chat-container');
-      //     var newMessage = document.createElement('div');
-      //     newMessage.className = 'thread';
-      //     newMessage.innerHTML = `
-      //             <div class="thread__top">
-      //                 <div class="thread__author" style=" flex-direction: row-reverse;">
-      //                   <a href="" class="thread__delete">
-      //                   <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-      //                       <title>remove</title>
-      //                       <path
-      //                         d="M27.314 6.019l-1.333-1.333-9.98 9.981-9.981-9.981-1.333 1.333 9.981 9.981-9.981 9.98 1.333 1.333 9.981-9.98 9.98 9.98 1.333-1.333-9.98-9.98 9.98-9.981z">
-      //                       </path>
-      //                     </svg>
-      //                 </a>
-      //                     <a href="" class="thread__authorInfo" >
+          var messageContainer = document.getElementById('chat-container');
+          var newMessage = document.createElement('div');
+          newMessage.className = 'thread';
+          newMessage.innerHTML = `
+                  <div class="thread__top">
+                      <div class="thread__author" style=" flex-direction: row-reverse;">
+                        <a href="" class="thread__delete">
+                        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+                            <title>remove</title>
+                            <path
+                              d="M27.314 6.019l-1.333-1.333-9.98 9.981-9.981-9.981-1.333 1.333 9.981 9.981-9.981 9.98 1.333 1.333 9.981-9.98 9.98 9.98 1.333-1.333-9.98-9.98 9.98-9.981z">
+                            </path>
+                          </svg>
+                      </a>
+                          <a href="" class="thread__authorInfo" >
                               
-      //                         <span>@${userName}</span>
-      //                         <div class="avatar avatar--small">
-      //                             <img src="" />
-      //                         </div>
-      //                     </a>
-      //                     <span class="thread__date"></span>
-      //                 </div>
+                              <span>@${userName}</span>
+                              <div class="avatar avatar--small">
+                                  <img src="" />
+                              </div>
+                          </a>
+                          <span class="thread__date"></span>
+                      </div>
                       
-      //             </div>
-      //             <div class="thread__details">
-      //             <div class="sender-message">
+                  </div>
+                  <div class="thread__details">
+                  <div class="sender-message">
 
-      //                 ${data.message}
-      //                 <img src = "${data.image}">
-      //                 </div>
-      //             </div>
-      //         `;
-      //     messageContainer.appendChild(newMessage);
-      //     messageContainer.scrollTop = messageContainer.scrollHeight;
-      //   } else {
-      //     console.log('lỗi');
-      //   }
-      // }
+                      ${data.message}
+                      <img src = "${data.image}">
+                      </div>
+                  </div>
+              `;
+          messageContainer.appendChild(newMessage);
+          location.reload();
+          messageContainer.scrollTop = messageContainer.scrollHeight;
+        } else {
+          console.log('lỗi');
+        }
+      }
 
 
 
-      // ChatSocket.onclose = function (event) {
-      //   console.log('WebSocket connection closed:', event);
-      // };
+      ChatSocket.onclose = function (event) {
+        console.log('WebSocket connection closed:', event);
+      };
 
-      // // Additional code for sending messages through the WebSocket
-      // document.querySelector('#chat-submit').onclick = function (event) {
-      //   event.preventDefault();
+      // Additional code for sending messages through the WebSocket
+      document.querySelector('#chat-submit').onclick = function (event) {
+        event.preventDefault();
 
-      //   const messageInputDom = document.querySelector('#chat-input');
-      //   const imageInputDom = document.querySelector('#image-upload');
-      //   const message = messageInputDom.value;
+        const messageInputDom = document.querySelector('#chat-input');
+        const imageInputDom = document.querySelector('#image-upload');
+        const message = messageInputDom.value;
 
-      //   function sendMessage(imageBase64 = null) {
-      //     ChatSocket.send(JSON.stringify({
-      //       'image': imageBase64,
-      //       'message': message,
-      //       'username': userName,
-      //       'chat_id': chat_id,
-      //     }));
+        function sendMessage(imageBase64 = null) {
+          ChatSocket.send(JSON.stringify({
+            'image': imageBase64,
+            'message': message,
+            'username': userName,
+            'chat_id': chat_id,
+          }));
 
-      //     // Xóa nội dung tin nhắn và hình ảnh sau khi gửi
-      //     messageInputDom.value = '';
-      //     imageInputDom.value = '';
-      //     // Nếu bạn có một phần tử hiển thị hình ảnh xem trước, hãy xóa nó ở đây
-      //     const imagePreview = document.getElementById('image-upload');
-      //     if (imagePreview) {
-      //       imagePreview.src = '';
-      //     }
-      //   }
+          // Xóa nội dung tin nhắn và hình ảnh sau khi gửi
+          messageInputDom.value = '';
+          imageInputDom.value = '';
+          // Nếu bạn có một phần tử hiển thị hình ảnh xem trước, hãy xóa nó ở đây
+          const imagePreview = document.getElementById('image-upload');
+          if (imagePreview) {
+            imagePreview.src = '';
+          }
+        }
 
-      //   if (imageInputDom.files.length > 0) {
-      //     const file = imageInputDom.files[0];
-      //     const reader = new FileReader();
+        if (imageInputDom.files.length > 0) {
+          const file = imageInputDom.files[0];
+          const reader = new FileReader();
 
-      //     reader.onloadend = function () {
-      //       const base64Image = reader.result; // Dữ liệu hình ảnh dưới dạng chuỗi Base64
-      //       sendMessage(base64Image);
-      //     };
+          reader.onloadend = function () {
+            const base64Image = reader.result; // Dữ liệu hình ảnh dưới dạng chuỗi Base64
+            sendMessage(base64Image);
+          };
 
-      //     reader.readAsDataURL(file); // Bắt đầu đọc file như là Data URL
-      //   } else {
-      //     sendMessage();
-      //   }
-      // };
+          reader.readAsDataURL(file); // Bắt đầu đọc file như là Data URL
+        } else {
+          sendMessage();
+        }
+      };
 
 
 

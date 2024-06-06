@@ -3,7 +3,7 @@
         width: 320px;
         background-color: #333;
         color: white;
-        height: 40vh;
+        height: 70vh;
         padding: 20px;
         box-sizing: border-box;
     }
@@ -149,18 +149,14 @@
 
     </div>
     <div class="sidebar">
-        <form action="" method="GET">
-            <div class="search">
-                <input type="search" name="q" placeholder="Tìm kiếm sản phẩm">
-            </div>
-        </form>
         <div class="menu">
             <a href="{%url 'manage'%}" class="menu-item ">Manage User</a>
             <a href="{%url 'manageUserBan'%}" class="menu-item ">Manage Banned</a>
             <a href="{%url 'reported_messages'%}" class="menu-item ">Message Report</a>
             <a href="{%url 'manageRoom'%}" class="menu-item">Manage Room</a>
-
-
+            <a href="{%url 'manage_event'%}" class="menu-item">Manage Events</a>
+            <a href="{%url 'manage_stores'%}" class="menu-item">Manage Stores</a>
+            <a href="{%url 'manage_products'%}" class="menu-item">Manage Products</a>
         </div>
 
     </div>

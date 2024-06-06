@@ -136,9 +136,21 @@ urlpatterns = [
 
     path('reports/messages/', views.reported_messages, name='reported_messages'),
     path('create_account/', views.create_account, name='create_account'),
+    path('manage_event/', views.ManageEvent, name='manage_event'),
+    path('manage_stores/', views.manageStore, name='manage_stores'),
+    path('manage_products/', views.manageProduct, name='manage_products'),
 
 
 
+    path('product/<int:pk>/approve/', views.approve_product, name='approve_product'),
+    path('product/<int:pk>/reject/', views.reject_product, name='reject_product'),
+
+    path('event/<int:pk>/approve/', views.approve_event, name='approve_event'),
+    path('event/<int:pk>/reject/', views.reject_event, name='reject_event'),
+
+    path('store/<int:pk>/approve/', views.approve_store, name='approve_store'),
+    path('store/<int:pk>/reject/', views.reject_store, name='reject_store'),
+    path('event/<int:event_id>/message/<int:message_id>/delete/', views.delete_event_message, name='delete_event_message'),
 
 
 ]

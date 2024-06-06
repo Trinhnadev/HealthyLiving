@@ -16,7 +16,7 @@
           {% csrf_token %}
           <div class="form__group form__group">
             <label for="Code">Enter Auth Code</label>
-            <div id="countdown"></div>
+            <div id="countdown" style="color: #001e1d;"></div>
             <input id="code" name="code" type="text" placeholder="J5GTE3" />
             
           </div>
@@ -41,7 +41,7 @@
         {% endif %}
 
         <div class="auth__action">
-            <p>Tôi Đã nhớ mật khẩu <a href="{% url 'login' %}" class="btn btn--link">Login</a></p>
+            <p style="color: #001e1d;">Tôi Đã nhớ mật khẩu <a href="{% url 'login' %}" class="btn btn--link">Login</a></p>
           </div>
       </div>
     </div>

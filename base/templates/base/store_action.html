@@ -1,8 +1,27 @@
 <style>
+.room__top__store,
+.participants__top {
+  background: var(--color-dark-light);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  position: relative;
+}
+
+.room__top__store svg,
+.thread__top svg {
+  width: 1.6rem;
+  height: 1.6rem;
+  fill: var(--color-light);
+  cursor: pointer;
+}
+
+
     .sidebar {
         width: 320px;
-        background-color: #333;
-        color: white;
+        background-color: #abd1c6;
+        color: #001e1d;
         height: 40vh;
         padding: 20px;
         box-sizing: border-box;
@@ -136,7 +155,7 @@
     .dropdown-menu a:hover {
         background-color: #444;
     }
-
+    
     /* Additional styles for suggested events will go here */
 
     /* Add styles for responsiveness as needed */
@@ -166,7 +185,7 @@
 
     <!-- manager start -->
     <div class="topics">
-        <div class="room__top">
+        <div class="room__top__store">
             <div class="room__topLeft">
                 <h3>Manage</h3>
             </div>
@@ -175,7 +194,7 @@
         <div class="sidebar">
             <form action="{%url 'shop'%}" method="GET">
                 <div class="search">
-                    <input type="search" name="q" placeholder="Tìm kiếm Store">
+                    <input type="search" name="q" placeholder="Search...">
                 </div>
             </form>
             <div class="menu">
