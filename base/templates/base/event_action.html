@@ -101,6 +101,8 @@
     <a href="{%url 'event'%}" class="menu-item {% if request.resolver_match.url_name == 'event' %}active{% endif %}">Home Page</a>
     <a href="{%url 'myevent'%}" class="menu-item {% if request.resolver_match.url_name == 'myevent' %}active{% endif %}">My Event</a>
     <a href="{%url 'eventJoined'%}" class="menu-item {% if request.resolver_match.url_name == 'eventJoined' %}active{% endif %}">Joined</a>
+    <a href="{% url 'liked_events' %}" class="menu-item {% if request.resolver_match.url_name == 'liked_events' %}active{% endif %}">Liked</a>
+
     <a href="{%url 'view_invitations'%}" class="menu-item">Notification<span class="notification-dot" id="requestNotificationDot"><span id="requestCount">{{invitations.count}}</span></span></a>
     <form action="{%url 'create-event'%}">
     <button class="btn-new-event">+ Create New Event</button>

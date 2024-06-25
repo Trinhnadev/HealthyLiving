@@ -1,3 +1,4 @@
+import calendar
 import json
 import os
 import random
@@ -26,7 +27,9 @@ from django.db.models import Count ,Prefetch
 from collections import defaultdict
 from django.db.models import Sum, F 
 from django.db.models.functions import ExtractMonth
-
+from django.views.decorators.http import require_POST
+from django.views.decorators.csrf import csrf_exempt
+from decimal import Decimal
 
 
 
@@ -147,21 +150,24 @@ def logoutUser(request):
 def sign(request):
     page = 'sign'
     form = MyUserCreationForm()
-    
+
     if request.method == 'POST':
         form = MyUserCreationForm(request.POST)
         if form.is_valid():
-            user =form.save(commit = False)
-            user.username = user.username.lower()
-            user.save()
-            login(request,user)
-
-            return redirect('home')
+            email = form.cleaned_data.get('email')
+            if User.objects.filter(email=email).exists():
+                messages.error(request, "Email này đã được đăng ký.")
+            else:
+                user = form.save(commit=False)
+                user.username = user.username.lower()
+                user.save()
+                login(request, user)
+                return redirect('home')
         else:
-            messages.error(request,"sai")
-        
-    context = {'form':form}
-    return render(request,'base/login_sign.html',context)
+            messages.error(request, "Đăng ký không thành công. Vui lòng kiểm tra lại thông tin.")
+
+    context = {'form': form}
+    return render(request, 'base/login_sign.html', context)
 
 
 @login_required(login_url='login')
@@ -610,7 +616,7 @@ def product_delete(request, store_id, product_id):
     if request.method == "POST":
         product.delete()
         return redirect('store_products', store_id=store.id)
-    return render(request, 'base/product_delete.html', {'product': product, 'store': store})
+    return render(request, 'base/delete.html', {'product': product, 'store': store})
 
 
 
@@ -751,9 +757,28 @@ def store_order_history(request, store_id):
         'order_totals': order_totals,
     })
 
+
+@login_required
+def store_order_detail(request, store_id, order_id):
+    store = get_object_or_404(Store, id=store_id, owner=request.user)
+    order = get_object_or_404(Order, id=order_id, store=store)
+
+    # Filter order details to include only products from the specified store
+    order_details = order.orderdetail_set.filter(product__store=store)
+
+    # Calculate the total for the filtered order details
+    order_total = sum(detail.subtotal for detail in order_details)
+
+    return render(request, 'base/store_order_detail.html', {
+        'store': store,
+        'order': order,
+        'order_details': order_details,
+        'order_total': order_total,
+    })
+
 @login_required
 def revenue(request, store_id):
-    stores = Store.objects.filter(owner=request.user,status='approved')
+    stores = Store.objects.filter(owner=request.user, status='approved')
     try:
         store = Store.objects.get(id=store_id)
     except Store.DoesNotExist:
@@ -779,55 +804,87 @@ def revenue(request, store_id):
     store_orders = dict((store, {'orders': data['orders'], 'total': data['total'], 'details': dict(data['details'])}) for store, data in store_orders.items())
     monthly_revenue = orders.annotate(month=ExtractMonth('order_date'))\
                         .values('month')\
-                        .annotate(total_revenue=Sum('orderdetail__subtotal'))\
+                        .annotate(total_revenue=Sum('orderdetail__subtotal'), total_orders=Count('id'))\
                         .order_by('month')
 
-# Chuẩn bị dữ liệu cho biểu đồ (Giả sử doanh thu cho những tháng không có đơn hàng là 0)
+    # Chuẩn bị dữ liệu cho biểu đồ (Giả sử doanh thu cho những tháng không có đơn hàng là 0)
     revenue_per_month = [0] * 12
+    orders_per_month = [0] * 12
     for revenue in monthly_revenue:
         revenue_per_month[revenue['month'] - 1] = revenue['total_revenue']
-
+        orders_per_month[revenue['month'] - 1] = revenue['total_orders']
 
     revenue_per_month_float = [float(revenue) for revenue in revenue_per_month]
+
+    # Tổng số lượng đơn hàng và tổng doanh thu
+    total_orders = orders.count()
+    total_revenue = sum(revenue_per_month_float)
+
     # Render kết quả ra template, ví dụ 'store_order_history.html'
-    return render(request, 'base/revenue.html', {'store': store, 'orders': orders ,'stores':stores,'store_orders': store_orders,'revenue_per_month': revenue_per_month_float,})
+    return render(request, 'base/revenue.html', {
+        'store': store,
+        'orders': orders,
+        'stores': stores,
+        'store_orders': store_orders,
+        'revenue_per_month': revenue_per_month_float,
+        'orders_per_month': orders_per_month,
+        'total_orders': total_orders,
+        'total_revenue': total_revenue,
+        'months': [(i, calendar.month_name[i]) for i in range(1, 13)],  # Passing months to the template
+    })
 
 
 @login_required
 def dashboard(request, store_id):
-    stores = Store.objects.filter(owner=request.user,status ="approved")
+    stores = Store.objects.filter(owner=request.user, status="approved")
     try:
         store = Store.objects.get(id=store_id)
     except Store.DoesNotExist:
         messages.error(request, "Store not found.")
         return redirect('store_order_history')
 
-    # Lấy tất cả đơn hàng có chứa ít nhất một sản phẩm từ cửa hàng này
-    orders = Order.objects.filter(orderdetail__product__store=store).distinct().order_by('-order_date').prefetch_related('orderdetail_set__product__store')
+    month = request.GET.get('month')
+    if month:
+        month = datetime.strptime(month, '%Y-%m')
+        orders = Order.objects.filter(orderdetail__product__store=store, order_date__year=month.year, order_date__month=month.month).distinct().order_by('-order_date').prefetch_related('orderdetail_set__product__store')
+        top_products = OrderDetail.objects.filter(product__store=store, order__order_date__year=month.year, order__order_date__month=month.month).values('product__name').annotate(total_sold=Sum('quantity')).order_by('-total_sold')[:5]
+    else:
+        orders = Order.objects.filter(orderdetail__product__store=store).distinct().order_by('-order_date').prefetch_related('orderdetail_set__product__store')
+        top_products = OrderDetail.objects.filter(product__store=store).values('product__name').annotate(total_sold=Sum('quantity')).order_by('-total_sold')[:5]
 
-    # Tổ chức dữ liệu đơn hàng và chi tiết đơn hàng theo cửa hàng
     store_orders = defaultdict(lambda: {'orders': [], 'total': 0, 'details': defaultdict(list)})
 
     for order in orders:
-        # Khởi tạo tổng giá và chi tiết cho từng cửa hàng trong đơn hàng
         for detail in order.orderdetail_set.all():
             product_store = detail.product.store
-            if product_store.id == store_id:  # Chỉ xử lý sản phẩm thuộc cửa hàng được chỉ định
+            if product_store.id == store_id:
                 store_orders[product_store]['orders'].append(order)
                 store_orders[product_store]['details'][order].append(detail)
                 store_orders[product_store]['total'] += float(detail.subtotal)
 
-    # Chuyển kết quả từ defaultdict sang dict để tránh lỗi khi truyền vào template
     store_orders = dict((store, {'orders': data['orders'], 'total': data['total'], 'details': dict(data['details'])}) for store, data in store_orders.items())
-    top_products = OrderDetail.objects.filter(product__store=store)\
-                .values('product__name')\
-                .annotate(total_sold=Sum('quantity'))\
-                .order_by('-total_sold')[:5]
     product_names = [product['product__name'] for product in top_products]
     product_sales = [product['total_sold'] for product in top_products]
-    # Render kết quả ra template, ví dụ 'store_order_history.html'
-    return render(request, 'base/dashboard.html', {'store': store, 'orders': orders ,'stores':stores,'store_orders': store_orders,'product_names': product_names,
-    'product_sales': product_sales,})
+
+    total_orders = orders.count()
+    total_revenue = sum(order.orderdetail_set.aggregate(total=Sum('subtotal'))['total'] for order in orders)
+
+    # Generate list of all months in the current year
+    current_year = datetime.now().year
+    month_list = [f"{current_year}-{str(month).zfill(2)}" for month in range(1, 13)]
+
+    return render(request, 'base/dashboard.html', {
+        'store': store,
+        'orders': orders,
+        'stores': stores,
+        'store_orders': store_orders,
+        'product_names': product_names,
+        'product_sales': product_sales,
+        'total_orders': total_orders,
+        'total_revenue': total_revenue,
+        'selected_month': month.strftime('%Y-%m') if month else '',
+        'month_list': month_list,
+    })
 
 
 
@@ -1041,8 +1098,7 @@ def send_invitation(request, event_id, user_id):
     event = get_object_or_404(Event, pk=event_id)
     
     # Check if the user making the request is the host of the event
-    if request.user != event.host:
-        return HttpResponse("You are not authorized to send invitations for this event.", status=403)
+    
     
     invitee = get_object_or_404(User, pk=user_id)
     
@@ -1082,15 +1138,50 @@ def accept_invitation(request, invitation_id):
     invitation.event.par.add(request.user)
     return redirect('event_detail', pk=invitation.event.id)
 
+@login_required
+def liked_events(request):
+    liked_events = Event.objects.filter(like=request.user)
+    return render(request, 'base/liked_events.html', {'liked_events': liked_events})
+
+#thích event 
+@login_required
+def like_event(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    if request.user in event.like.all():
+        event.like.remove(request.user)
+    else:
+        event.like.add(request.user)
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
+
+@login_required
+def dislike_event(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    if request.user in event.like.all():
+        event.like.remove(request.user)
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
+@login_required
+@require_POST
+@csrf_exempt
+def dislike_selected_events(request):
+    if request.method == 'POST':
+        event_ids = request.POST.getlist('event_ids[]')
+        events = Event.objects.filter(id__in=event_ids, like=request.user)
+
+        for event in events:
+            event.like.remove(request.user)
+
+        return JsonResponse({'status': 'success', 'message': f'{len(events)} events disliked'})
+    
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
 
 #từ chối vào event
 @login_required
 def decline_invitation(request, invitation_id):
     invitation = get_object_or_404(Invitation, pk=invitation_id, invitee=request.user)
     invitation.delete()
-    return redirect('invitations')
+    return redirect('view_invitations')
 
 
 
@@ -1443,3 +1534,87 @@ def delete_event_message(request, event_id, message_id):
     
     # Chuyển hướng người dùng đến trang chi tiết sự kiện sau khi xóa tin nhắn
     return redirect('event_detail', pk=event_id)
+
+
+
+
+
+#analys 
+def top_stores_by_revenue(request):
+    current_month = datetime.now().month
+    current_year = datetime.now().year
+    selected_month = int(request.GET.get('month', current_month))
+    selected_year = int(request.GET.get('year', current_year))
+
+    # Filter orders by the selected month and year
+    orders = Order.objects.filter(order_date__year=selected_year, order_date__month=selected_month)
+    
+    # Annotate and aggregate revenue per store
+    store_revenues = orders.values('orderdetail__product__store__name') \
+        .annotate(total_revenue=Sum('orderdetail__subtotal')) \
+        .order_by('-total_revenue')[:5]
+
+    # Prepare data for the dropdowns
+    months = range(1, 13)
+    years = Order.objects.dates('order_date', 'year', order='DESC').distinct()
+
+    # Convert Decimal to float for JSON serialization
+    labels = [store['orderdetail__product__store__name'] for store in store_revenues]
+    data = [float(store['total_revenue']) for store in store_revenues]
+
+    context = {
+        'labels': json.dumps(labels),
+        'data': json.dumps(data),
+        'selected_month': selected_month,
+        'selected_year': selected_year,
+        'months': months,
+        'years': years,
+    }
+
+    return render(request, 'base/top_store_revenue.html', context)
+
+
+
+def top_products_by_month(request):
+    current_month = datetime.now().month
+    current_year = datetime.now().year
+
+    # Validate and get month and year from request, default to current month and year if invalid
+    try:
+        selected_month = int(request.GET.get('month', current_month))
+        if not 1 <= selected_month <= 12:
+            selected_month = current_month
+    except (ValueError, TypeError):
+        selected_month = current_month
+
+    try:
+        selected_year = int(request.GET.get('year', current_year))
+    except (ValueError, TypeError):
+        selected_year = current_year
+
+    # Filter orders by the selected month and year
+    order_details = OrderDetail.objects.filter(order__order_date__year=selected_year, order__order_date__month=selected_month)
+    
+    # Annotate and aggregate quantity per product
+    product_sales = order_details.values('product__name') \
+        .annotate(total_quantity=Sum('quantity')) \
+        .order_by('-total_quantity')[:10]
+
+    # Prepare data for the dropdowns
+    months = [(i, calendar.month_name[i]) for i in range(1, 13)]
+    years = OrderDetail.objects.dates('order__order_date', 'year', order='DESC').distinct()
+
+    # Prepare data for the chart
+    labels = [item['product__name'] for item in product_sales]
+    data = [item['total_quantity'] for item in product_sales]
+
+    context = {
+        'labels': json.dumps(labels),
+        'data': json.dumps(data),
+        'selected_month': selected_month,
+        'selected_year': selected_year,
+        'months': months,
+        'years': years,
+    }
+
+    return render(request, 'base/top_products_by_month.html', context)

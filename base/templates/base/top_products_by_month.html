@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top Products by Month</title>
+    <style>
+        .dashboard {
+            width: 1000px;
+            margin: 0 auto;
+            background-color: #3f4156;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            height: 640px;
+        }
+        h1 {
+            font-size: 24px;
+            margin: 0;
+            color: white;
+        }
+        label {
+            color: white;
+        }
+        select {
+            margin: 10px 0;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard">
+        <h1>Top Products by Month</h1>
+        <label for="monthFilter">Filter by Month:</label>
+        <select id="monthFilter">
+            {% for month_num, month_name in months %}
+                <option value="{{ month_num }}" {% if month_num == selected_month %}selected{% endif %}>{{ month_name }}</option>
+            {% endfor %}
+        </select>
+        <label for="yearFilter">Filter by Year:</label>
+        <select id="yearFilter">
+            {% for year in years %}
+                <option value="{{ year.year }}" {% if year.year == selected_year %}selected{% endif %}>{{ year.year }}</option>
+            {% endfor %}
+        </select>
+
+        <canvas id="productChart" width="600" height="350"></canvas>
+
+        <script>
+            const productLabels = JSON.parse('{{ labels|safe }}');
+            const quantityData = JSON.parse('{{ data|safe }}');
+            
+            const ctx = document.getElementById('productChart').getContext('2d');
+            let productChart;
+
+            function drawChart(labels, data) {
+                if (productChart) {
+                    productChart.destroy();
+                }
+                productChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Quantity Sold',
+                            data: data,
+                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+            }
+
+            document.getElementById('monthFilter').addEventListener('change', function() {
+                const selectedMonth = parseInt(this.value);
+                const selectedYear = document.getElementById('yearFilter').value;
+                window.location.href = `?month=${selectedMonth}&year=${selectedYear}`;
+            });
+
+            document.getElementById('yearFilter').addEventListener('change', function() {
+                const selectedYear = this.value;
+                const selectedMonth = document.getElementById('monthFilter').value;
+                window.location.href = `?month=${selectedMonth}&year=${selectedYear}`;
+            });
+
+            // Initialize the chart with the current data
+            drawChart(productLabels, quantityData);
+        </script>
+    </div>
+</body>
+</html>

@@ -6,6 +6,8 @@ class User(AbstractUser):
     class UserRole(models.TextChoices):
         ADMIN = 'AD', 'Admin'
         USER = 'US', 'User'
+        MODER = 'MO', 'Moder'
+
     name = models.CharField(max_length = 200, null = True)
     email =models.EmailField(unique = True,null =True)
     bio = models.TextField(null = True)
@@ -132,6 +134,7 @@ class Event(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
     img = models.ImageField(default='eventDefault.jpg',null=True)
+    like = models.ManyToManyField(User,related_name='like',blank=True)
     par = models.ManyToManyField(User,related_name='par',blank=True)
     location = models.CharField(max_length=200)
     status = models.CharField(max_length=200, default="waiting", null= True)

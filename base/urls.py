@@ -94,6 +94,7 @@ urlpatterns = [
     # store history
 
     path('store/<int:store_id>/order-history/', views.store_order_history, name='store_order_history'),
+    path('store/<int:store_id>/order/<int:order_id>/', views.store_order_detail, name='store_order_detail'),
     path('liked-stores/', views.liked_stores, name='liked_stores'),
     #join room
     # path('rooms/join/<int:room_id>/', views.join_private_room, name='join_private_room'),
@@ -120,7 +121,10 @@ urlpatterns = [
     path('create-event/',views.createEvent, name ="create-event"),
     path('event-update/<int:pk>/', views.update_event, name='update_event'),
     path('event-delete/<int:pk>/', views.delete_event, name='delete_event'),
-
+    path('event/<int:event_id>/like/', views.like_event, name='like_event'),
+    path('event/<int:event_id>/dislike/', views.dislike_event, name='dislike_event'),
+    path('liked-events/', views.liked_events, name='liked_events'),
+    path('dislike_selected_events/', views.dislike_selected_events, name='dislike_selected_events'),
 
 
     path('password_reset/', views.password_reset_request, name='password_reset_request'),
@@ -139,6 +143,7 @@ urlpatterns = [
     path('manage_event/', views.ManageEvent, name='manage_event'),
     path('manage_stores/', views.manageStore, name='manage_stores'),
     path('manage_products/', views.manageProduct, name='manage_products'),
+    path('top-products/', views.top_products_by_month, name='top_products_by_month'),
 
 
 
@@ -152,5 +157,7 @@ urlpatterns = [
     path('store/<int:pk>/reject/', views.reject_store, name='reject_store'),
     path('event/<int:event_id>/message/<int:message_id>/delete/', views.delete_event_message, name='delete_event_message'),
 
+
+    path('top-stores/', views.top_stores_by_revenue, name='top_stores_by_revenue'),
 
 ]

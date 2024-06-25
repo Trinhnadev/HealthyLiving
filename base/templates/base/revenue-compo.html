@@ -1,136 +1,180 @@
-
-
-
-
-
 <style>
-    .dashboard {
-    width: 1000px;
-    margin: 0 auto;
-    background-color: #3f4156;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    height: 640px;
+  .dashboard {
+      width: 1000px;
+      margin: 0 auto;
+      background-color: #3f4156;
+      padding: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      height: 770px;
   }
-  
   h1 {
-    font-size: 24px;
-    margin: 0;
+      font-size: 24px;
+      margin: 0;
+      color: white;
   }
-  
-  .order-list {
-    list-style-type: none;
-    padding: 0;
+  label {
+      color: white;
   }
-  
-  .order {
-    width: 950px;
-    border: 1px solid #ddd;
-    margin-bottom: 20px;
-    padding: 20px;
-    background-color: #51546e;
+  select {
+      margin: 10px 0;
   }
-  
-  .order-details {
-    margin: 0;
+  .stats-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: space-between;
   }
-  
-  .order-date {
-    font-weight: bold;
-    margin: 0;
+  .stat {
+      background-color: #f0f0f5;
+      border-radius: 8px;
+      width: 23%;
+      display: flex;
+      align-items: center;
+      padding: 15px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
-  
-  .order-details h2 {
-    font-size: 20px;
-    margin: 0;
+  .icon {
+      width: 40px;
+      height: 40px;
+      margin-right: 15px;
   }
-  
-  .order-details p {
-    margin: 10px 0;
+  .icon img {
+      width: 100%;
+      height: 100%;
   }
-  </style>
-  
-  <div class="topics">
-    <div class="room__top">
-        
-        <div class="room__topLeft">
-            <a href="{% url 'shop' %}">
-                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-                  <title>arrow-left</title>
-                  <path
-                    d="M13.723 2.286l-13.723 13.714 13.719 13.714 1.616-1.611-10.96-10.96h27.625v-2.286h-27.625l10.965-10.965-1.616-1.607z">
-                  </path>
-                </svg>
-              </a>
-            <h3>Monthly Revenue Chart {{store.name}}</h3>
-        </div>
-  
-    </div>
-  <div class="dashboard">
-        
-    <h1></h1>
-    <label for="monthFilter">Filter by Month:</label>
-    <select id="monthFilter">
-        <option value="0">All Months</option>
-        <option value="1">January</option>
-        <option value="2">February</option>
-        <option value="3">March</option>
-        <option value="4">April</option>
-        <option value="5">May</option>
-        <option value="6">June</option>
-        <option value="7">July</option>
-        <option value="8">August</option>
-        <option value="9">September</option>
-        <option value="10">October</option>
-        <option value="11">November</option>
-        <option value="12">December</option>
-    </select>
-
-    <canvas id="revenueChart" width="600" height="350"></canvas>
-
-    <script>
-        const revenuePerMonth = JSON.parse('{{ revenue_per_month|safe }}').map(Number);
-
-        const ctx = document.getElementById('revenueChart').getContext('2d');
-        let revenueChart;
-
-        function drawChart(month, data) {
-            if (revenueChart) {
-                revenueChart.destroy();
-            }
-            revenueChart = new Chart(ctx, {
-                type: 'bar', // Or 'line', depending on your preference
-                data: {
-                    labels: month === 0 ? ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'] : ['Month ' + month],
-                    datasets: [{
-                        label: 'Revenue',
-                        data: month === 0 ? revenuePerMonth : [data],
-                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-        }
-
-        document.getElementById('monthFilter').addEventListener('change', function() {
-            const selectedMonth = parseInt(this.value);
-            if (selectedMonth > 0) {
-                drawChart(selectedMonth, revenuePerMonth[selectedMonth - 1]);
-            } else {
-                drawChart(0, revenuePerMonth);
-            }
-        });
-
-        // Initialize the chart with all months' data
-        drawChart(0, revenuePerMonth);
-    </script>
+  .info {
+      text-align: left;
+  }
+  .number {
+      font-size: 24px;
+      color: #333;
+      margin: 0;
+  }
+  .label {
+      font-size: 14px;
+      color: #666;
+      margin: 0;
+  }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+<div class="dashboard">
+<div class="room__top">
+  <div class="room__topLeft">
+      <a href="{% url 'shop' %}">
+          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+              <title>arrow-left</title>
+              <path d="M13.723 2.286l-13.723 13.714 13.719 13.714 1.616-1.611-10.96-10.96h27.625v-2.286h-27.625l10.965-10.965-1.616-1.607z"></path>
+          </svg>
+      </a>
+      <h3>Monthly Revenue Chart {{ store.name }}</h3>
   </div>
-  
+</div>
+<h1></h1>
+<label for="monthFilter">Filter by Month:</label>
+<select id="monthFilter">
+  <option value="0">All Months</option>
+  {% for month_num, month_name in months %}
+      <option value="{{ month_num }}" {% if month_num == selected_month %}selected{% endif %}>{{ month_name }}</option>
+  {% endfor %}
+</select>
+
+
+<div class="stats-container">
+  <div class="stat">
+    <div class="icon">
+        <img src="order_icon.png" alt="Order Icon">
+    </div>
+    <div class="info">
+        <p class="number" id="">{{ store.name }}</p>
+        <p class="label">Store</p>
+    </div>
+</div>
+  <div class="stat">
+      <div class="icon">
+          <img src="order_icon.png" alt="Order Icon">
+      </div>
+      <div class="info">
+          <p class="number" id="orderCount">{{ total_orders }}</p>
+          <p class="label">ĐƠN HÀNG</p>
+      </div>
+  </div>
+  <div class="stat">
+    <div class="icon">
+        <img src="order_icon.png" alt="Order Icon">
+    </div>
+    <div class="info">
+        <p class="number" id="orderCount">0</p>
+        <p class="label">Đơn Hoàn Trả</p>
+    </div>
+</div>
+
+  <div class="stat">
+      <div class="icon">
+          <img src="revenue_icon.png" alt="Revenue Icon">
+      </div>
+      <div class="info">
+          <p class="number" id="revenue"> $ {{ total_revenue|floatformat:2 }} </p>
+          <p class="label">DOANH THU</p>
+      </div>
+  </div>
+  <!-- Add other stats as needed -->
+</div>
+
+
+
+<canvas id="revenueChart" width="600" height="350"></canvas>
+
+
+
+<script>
+  const revenuePerMonth = JSON.parse('{{ revenue_per_month|safe }}').map(Number);
+  const ordersPerMonth = JSON.parse('{{ orders_per_month|safe }}').map(Number);
+
+  const ctx = document.getElementById('revenueChart').getContext('2d');
+  let revenueChart;
+
+  function drawChart(month) {
+      if (revenueChart) {
+          revenueChart.destroy();
+      }
+      revenueChart = new Chart(ctx, {
+          type: 'bar',
+          data: {
+              labels: month === 0 ? ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'] : ['Month ' + month],
+              datasets: [{
+                  label: 'Revenue',
+                  data: month === 0 ? revenuePerMonth : [revenuePerMonth[month - 1]],
+                  backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                  borderColor: 'rgba(54, 162, 235, 1)',
+                  borderWidth: 1
+              }]
+          },
+          options: {
+              scales: {
+                  y: {
+                      beginAtZero: true
+                  }
+              }
+          }
+      });
+
+      // Update the statistics
+      const orderCount = month === 0 ? ordersPerMonth.reduce((a, b) => a + b, 0) : ordersPerMonth[month - 1];
+      const revenue = month === 0 ? revenuePerMonth.reduce((a, b) => a + b, 0).toFixed(2) : revenuePerMonth[month - 1].toFixed(2);
+
+      document.getElementById('orderCount').textContent = orderCount;
+      document.getElementById('revenue').textContent = revenue;
+  }
+
+  document.getElementById('monthFilter').addEventListener('change', function() {
+      const selectedMonth = parseInt(this.value);
+      drawChart(selectedMonth);
+  });
+
+  // Initialize the chart with all months' data
+  drawChart(0);
+</script>
+</div>
+</body>

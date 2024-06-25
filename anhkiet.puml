@@ -1,0 +1,109 @@
+@startuml
+
+class User {
+  +id: int
+  +name: String
+  +email: String
+  +email_verified_at: Timestamp
+  +password: String
+  +image: String
+  +designation: String
+  +mobile: String
+  +rememberToken: String
+  +timestamps()
+}
+
+class PasswordResetToken {
+  +email: String
+  +token: String
+  +created_at: Timestamp
+}
+
+class FailedJob {
+  +id: int
+  +uuid: String
+  +connection: Text
+  +queue: Text
+  +payload: LongText
+  +exception: LongText
+  +failed_at: Timestamp
+}
+
+class PersonalAccessToken {
+  +id: int
+  +tokenable_type: String
+  +tokenable_id: int
+  +name: String
+  +token: String
+  +abilities: Text
+  +last_used_at: Timestamp
+  +expires_at: Timestamp
+  +timestamps()
+}
+
+class Category {
+  +id: int
+  +name: String
+  +status: int
+  +timestamps()
+}
+
+class JobType {
+  +id: int
+  +name: String
+  +status: int
+  +timestamps()
+}
+
+class Job {
+  +id: int
+  +title: String
+  +category_id: int
+  +job_type_id: int
+  +vacancy: int
+  +salary: String
+  +location: String
+  +description: Text
+  +benefits: Text
+  +responsibility: Text
+  +qualifications: Text
+  +keywords: Text
+  +experience: Text
+  +company_name: String
+  +company_location: String
+  +company_website: String
+  +status: int
+  +isFeatured: int
+  +user_id: int
+  +timestamps()
+}
+
+class JobApplication {
+  +id: int
+  +job_id: int
+  +user_id: int
+  +employer_id: int
+  +applied_date: Timestamp
+  +timestamps()
+}
+
+class SavedJob {
+  +id: int
+  +job_id: int
+  +user_id: int
+  +timestamps()
+}
+
+User "1" -- "0..*" PersonalAccessToken : owns
+User "1" -- "0..*" Job : creates
+User "1" -- "0..*" JobApplication : applies
+User "1" -- "0..*" SavedJob : saves
+User "1" -- "0..*" JobApplication : employer
+
+Category "1" -- "0..*" Job : categorizes
+JobType "1" -- "0..*" Job : defines
+
+Job "1" -- "0..*" JobApplication : has
+Job "1" -- "0..*" SavedJob : saved
+
+@enduml

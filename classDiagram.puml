@@ -1,0 +1,209 @@
+@startuml
+
+skinparam ClassAttributeIconSize 0
+
+class User {
+    + id: Integer
+    + username: String
+    + name: String
+    + email: String
+    + bio: Text
+    + avatar: String
+    + role: String
+    + is_banned: Boolean
+    + USERNAME_FIELD: String
+    + REQUIRED_FIELDS: List
+    + is_admin(): Boolean
+}
+
+class Topic {
+    + id: Integer
+    + name: String
+    + __str__(): String
+}
+
+class Room {
+    + id: Integer
+    + host: ForeignKey
+    + topic: ForeignKey
+    + name: String
+    + img: String
+    + description: Text
+    + participants: ManyToManyField
+    + updated: DateTime
+    + created: DateTime
+    + is_private: Boolean
+    + question: String
+    + answer: String
+    + __str__(): String
+}
+
+class Message {
+    + id: Integer
+    + user: ForeignKey
+    + room: ForeignKey
+    + image: String
+    + body: Text
+    + updated: DateTime
+    + created: DateTime
+    + __str__(): String
+}
+
+class MessageReport {
+    + id: Integer
+    + reported_message: ForeignKey
+    + reporting_users: ManyToManyField
+    + reason: Text
+    + detail: Text
+    + created_at: DateTime
+    + __str__(): String
+}
+
+class Friendship {
+    + id: Integer
+    + sender: ForeignKey
+    + receiver: ForeignKey
+    + status: String
+    + __str__(): String
+}
+
+class ChatRoom {
+    + id: Integer
+    + members: ManyToManyField
+    + created_at: DateTime
+    + __str__(): String
+}
+
+class Chat {
+    + id: Integer
+    + roomchat: ForeignKey
+    + sender: ForeignKey
+    + receiver: ForeignKey
+    + image: String
+    + content: Text
+    + timestamp: DateTime
+    + __str__(): String
+}
+
+class Event {
+    + id: Integer
+    + host: ForeignKey
+    + title: String
+    + description: Text
+    + img: String
+    + location: String
+    + status: String
+    + is_private: Boolean
+    + start_time: DateTime
+    + end_time: DateTime
+    + created_at: DateTime
+    + updated_at: DateTime
+    + __str__(): String
+}
+
+class EventMessage {
+    + id: Integer
+    + user: ForeignKey
+    + event: ForeignKey
+    + image: String
+    + body: Text
+    + updated: DateTime
+    + created: DateTime
+    + __str__(): String
+}
+
+class Invitation {
+    + id: Integer
+    + event: ForeignKey
+    + invitee: ForeignKey
+    + accepted: Boolean
+    + __str__(): String
+}
+
+class Store {
+    + id: Integer
+    + owner: ForeignKey
+    + img: String
+    + name: String
+    + description: Text
+    + status: String
+    + address: Text
+    + phone: String
+    + __str__(): String
+}
+
+class Product {
+    + id: Integer
+    + store: ForeignKey
+    + name: String
+    + quantity: Integer
+    + description: Text
+    + price: Decimal
+    + image: String
+    + status: String
+    + __str__(): String
+}
+
+class Cart {
+    + id: Integer
+    + user: OneToOneField
+    + created_at: DateTime
+    + get_total_price(): Decimal
+    + __str__(): String
+}
+
+class CartItem {
+    + id: Integer
+    + cart: ForeignKey
+    + product: ForeignKey
+    + quantity: Integer
+    + get_total(): Decimal
+    + __str__(): String
+}
+
+class Order {
+    + id: Integer
+    + user: ForeignKey
+    + store: ForeignKey
+    + order_date: DateTime
+    + address: Text
+    + full_name: String
+    + phone_number: String
+}
+
+class OrderDetail {
+    + id: Integer
+    + order: ForeignKey
+    + product: ForeignKey
+    + quantity: Integer
+    + subtotal: Decimal
+}
+
+User "1" -- "n" Room : hosts
+Topic "1" -- "n" Room : topics
+User "1" -- "n" Message : sends
+Room "1" -- "n" Message : contains
+Message "1" -- "n" MessageReport : is reported in
+User "n" -- "n" MessageReport : reports
+User "1" -- "n" Friendship : sends
+User "1" -- "n" Friendship : receives
+User "n" -- "n" ChatRoom : joins
+ChatRoom "1" -- "n" Chat : contains
+User "1" -- "n" Chat : sends
+User "1" -- "n" Chat : receives
+User "1" -- "n" Event : hosts
+Event "1" -- "n" EventMessage : contains
+User "1" -- "n" EventMessage : writes
+Event "1" -- "n" Invitation : sends
+User "1" -- "n" Invitation : receives
+User "1" -- "n" Store : owns
+Store "1" -- "n" Product : sells
+User "1" -- "1" Cart : has
+Cart "1" -- "n" CartItem : contains
+Product "1" -- "n" CartItem : in
+User "1" -- "n" Order : places
+Store "1" -- "n" Order : receives
+Order "1" -- "n" OrderDetail : contains
+Product "1" -- "n" OrderDetail : in
+
+@enduml

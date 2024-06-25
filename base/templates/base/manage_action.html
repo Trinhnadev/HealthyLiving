@@ -150,13 +150,20 @@
     </div>
     <div class="sidebar">
         <div class="menu">
+            {%if request.user == "Admin"%}
             <a href="{%url 'manage'%}" class="menu-item ">Manage User</a>
             <a href="{%url 'manageUserBan'%}" class="menu-item ">Manage Banned</a>
+            {%endif%}
+
             <a href="{%url 'reported_messages'%}" class="menu-item ">Message Report</a>
             <a href="{%url 'manageRoom'%}" class="menu-item">Manage Room</a>
             <a href="{%url 'manage_event'%}" class="menu-item">Manage Events</a>
             <a href="{%url 'manage_stores'%}" class="menu-item">Manage Stores</a>
             <a href="{%url 'manage_products'%}" class="menu-item">Manage Products</a>
+            <a href="{%url 'top_stores_by_revenue'%}" class="menu-item">Manage Revenue</a>
+            <a href="{%url 'top_products_by_month'%}" class="menu-item">Manage Best seller</a>
+
+
         </div>
 
     </div>

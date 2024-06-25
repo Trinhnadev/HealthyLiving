@@ -1,0 +1,78 @@
+
+    <style>
+
+        .order-detail {
+            width: 1000px;
+            margin: 0 auto;
+            background-color: #004643;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            color: #b2bdbd;
+        }
+
+        h1, h2 {
+            font-size: 24px;
+            margin: 0 0 10px 0;
+            color: #fff;
+        }
+
+        p {
+            margin: 10px 0;
+            color: #b2bdbd;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        ul li {
+            background-color: #51546e;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            color: #fff;
+        }
+
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            background-color: #007bff;
+            color: #fff;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .back-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+
+<body>
+    <div class="order-detail">
+        <h1>Order Detail for Store: {{ store.name }}</h1>
+        <p><strong>Order ID:</strong> {{ order.id }}</p>
+        <p><strong>Order Date:</strong> {{ order.order_date }}</p>
+        <p><strong>Customer Name:</strong> {{ order.full_name }}</p>
+        <p><strong>Address:</strong> {{ order.address }}</p>
+        <p><strong>Phone Number:</strong> {{ order.phone_number }}</p>
+
+        <h2>Products</h2>
+        <ul>
+            {% for detail in order_details %}
+            <li>
+                <p><strong>Product Name:</strong> {{ detail.product.name }}</p>
+                <p><strong>Quantity:</strong> {{ detail.quantity }}</p>
+                <p><strong>Subtotal:</strong>$ {{ detail.subtotal }}</p>
+            </li>
+            {% endfor %}
+        </ul>
+
+        <h2>Total:$  {{ order_total }}</h2>
+
+        <a href="{% url 'store_order_history' store.id %}" class="back-button">Back to Order History</a>
+    </div>
+</body>
+</html>

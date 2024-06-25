@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="styles.css">
+</head><style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.dashboard {
+    width: 80%;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.statistic {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.statistic h2 {
+    margin: 0;
+    font-size: 24px;
+    color: #333;
+}
+
+.stats-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: space-between;
+}
+
+.stat {
+    background-color: #f0f0f5;
+    border-radius: 8px;
+    width: 23%;
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.icon {
+    width: 40px;
+    height: 40px;
+    margin-right: 15px;
+}
+
+.icon img {
+    width: 100%;
+    height: 100%;
+}
+
+.info {
+    text-align: left;
+}
+
+.number {
+    font-size: 24px;
+    color: #333;
+    margin: 0;
+}
+
+.label {
+    font-size: 14px;
+    color: #666;
+    margin: 0;
+}
+
+</style>
+<body>
+    <div class="dashboard">
+        <div class="statistic">
+            <h2>Số lượng đơn hàng: <span id="orderCount">0</span></h2>
+            <h2>Doanh thu: <span id="revenue">0</span> VND</h2>
+        </div>
+        <div class="stats-container">
+            <div class="stat">
+                <div class="icon">
+                    <img src="order_icon.png" alt="Order Icon">
+                </div>
+                <div class="info">
+                    <p class="number">1</p>
+                    <p class="label">ĐƠN HÀNG</p>
+                </div>
+            </div>
+            <div class="stat">
+                <div class="icon">
+                    <img src="revenue_icon.png" alt="Revenue Icon">
+                </div>
+                <div class="info">
+                    <p class="number">630,000</p>
+                    <p class="label">DOANH THU</p>
+                </div>
+            </div>
+            <div class="stat">
+                <div class="icon">
+                    <img src="cash_icon.png" alt="Cash Icon">
+                </div>
+                <div class="info">
+                    <p class="number">630,000</p>
+                    <p class="label">TIỀN MẶT</p>
+                </div>
+            </div>
+            <div class="stat">
+                <div class="icon">
+                    <img src="other_icon.png" alt="Other Icon">
+                </div>
+                <div class="info">
+                    <p class="number">0</p>
+                    <p class="label">TÀI KHOẢN KHÁC</p>
+                </div>
+            </div>
+            <div class="stat">
+                <div class="icon">
+                    <img src="return_icon.png" alt="Return Icon">
+                </div>
+                <div class="info">
+                    <p class="number">0</p>
+                    <p class="label">HUỶ/TRẢ ĐƠ</p>
+                </div>
+            </div>
+            <div class="stat">
+                <div class="icon">
+                    <img src="value_return_icon.png" alt="Value Return Icon">
+                </div>
+                <div class="info">
+                    <p class="number">0</p>
+                    <p class="label">GIÁ TRỊ TRẢ LẠI</p>
+                </div>
+            </div>
+            <div class="stat">
+                <div class="icon">
+                    <img src="debt_icon.png" alt="Debt Icon">
+                </div>
+                <div class="info">
+                    <p class="number">0</p>
+                    <p class="label">GHI NỢ</p>
+                </div>
+            </div>
+            <div class="stat">
+                <div class="icon">
+                    <img src="usage_icon.png" alt="Usage Icon">
+                </div>
+                <div class="info">
+                    <p class="number">0 / 30</p>
+                    <p class="label">BẢN SỬ DỤNG</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
