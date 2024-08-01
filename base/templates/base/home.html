@@ -1,124 +1,49 @@
 {%extends 'main.html'%}
-
+{%load static%}
 {% block content%}
-  <style>
-.create-room-form {
-  display: none;
-  opacity: 0;
-  transform: translateY(-20px);
-  transition: opacity 0.3s, transform 0.3s;
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-}
+<!-- Activity -->
+<div class="row newsfeed-right-side-content mt-3">
+  {% include 'base/topics_compo.html'%}
 
-.create-room-form.show {
-  display: block;
-  opacity: 1;
-  transform: translateY(0);
-}
 
-form {
-  display: flex;
-  flex-direction: column;
-}
 
-label {
-  margin-bottom: 5px;
-}
+  <div class="col-md-6 second-section" id="page-content-wrapper">
 
-input, textarea {
-  /* margin-bottom: 10px; */
-  /* padding: 10px; */
-  border: 1px solid #ccc;
-  border-radius: 5px;
-}
 
-/* Thêm style cho nút "Post" */
-.btn--primary {
-  background-color: #007BFF;
-  border-radius: 5px;
-  padding: 10px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.btn--primary:hover {
-  background-color: #0056b3;
-}
-
-/* ... (các styles khác) ... */
-
-  </style>
-<main class="layout layout--3">
-  <div class="container">
-    <!-- Topics Start -->
-    {% include 'base/topics_compo.html'%}
-      
-    <!-- Topics End -->
-
-    <!-- Room List Start -->
-    <div class="roomList">
-      <div class="mobile-menu">
-        <form class="header__search" href = "{%url 'home'%}" method="GET">
-          <label>
-            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-              <title>search</title>
-              <path
-                d="M32 30.586l-10.845-10.845c1.771-2.092 2.845-4.791 2.845-7.741 0-6.617-5.383-12-12-12s-12 5.383-12 12c0 6.617 5.383 12 12 12 2.949 0 5.649-1.074 7.741-2.845l10.845 10.845 1.414-1.414zM12 22c-5.514 0-10-4.486-10-10s4.486-10 10-10c5.514 0 10 4.486 10 10s-4.486 10-10 10z"
-              ></path>
-            </svg>
-            <input name ="q" placeholder="Search for posts" />
-          </label>
-        </form>
-        <div class="mobile-menuItems">
-          <a class="btn btn--main btn--pill" href="#">Browse Topics</a>
-          <a class="btn btn--main btn--pill" href="#">Recent Activities</a>
-        </div>
-      </div>
-      <div class="roomList__header">
-        <div>
-          <h2>News feed</h2>
-          <p>{{rooms.count}} Rooms available</p>
-        </div>
-        <a class="btn btn--main" href="{% url 'create-room' %}" >
-          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-            <title>add</title>
+    <div class="mb-3" style="margin-left: 15px;">
+      <div class="btn-group d-flex" >
+        <a href="{%url 'create-room'%}" class="btn btn-quick-links mr-3 ql-active" >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+            class="bi bi-plus-circle-fill" viewBox="0 0 16 16">
             <path
-              d="M16.943 0.943h-1.885v14.115h-14.115v1.885h14.115v14.115h1.885v-14.115h14.115v-1.885h-14.115v-14.115z"
-            ></path>
+              d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.5 4.5a.5.5 0 0 0-1 0v3h-3a.5.5 0 0 0 0 1h3v3a.5.5 0 0 0 1 0v-3h3a.5.5 0 0 0 0-1h-3z" />
           </svg>
-          Create Room
+          <span class="fs-8">Create New Room</span>
         </a>
-      </div>
-      <!-- create room form -->
-      <div id="createRoomForm" class="create-room-form"  >
-        <form action="{% url 'create-room' %}" method="POST" enctype="multipart/form-data">
-          {% csrf_token %}
-          <label for="image">Choose an image:</label>
-          <input type="file" id="image" name="image" accept="image/*">
-          
-          <label for="caption">Caption:</label>
-          <textarea id="caption" name="caption" placeholder="Add a caption..."></textarea>
-          
-          <button type="submit" class="btn btn--primary" style="text-align: center;">Post</button>
-        </form>
-      </div>
 
-
-        {%include 'base/feed.html'%}
+      </div>
     </div>
-    <!-- Room List End -->
 
-    <!-- Activities Start -->
-    {%include 'base/activity.html'%}
-    <!-- Activities End -->
+
+
+
+
+
+
+    <!-- Posts -->
+    {%include 'base/feed.html'%}
+
+
   </div>
-</main>
+  {% include 'base/activity.html'%}
+
+  <!-- LIST Friend -->
 
 
-{%endblock%}
 
-{%block scripts%}
+</div>
+
+
+
+
 {%endblock%}

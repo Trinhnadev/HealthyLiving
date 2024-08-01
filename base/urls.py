@@ -24,13 +24,15 @@ urlpatterns = [
     path('update-user/',views.updateUser, name ="update-user"),
     path('topics/',views.topicsPage, name ="topics"),
     path('friend/',views.friendPages, name ="friend"),
-    path('myfriend/',views.myFriends, name ="myfriend"),
+    path('all-friend/',views.AllFriend, name ="all-friend"),
+    
 
 
     path('activity/',views.activityPages, name ="activity"),
 
 
     path('update_avatar/', views.update_avatar, name='update_avatar'),
+    path('update_coveravatar/', views.update_coveravatar, name='update_coveravatar'),
 
     path('addFriend/<str:pk>/',views.sentRequest,name="addFriend"),
     path('accept/<str:pk>/',views.acceptRequest,name = 'accept'),
@@ -59,6 +61,7 @@ urlpatterns = [
     path('store/<int:store_id>/product/<int:product_id>/delete/', views.product_delete, name='product_delete'),
     path('dashboard/<int:store_id>/', views.dashboard, name='dashboard'),
     path('revenue/<int:store_id>/', views.revenue, name='revenue'),
+    path('product/update_quantity/', views.update_product_quantity, name='update_product_quantity'),
 
 
     
@@ -131,7 +134,11 @@ urlpatterns = [
     path('enter_reset_code/', views.enter_reset_code, name='enter_reset_code'),
     path('reset_password/', views.reset_password, name='reset_password'),
     path('change_password/', views.change_password, name='change_password'),
-    path('report/<int:mess_id>/', views.report_mess, name='report_mess'),
+    path('report/', views.report_mess, name='report_message'),
+
+
+
+    # admin
     path('manage/', views.manageUser, name='manage'),
     path('ban-user/<int:user_id>/', views.ban_user, name='ban_user'),
     path('unban-user/<int:user_id>/', views.unban_user, name='unban_user'),
@@ -159,5 +166,6 @@ urlpatterns = [
 
 
     path('top-stores/', views.top_stores_by_revenue, name='top_stores_by_revenue'),
+    path('unauthorized/', views.unauthorized, name='unauthorized'),
 
 ]

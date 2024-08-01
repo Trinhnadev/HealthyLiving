@@ -1,114 +1,101 @@
+
 <style>
-  .dashboard {
-      width: 1000px;
-      margin: 0 auto;
-      background-color: #3f4156;
-      padding: 20px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-      height: 640px;
-  }
-
-  h1 {
-      font-size: 24px;
-      margin: 0;
-  }
-
-  .order-list {
-      list-style-type: none;
-      padding: 0;
-  }
-
-  .order {
-      width: 950px;
-      border: 1px solid #ddd;
-      margin-bottom: 20px;
-      padding: 20px;
-      background-color: #51546e;
-  }
-
-  .order-details {
-      margin: 0;
-  }
-
-  .order-date {
-      font-weight: bold;
-      margin: 0;
-  }
-
-  .order-details h2 {
-      font-size: 20px;
-      margin: 0;
-  }
-
-  .order-details p {
-      margin: 10px 0;
-  }
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f6f8;
+        margin: 0;
+        padding: 0;
+    }
+    .container {
+        width: 90%;
+        margin: 20px auto;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+    .header {
+        padding: 20px;
+        background-color: #fff;
+        border-bottom: 1px solid #e0e0e0;
+    }
+    .header h2 {
+        margin: 0;
+        font-size: 18px;
+        color: #333;
+    }
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .table th, .table td {
+        padding: 15px;
+        text-align: left;
+        border-bottom: 1px solid #e0e0e0;
+    }
+    .table th {
+        background-color: #f4f6f8;
+        color: #333;
+    }
+    .table td img {
+        width: 50px;
+        height: auto;
+        border-radius: 5px;
+        margin-right: 15px;
+    }
+    .table .product-name {
+        display: flex;
+        align-items: center;
+    }
+    .footer {
+        padding: 15px;
+        text-align: right;
+        background-color: #f4f6f8;
+    }
+    .footer select {
+        padding: 8px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+    }
 </style>
 
-<div class="topics">
-  <div class="room__top">
-      <div class="room__topLeft">
-          <a href="{% url 'shop' %}">
-              <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-                  <title>arrow-left</title>
-                  <path d="M13.723 2.286l-13.723 13.714 13.719 13.714 1.616-1.611-10.96-10.96h27.625v-2.286h-27.625l10.965-10.965-1.616-1.607z"></path>
-              </svg>
-          </a>
-          <h3>Top 5 Best Selling Products {{store.name}}</h3>
-      </div>
-  </div>
-
-  
-
-  <div class="dashboard">
-    <form method="get" action="{% url 'dashboard' store.id %}" id="monthFilterForm">
-      <label for="month">Filter by month:</label>
-      <select id="month" name="month" onchange="document.getElementById('monthFilterForm').submit();">
-          <option value="">All</option>
-          {% for month in month_list %}
-              <option value="{{ month }}" {% if month == selected_month %}selected{% endif %}>{{ month }}</option>
-          {% endfor %}
-      </select>
-  </form>
-  
-      <div>
-          <canvas id="topProductsChart" width="400" height="230"></canvas>
-      </div>
-  </div>
-
-  <script>
-      var ctx = document.getElementById('topProductsChart').getContext('2d');
-      var topProductsChart = new Chart(ctx, {
-          type: 'bar',
-          data: {
-              labels: {{ product_names|safe }},
-              datasets: [{
-                  label: 'Sell quantity',
-                  data: {{ product_sales|safe }},
-                  backgroundColor: [
-                      'rgba(255, 99, 132, 0.2)',
-                      'rgba(54, 162, 235, 0.2)',
-                      'rgba(255, 206, 86, 0.2)',
-                      'rgba(75, 192, 192, 0.2)',
-                      'rgba(153, 102, 255, 0.2)',
-                  ],
-                  borderColor: [
-                      'rgba(255, 99, 132, 1)',
-                      'rgba(54, 162, 235, 1)',
-                      'rgba(255, 206, 86, 1)',
-                      'rgba(75, 192, 192, 1)',
-                      'rgba(153, 102, 255, 1)',
-                  ],
-                  borderWidth: 1
-              }]
-          },
-          options: {
-              scales: {
-                  y: {
-                      beginAtZero: true
-                  }
-              }
-          }
-      });
-  </script>
-</div>
+    <div class="container">
+        <div class="header">
+            <h2>Best Selling Products</h2>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Orders ({{ total_orders }})</th>
+                    <th>Order(%)</th>
+                    <th>Revenue (${{ store_revenue }})</th>
+                    <th>Revenue(%)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in top_products %}
+                <tr>
+                    <td class="product-name">
+                        <img src="{{ product.image.url }}" alt="{{ product.name }}"> 
+                        {{ product.name }}
+                    </td>
+                    <td>{{ product.orders_count }}</td>
+                    <td>{{ product.orders_percentage|floatformat:2 }}%</td>
+                    <td>${{ product.revenue|floatformat:2 }}</td>
+                    <td>{{ product.revenue_percentage|floatformat:2 }}%</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="footer">
+            <form method="get">
+                <select name="month" onchange="this.form.submit()">
+                    <option value="all" {% if selected_month == 'all' %}selected{% endif %}>All Months</option>
+                    {% for month, month_name in month_list %}
+                    <option value="{{ month }}" {% if month == selected_month %}selected{% endif %}>{{ month_name }}</option>
+                    {% endfor %}
+                </select>
+            </form>
+        </div>
+    </div>

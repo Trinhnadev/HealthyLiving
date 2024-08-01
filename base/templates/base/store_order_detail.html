@@ -1,28 +1,19 @@
 {%extends 'main.html'%}
 
 {% block content%}
-  <style>
+<style>
 
-  </style>
-<main class="layout layout--3">
-  <div class="container">
-    <!-- Topics Start -->
-    {% include 'base/store_action_detail.html'%}
-      
-    <!-- Topics End -->
-
-    <!-- Room List Start -->
-    <div class="EventList">
+</style>
+<div class="container-fluid" id="wrapper">
+  <div class="row newsfeed-size">
+    <div class="col-md-12 newsfeed-right-side">
+      <div class="row newsfeed-right-side-content mt-3">
+        {% include 'base/store_action_detail.html'%}
         {%include 'base/store_order_detail_compo.html'%}
+      </div>
     </div>
-    <!-- Room List End -->
-
-    <!-- Activities Start -->
-
-
-    <!-- Activities End -->
   </div>
-</main>
 
 
-{%endblock%}
+
+  {%endblock%}

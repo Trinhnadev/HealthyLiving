@@ -1,0 +1,6 @@
+{
+    "python.analysis.extraPaths": [
+        "./studybud"
+    ],
+    "liveServer.settings.port": 5501
+}

@@ -1,116 +1,103 @@
-<style>
-.cart {
-    width: 1000px;
-    margin: 0 auto;
-    background-color:  #004643;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    color: #b2bdbd;
-
-}
-
-h1 {
-    font-size: 24px;
-    margin: 0;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
-
-table th, table td {
-    border: 1px solid #fff;
-    padding: 10px;
-    text-align: left;
-}
-
-table th {
-    background-color: #51546e;
-    color: #fff;
-}
-
-table td img {
-    max-width: 50px;
-    height: auto;
-}
-
-.checkout {
-    text-align: right;
-    margin-top: 20px;
-}
-
-button {
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-button:hover {
-    background-color: #0056b3;
-}
-
-</style>
-<div class="room__top">
-        
-    <div class="room__topLeft">
-        <a href="{% url 'shop' %}">
-            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-              <title>arrow-left</title>
-              <path
-                d="M13.723 2.286l-13.723 13.714 13.719 13.714 1.616-1.611-10.96-10.96h27.625v-2.286h-27.625l10.965-10.965-1.616-1.607z">
-              </path>
-            </svg>
-          </a>
-        <h3>Your Cart</h3>
+<section class="h-100 h-custom" style="background-color: #eee; width: 1250px;">
+    <div class="container py-5 h-100">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col">
+          <div class="card">
+            <div class="card-body p-4">
+  
+              <div class="row">
+  
+                <div class="col-lg-7">
+                  <h5 class="mb-3"><a href="{% url 'shop'%}" class="text-body"><i class="fas fa-long-arrow-alt-left me-2"></i>Continue shopping</a></h5>
+                  <hr>
+  
+                  <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div>
+                      <p class="mb-1">Shopping cart</p>
+                      <p class="mb-0">You have {{ cart_items.count }} items in your cart</p>
+                    </div>
+                  </div>
+  
+                  {% for c in cart_items %}
+                  <div class="card mb-3">
+                    <div class="card-body">
+                      <div class="d-flex justify-content-between">
+                        <div class="d-flex flex-row align-items-center">
+                          <div>
+                            <img src="{{ c.product.image.url }}" class="img-fluid rounded-3" alt="Shopping item" style="width: 65px;">
+                          </div>
+                          <div class="ms-3">
+                            <h5>{{ c.product.name }}</h5>
+                            <p class="small mb-0">256GB, Navy Blue</p>
+                          </div>
+                        </div>
+                        <div class="d-flex flex-row align-items-center">
+                          <div style="width: 50px;">
+                            <h5 class="fw-normal mb-0">{{ c.quantity }}</h5>
+                          </div>
+                          <div style="width: 80px;">
+                            <h5 class="mb-0">${{ c.get_total }}</h5>
+                          </div>
+                          <a href="{% url 'remove_from_cart' c.id %}" style="color: #cecece;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                              <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                              <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                            </svg>
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  {% endfor %}
+                </div>
+  
+                <div class="col-lg-5">
+                  <div class="card bg-primary text-white rounded-3">
+                    <div class="card-body">
+                      <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="mb-0">Card details</h5>
+                        <img src="{{ request.user.avatar.url }}" class="img-fluid rounded-3" style="width: 45px;" alt="Avatar">
+                      </div>
+  
+                      <form method="POST" action="{% url 'checkout' %}">
+                        {% csrf_token %}
+                        <div data-mdb-input-init class="form-outline form-white mb-4">
+                          <input type="text" id="Name" name="full_name" class="form-control form-control-lg" placeholder="Cardholder's Name" required />
+                          <label class="form-label" for="Name">Full Name</label>
+                        </div>
+  
+                        <div data-mdb-input-init class="form-outline form-white mb-4">
+                          <input type="text" id="phonenumber" name="phone_number" class="form-control form-control-lg" placeholder="1234 5678 9012 3457" required />
+                          <label class="form-label" for="phonenumber">Phone Number</label>
+                        </div>
+  
+                        <div data-mdb-input-init class="form-outline form-white mb-4">
+                          <input type="text" id="address" name="address" class="form-control form-control-lg" placeholder="Address" required />
+                          <label class="form-label" for="address">Address</label>
+                        </div>
+  
+                        <div class="d-flex justify-content-between">
+                          <p class="mb-2">Subtotal</p>
+                          <p class="mb-2">${{ total_price }}</p>
+                        </div>
+  
+                        <button type="submit" class="btn btn-info btn-block btn-lg">
+                          <div class="d-flex justify-content-between">
+                            <span>${{ total_price }}</span>
+                            <span>Checkout <i class="fas fa-long-arrow-alt-right ms-2"></i></span>
+                          </div>
+                        </button>
+                      </form>
+  
+                    </div>
+                  </div>
+                </div>
+  
+              </div>
+  
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-
-</div>
-<div class="cart">
-    <table>
-        <thead>
-            <tr>
-                <th>Image</th>
-                <th>Name</th>
-                <th>Price</th>
-                <th>Quantity</th>
-                <th>Toatal</th>
-                <th>Action</th>
-
-            </tr>
-        </thead>
-        <tbody>
-            {%for c in cart_items%}
-            <tr>
-                <td><img src="{{c.product.image.url}}" alt="Sản phẩm 1"></td>
-                <td>{{c.product.name}}</td>
-                <td>${{c.product.price}}</td>
-                <td>{{c.quantity}}</td>
-                <td>${{c.get_total}}</td>
-                <td>
-                    <a href="{%url 'remove_from_cart' c.id%}" style="color:  #b2bdbd;">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-                    <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
-                    <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
-                  </svg>
-                </a>
-            </td>
-            </tr>
-            {%endfor%}
-            <!-- Thêm các sản phẩm khác ở đây -->
-        </tbody>
-        <tfoot>
-            <td  rowspan="2">${{ total_price }}</td>
-        </tfoot>
-    </table>
-    <div class="checkout">
-       <a href="{%url 'shop'%}"> <button>Back to shop</button></a>
-       {%if cart_items%}
-       <a href="{%url 'checkout'%}"> <button>Check Out</button></a>
-       {%endif%}
-    </div>
-</div>
+  </section>

@@ -2,6 +2,10 @@ import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 
+from datetime import timedelta
+from django.utils import timezone
+# from .tasks import send_event_reminder, delete_event_and_notify_host
+
 class User(AbstractUser):
     class UserRole(models.TextChoices):
         ADMIN = 'AD', 'Admin'
@@ -12,7 +16,8 @@ class User(AbstractUser):
     email =models.EmailField(unique = True,null =True)
     bio = models.TextField(null = True)
 
-    avatar = models.ImageField(default='defaut1.png',null=True)
+    avatar = models.ImageField(default='default1.png',null=True)
+    coveravatar = models.ImageField(default='default1.png',null=True)
     role = models.CharField(
         max_length=2,
         choices=UserRole.choices,
@@ -86,7 +91,7 @@ class MessageReport(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        ordering = ['-created_at']
+        ordering = ['created_at']
 
     def __str__(self):
         return f' reports {self.reported_message}'
@@ -102,6 +107,7 @@ class Friendship(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='friendship_sent')
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='friendship_received')
     status = models.CharField(max_length=20, default='pending')  # 'pending', 'accepted', 'rejected'
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.sender.username} - {self.receiver.username} ({self.status})"
@@ -144,6 +150,10 @@ class Event(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
+
+
+
+
     def __str__(self):
         return self.title
     
@@ -166,6 +176,7 @@ class Invitation(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='invitations')
     invitee = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_invitations')
     accepted = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.invitee.username} invited to {self.event.title}"
@@ -194,6 +205,8 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     image = models.ImageField(upload_to='products/')
     status = models.CharField(max_length=200, default="waiting", null= True)
+
+
 
 
     def __str__(self):
@@ -237,3 +250,14 @@ class OrderDetail(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
     subtotal = models.DecimalField(max_digits=10, decimal_places=2)
+
+
+
+class Notification(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f'Notification for {self.user.username}'

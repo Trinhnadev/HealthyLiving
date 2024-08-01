@@ -1,136 +1,51 @@
+<div class="message-contacts">
+  <ul class="conversations">
 
-<style>
+    <a href="{%url 'chat'%}">
+      <li class="contact">
+        
+          <div class="wrap">
+              <span class="contact-status online"></span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chat-dots-fill" viewBox="0 0 16 16">
+                <path d="M16 8c0 3.866-3.582 7-8 7a9 9 0 0 1-2.347-.306c-.584.296-1.925.864-4.181 1.234-.2.032-.352-.176-.273-.362.354-.836.674-1.95.77-2.966C.744 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7M5 8a1 1 0 1 0-2 0 1 1 0 0 0 2 0m4 0a1 1 0 1 0-2 0 1 1 0 0 0 2 0m3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/>
+              </svg>
+              <span class="unread-messages">3</span>
+              <div class="meta">
+                  <p class="name">Chat</p>
+                  <p class="preview"></p>
+              </div>
+          </div>
+      </li>
+    </a>
 
-
-  .sidebar {
-    width: 320px;
-    background-color: #333;
-    color: white;
-    height: 100vh;
-    padding: 20px;
-    box-sizing: border-box;
-  }
-  
-  .search input[type="search"] {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 20px;
-    border: none;
-    border-radius: 20px;
-  }
-  
-  .menu {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  
-  .menu-item {
-  border-radius: 5px;
-  display: flex; /* Sử dụng Flexbox */
-  align-items: center; /* Căn chỉnh các items theo trục dọc giữa */
-  text-decoration: none; /* Loại bỏ gạch chân của liên kết */
-  color: inherit; /* Kế thừa màu chữ từ phần tử cha */
-  padding: 10px; /* Thêm một chút đệm */
-}
-.menu-item-t {
-  border-radius: 5px;
-  display: flex; /* Sử dụng Flexbox */
-  align-items: center; /* Căn chỉnh các items theo trục dọc giữa */
-  text-decoration: none; /* Loại bỏ gạch chân của liên kết */
-  color: inherit; /* Kế thừa màu chữ từ phần tử cha */
-  padding: 10px; /* Thêm một chút đệm */
-}
-
-
-.avatar {
-  margin-right: 10px; /* Thêm khoảng cách giữa avatar và tên */
-}
-
-.avatar img {
-  display: block;
-  width: 40px; /* Đặt chiều rộng cho avatar */
-  height: 40px; /* Đặt chiều cao cho avatar */
-  border-radius: 50%; /* Làm cho avatar trở nên tròn */
-}
-  
-  .menu-item.active,
-  .menu-item:hover {
-    background-color: #505050;
-  }
-  .menu-item-t.active,
-  .menu-item-t:hover {
-    background-color: #505050;
-  }
-  
-  .btn-new-event {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    margin-top: 20px;
-    background-color: #0b79f7;
-    color: white;
-    text-align: center;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: background 0.3s;
-  }
-  
-  .btn-new-event:hover {
-    background-color: #0966d2;
-  }
-  
-  .suggested-events {
-    margin-top: 20px;
-  }
-  .scrollable-container {
-    overflow-y: scroll;
-    height: 110vh;
-    scrollbar-width: none;
-    /* For Firefox */
-  }
-
-  .scrollable-container::-webkit-scrollbar {
-    display: none;
-    /* For Chrome, Safari, and Opera */
-  }
-  
-  /* Additional styles for suggested events will go here */
-  
-  /* Add styles for responsiveness as needed */
-  
-      </style>
-  <div class="topics">
-  <div class="sidebar">
-    <form action="{%url 'chat'%}" method="GET">
-    <div class="search">
-      <input type="search" name ="q" placeholder="Search...">
-    </div>
-  </form>
-  <div class="scrollable-container">
-    <div class="menu">
-      <a href="{%url 'chat'%}" class="menu-item-t {% if request.resolver_match.url_name == 'chat' %}active{% endif %}">Trang chủ</a>
       {% for room in chat_rooms %}
       {%for f in room.members.all%}
       {% if f != user %}
-      <a href="{%url 'open_chat' room.id%}" class="menu-item ">
-        <div class="avatar avatar--small">
-          <img src="{{f.avatar.url}}" alt=""/>
-        </div>
-        {{f.username}}</a>
-      
+      <a href="{%url 'open_chat' room.id%}">
+      <li class="contact messenger-user-active">
+        
+          <div class="wrap">
+              <span class="contact-status busy"></span>
+              <img src="{{f.avatar.url}}" alt="Conversation user" />
+              <div class="meta">
+                  <p class="name">{{f.name}}</p>
+                  <p class="preview"></p>
+              </div>
+          </div>
+       
+      </li>
+    </a>
       {%endif%}
       {%endfor%}
       {%endfor%}
 
-    </div>
-    </div>
-    <div class="suggested-events">
-      <!-- Suggested events here -->
-    </div>
-  </div>
-  </div>
+  </ul>
+</div>
+
+
+
+
+
   <script>
       // Khi một mục menu được nhấp, hãy thêm class 'active' vào nó và loại bỏ từ các mục khác
       document.addEventListener('DOMContentLoaded', function() {

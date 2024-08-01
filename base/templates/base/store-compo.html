@@ -1,149 +1,42 @@
-<style>
-  .store-container {
-    width: 1000px;
-    background-color: #333;
-    margin: 0 auto;
-    overflow: hidden;
-  }
 
-  .event-container {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(250px, 1fr));
-    gap: 20px;
-    padding: 20px;
-    background-color: #01A2A5;
-  }
+  <div class="col-md-10 second-section" id="page-content-wrapper">
+    
 
-  .event-card {
-    background-color: white;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    overflow: hidden;
-    transition: transform 0.2s ease-in-out;
-  }
+    <div class="jumbotron groups-banner">
+        <div class="container group-banner-content">
+            <h1 class="jumbotron-heading mt-auto banner-about"><img
+                    src="assets/images/icons/theme/shopping-bag-white.png" class="mr-3"
+                    alt="Welcome to groups"> Marketplace</h1>
+            <p>Get most popular products.</p>
+        </div>
+    </div>
 
-  .event-card:hover {
-    transform: translateY(-5px);
-  }
+    <!-- Groups -->
+    <div class="groups products py-3 px-4">
+      <div class="card-head d-flex justify-content-between">
+          <h5 class="mb-4">Popular Products</h5>
+          
 
-  .event-image {
-    width: 100%;
-    height: 150px;
-    object-fit: cover;
-  }
+      </div>
+      <div class="row">
+        {%for p in products%}
+          <div class="col-md-2 col-sm-6" >
+            
+              <div class="card group-card" style="background-color: #fff;">
+                  <img style = "height:160px" src="{{p.image.url}}"
+                      class="card-img-top group-card-image" alt="Group image">
+                  <div class="card-body">
+                      <h5 class="product-card-price">${{p.price}}</h5>
+                      <h5 class="card-title"><a href="#">{{p.name}}</a></h5>
+                      <p class="card-text">California, CA</p>
+                      <a href="{%url 'product_detail' store_id=p.store.id product_id=p.id%}"
+                          class="btn btn-quick-link join-group-btn border w-100">Details</a>
+                  </div>
+              </div>
+          </div>
+          {%endfor%}
 
-  .event-info {
-    padding: 15px;
-  }
-
-  .event-info h3 {
-    font-size: 1.1em;
-    margin-bottom: 10px;
-  }
-
-  .event-location,
-  .event-interest {
-    font-size: 0.9em;
-    color: #666;
-    margin-bottom: 5px;
-  }
-
-  .event-action {
-    background-color:#7FCBC1;
-    border: none;
-    padding: 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-  }
-
-  .event-action:hover {
-    background-color: #516ece;
-  }
-  .store-action{
-    display: flex;
-    /* Tạo một flex container */
-    gap: 10px;
-  }
-  btn-st{
-    padding: 7px 10px;
-    /* Đệm cho nút */
-    border: none;
-    /* Xóa border mặc định */
-    border-radius: 4px;
-    /* Bo tròn góc */
-    cursor: pointer;
-    /* Con trỏ chuột khi di chuyển vào nút */
-    font-size: 14px;
-    /* Cỡ chữ cho nút */
-    transition: background-color 0.3s;
-    /* Hiệu ứng mượt mà khi thay đổi màu nút */
-    text-decoration: none;
-    color: white;
-    padding: 5px 15px;
-    border: none;
-    border-radius: 5px;
-    /* Bo góc cho nút */
-    cursor: pointer;
-    font-size: 1.2rem;
-  }
-  .store-container {
-    overflow-y: scroll;
-    height: 635px;
-    scrollbar-width: none;
-    /* For Firefox */
-  }
-
-  .store-container::-webkit-scrollbar {
-    display: none;
-    /* For Chrome, Safari, and Opera */
-  }
-</style>
-<div class="room__top">
-  <div class="room__topLeft">
-    <a href="{% url 'home' %}">
-      <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-        <title>arrow-left</title>
-        <path
-          d="M13.723 2.286l-13.723 13.714 13.719 13.714 1.616-1.611-10.96-10.96h27.625v-2.286h-27.625l10.965-10.965-1.616-1.607z">
-        </path>
-      </svg>
-    </a>
-    <h3>Product</h3>
+      </div>
   </div>
 
 </div>
-<div class="store-container">
-  <div class="event-container">
-    <!-- Event Card -->
-    {%for p in products%}
-    <div class="event-card">
-      <img src="{{p.image.url}}" alt="Sakura Festival" class="event-image">
-      <div class="event-info">
-        <a href="{%url 'product_detail' store_id=p.store.id product_id=p.id%}">
-          <h3 style="color:#001e1d;">{{p.name}}</h3>
-        </a> <br>
-        <a href="{%url 'store_detail' p.store.id%}">
-          <h3 style="color:#001e1d;">By {{p.store.name}}</h3>
-        </a>
-
-        <p class="event-location" style="color:#001e1d;">${{p.price}}</p>
-        <div class="store-action">
-        <form action="{%url 'product_detail' store_id=p.store.id product_id=p.id%}">
-          <button class="btn-st event-action">Detail</button>
-          {%if p.quantity > 0%}
-        </form>
-        <form action="{% url 'add_to_cart' p.id %}">
-          {% csrf_token%}
-          <button class="btn-st event-action">Buy</button>
-        </form>
-        {%else%}
-        <button class="btn-st event-action" disabled>Soldout</button>
-
-        {%endif%}
-      </div>
-      </div>
-    </div>
-    {%endfor%}
-
-  </div>

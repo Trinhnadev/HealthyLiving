@@ -1,215 +1,131 @@
-<style>
-  .layout {
-    display: flex;
-    justify-content: center;
-  }
-
-  .container_s {
-    max-width: 1200px;
-    /* Chiều rộng tối đa của container */
-    margin: 0 auto;
-    /* Căn giữa container */
-  }
-
-  .layout__box_s {
-    border-radius: 10px;
-    /* Bo góc */
-    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
-    /* Bóng đổ cho box */
-  }
-
-  .topics__grid_s {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    /* Cách đều các item */
-    padding: 20px;
-    /* Đệm xung quanh grid */
-  }
-
-  .topics__item_s {
-    width: calc(33.333% - 30px);
-    /* Chiếm 1/3 chiều rộng của container trừ đi khoảng cách */
-    margin-bottom: 15px;
-    /* Khoảng cách giữa các hàng */
-    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
-    background-color: #004643;
-    /* Bóng đổ cho box */
-
-  }
-
-  .friend-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-  }
-
-  .friend-avatar img {
-    border-radius: 50%;
-    width: 120px;
-    /* Điều chỉnh kích thước avatar */
-    height: 120px;
-    margin-bottom: 10px;
-    /* Khoảng cách từ avatar đến thông tin */
-  }
-
-  .friend-info_s {
-    text-align: center;
-    padding: 10px 0;
-
-  }
-
-  .friend-name_s {
-    font-size: 1.9rem;
-    /* Kích thước chữ cho tên */
-    color: #333;
-    margin-bottom: 5px;
-    /* Khoảng cách từ tên đến nút */
-    color: #b2bdbd;
-  }
-
-  .friend-actions_s {
-    display: flex;
-    flex-direction: column;
-    /* Các nút xếp chồng lên nhau theo chiều dọc */
-    width: 100%;
-    
-    /* Các nút chiếm toàn bộ chiều rộng */
-
-  }
-  .friend-actions_s .btn{
-    background-color: #f9bc60;
-  }
-
-  .btn--primary {
-    
-    border: none;
-    border-radius: 4px;
-    padding: 8px 0;
-    /* Đệm cho nút */
-    margin-bottom: 8px;
-    /* Khoảng cách giữa các nút */
-    color: #001e1d;
-    text-transform: uppercase;
-    /* Viết hoa chữ trên nút */
-    font-weight: bold;
-    cursor: pointer;
-
-  }
-
-  .btn--primary:hover {
-    background-color: #0056b3;
-    /* Màu nền khi hover cho nút */
-
-  }
-
-  .topics__item_s:hover {
-    transform: translateY(-5px);
-  }
-
-  .header__search_s > label {
-  background-color: #004643;
-  padding: 1.3rem 1rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  border-radius: 4px;
- 
-}
-
-.header__search_s svg {
-  fill: #020826;
-  width: 2rem;
-  height: 2rem;
-  margin-left: 1rem;
-}
-
-.header__search_s input {
-  width: 30rem;
-  background: transparent;
-  border: none;
-  outline: none;
-  color: #020826;
-}
-</style>
-
 {% extends 'main.html' %}
 
 {% block content %}
-<main class="create-room layout">
-  <div class="container_s">
-    <div class="layout__box">
-      <div class="layout__boxHeader">
-        <div class="layout__boxTitle">
-          <a href="{% url 'home' %}">
-            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-              <title>arrow-left</title>
-              <path
-                d="M13.723 2.286l-13.723 13.714 13.719 13.714 1.616-1.611-10.96-10.96h27.625v-2.286h-27.625l10.965-10.965-1.616-1.607z">
-              </path>
-            </svg>
-          </a>
-          <h3>New Friends</h3>
-        </div>
+<style>
+  .scrollable-container {
+    overflow-y: scroll;
+    height: 82vh;
+    scrollbar-width: none;
+    /* For Firefox */
+  }
+
+  .scrollable-container::-webkit-scrollbar {
+    display: none;
+    /* For Chrome, Safari, and Opera */
+  }
+</style>
+
+
+<div class="row newsfeed-right-side-content mt-3">
+  {%include 'base/topics_compo.html'%}
+
+  
+  <div class="col-md-6 second-section" id="page-content-wrapper">
+    <div class="bg-white py-3 px-4 " style="width: 1100px; height: 87vh;">
+      <div class="card-head d-flex justify-content-between">
+        <h5 class="mb-4">Latest Active Friends</h5>
+        <form action="{%url 'all-friend'%}" method="GET">
+          
+              
+              <div class="input-group messenger-input w-100 align-items-center pr-2">
+                  <input type="text" class="form-control search-input" name="q" placeholder="Search New Friends"
+                      aria-label="Type a message..." aria-describedby="button-addon2">
+
+                          <div class="input-group-append"  >
+                              <button class="btn-btn search-button" type="submit"><i class="bx bx-search"></i></button>
+                          </div>
+
+                  </div>
+
+      </form>
       </div>
 
-      <div class="topics-page layout__body">
-        <form action="" method="GET" class="header__search_s">
-          <label>
-            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-              <title>search</title>
-              <path
-                d="M32 30.586l-10.845-10.845c1.771-2.092 2.845-4.791 2.845-7.741 0-6.617-5.383-12-12-12s-12 5.383-12 12c0 6.617 5.383 12 12 12 2.949 0 5.649-1.074 7.741-2.845l10.845 10.845 1.414-1.414zM12 22c-5.514 0-10-4.486-10-10s4.486-10 10-10c5.514 0 10 4.486 10 10s-4.486 10-10 10z">
-              </path>
-            </svg>
-            <input name="q" placeholder="Search..." />
-          </label>
-        </form>
 
-        <div class="topics__grid_s">
+
+      <div class="scrollable-container">
+        <div class="row">
+
           {% for u in users %}
-          <div class="topics__item_s" style="padding-top: 10px;">
-            <a href="{% url 'profile' u.id %}">
-              <div class="friend-item">
-                <div class="friend-avatar">
-                  <img src="{{ u.avatar.url }}" alt="{{ u.name }} Avatar" />
-                </div>
-                <div class="friend-info_s">
-                  <span class="friend-name_s">{{ u.name }}</span>
-                  <div class="friend-actions_s" style="gap: 1px;">
-                    {% if u in sent_friend_requests %}
-                    <!-- Người đang đăng nhập đã gửi yêu cầu kết bạn, hiển thị nút cancel -->
-                    <a href="{%url 'reject' u.id%}">
-                      <button class="btn btn--primary" style=" color: #b2bdbd; width: 10rem;">Cancel</button>
-                    </a>
-                    {% elif u in received_friend_requests %}
-                    <!-- Người đang đăng nhập nhận được yêu cầu kết bạn, hiển thị nút accept và reject -->
-                    <a href="{%url 'profile' u.id%}">
-                      <button class="btn btn--primary" style="color: #b2bdbd; width: 10rem; margin-bottom: 1px;">See
-                        Profile</button>
-                    </a>
-                    {% elif u in accepted_friends %}
-                    <!-- Người đang đăng nhập đã kết bạn, hiển thị nút reject và chat -->
-                    <a href="{%url 'profile' u.id%}">
-                      <button class="btn btn--primary" style=" color: #b2bdbd;">See Profile</button>
-                    </a>
-                    {% else %}
-                    <!-- Người đang đăng nhập chưa có mối quan hệ với người này, hiển thị nút addfriend -->
-                    <a href="{% url 'addFriend' u.id %}">
-                      <button class="btn btn--primary" style="color: #b2bdbd;">Add Friend</button>
-                    </a>
-                    {% endif %}
+          <div class="col-md-4 col-sm-6">
+            <div class="card group-card shadow-sm">
+              <img src="{{u.avatar.url}}" class="card-img-top group-card-image" alt="Group image" height="200vh" width="50px">
+              <div class="card-body">
+                <h5 class="card-title"><a href="{% url 'profile' u.id%}">{{ u.name }}</a></h5>
+                <p class="card-text">10k Members 20+ post a week</p>
+                {% if u in sent_friend_requests %}
+                <div class="btn-group w-100" role="group">
+                  <a href="{% url 'reject' u.id %}" class="btn btn-quick-link join-group-btn border w-100">Cancel</a>
+                  <div class="btn-group" role="group">
+                    <button id="friendsMore" type="button"
+                      class="btn btn-quick-link join-group-btn border btn-group-drop" data-toggle="dropdown"
+                      aria-haspopup="true" aria-expanded="false">
+                      <i class='bx bx-dots-horizontal-rounded'></i>
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="friendsMore">
+                      <a class="dropdown-item" href="#">Dropdown link</a>
+                      <a class="dropdown-item" href="#">Dropdown link</a>
+                    </div>
                   </div>
                 </div>
+                {% elif u in received_friend_requests %}
+                <div class="btn-group w-100" role="group">
+                  <a href="{% url 'profile' u.id %}" class="btn btn-quick-link join-group-btn border w-100">See
+                    Profile</a>
+                  <div class="btn-group" role="group">
+                    <button id="friendsMore" type="button"
+                      class="btn btn-quick-link join-group-btn border btn-group-drop" data-toggle="dropdown"
+                      aria-haspopup="true" aria-expanded="false">
+                      <i class='bx bx-dots-horizontal-rounded'></i>
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="friendsMore">
+                      <a class="dropdown-item" href="#">Dropdown link</a>
+                      <a class="dropdown-item" href="#">Dropdown link</a>
+                    </div>
+                  </div>
+                </div>
+                {% elif u in accepted_friends %}
+                <div class="btn-group w-100" role="group">
+                  <a href="{% url 'profile' u.id %}" class="btn btn-quick-link join-group-btn border w-100">See
+                    Profile</a>
+                  <div class="btn-group" role="group">
+                    <button id="friendsMore" type="button"
+                      class="btn btn-quick-link join-group-btn border btn-group-drop" data-toggle="dropdown"
+                      aria-haspopup="true" aria-expanded="false">
+                      <i class='bx bx-dots-horizontal-rounded'></i>
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="friendsMore">
+                      <a class="dropdown-item" href="#">Dropdown link</a>
+                      <a class="dropdown-item" href="#">Dropdown link</a>
+                    </div>
+                  </div>
+                </div>
+                {% else %}
+                <div class="btn-group w-100" role="group">
+                  <a href="{% url 'addFriend' u.id %}" class="btn btn-quick-link join-group-btn border w-100">Add
+                    Friend</a>
+                  <div class="btn-group" role="group">
+                    <button id="friendsMore" type="button"
+                      class="btn btn-quick-link join-group-btn border btn-group-drop" data-toggle="dropdown"
+                      aria-haspopup="true" aria-expanded="false">
+                      <i class='bx bx-dots-horizontal-rounded'></i>
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="friendsMore">
+                      <a class="dropdown-item" href="#">Dropdown link</a>
+                      <a class="dropdown-item" href="#">Dropdown link</a>
+                    </div>
+                  </div>
+                </div>
+                {% endif %}
               </div>
-            </a>
+            </div>
           </div>
           {% endfor %}
         </div>
+
       </div>
     </div>
   </div>
-</main>
+</div>
+
 
 {% endblock content %}

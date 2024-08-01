@@ -183,6 +183,82 @@
   overflow-y: auto;
   padding-bottom: 0;
 }
+
+.form {
+      max-width: 1000px;
+      background-color:  #8b9dc3;
+      border-radius: 25px;
+      border: 1px solid #dddddd;
+      padding: 10px 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .form input[type="text"] {
+      margin-top: 2px;
+      flex-grow: 1;
+      border: none;
+      outline: none;
+      padding: 10px;
+      border-radius: 10px;
+      background-color:  #696d97;
+    }
+
+    .form button {
+      background-color: transparent;
+      border: none;
+      cursor: pointer;
+      outline: none;
+    }
+
+    .form button:focus,
+    .form input[type="text"]:focus {
+      outline: none;
+    }
+
+    /* Đặt biểu tượng gửi hoặc một nút gửi nếu bạn muốn */
+    .form button::before {
+      content: '\21A9';
+      /* Biểu tượng "enter" trên bàn phím */
+      font-size: 1.5em;
+      color: #555555;
+    }
+
+    .image-upload-label {
+      cursor: pointer;
+      /* Thêm các thuộc tính CSS khác để định dạng icon tải lên của bạn */
+    }
+
+    .image-upload-label img {
+      width: 45px;
+      /* hoặc kích thước bạn muốn */
+      height: auto;
+    }
+
+    #image-upload {
+      display: none;
+      /* Ẩn input tệp tin */
+    }
+
+
+    .cmessage {
+      color: #ffffff;
+      /* Màu chữ cho tin nhắn của người nhận */
+      border-radius: 8px;
+      /* Bo góc cho khung tin nhắn */
+      padding: 8px;
+      text-align: left;
+      /* Đặt tin nhắn về phía bên phải */
+      max-width: 300px;
+      /* Giới hạn độ rộng lớn nhất của tin nhắn */
+      display: inline-block;
+      /* Đặt display là inline-block để cho phép co dãn */
+      word-wrap: break-word;
+      /* Khoảng cách từ chữ đến viền khung */
+    }
+    /* Định dạng cho danh sách gợi ý */
 </style>
 <div class="event-card">
   <div class="event-img">

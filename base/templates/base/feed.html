@@ -1,119 +1,116 @@
-<style>
-  .scrollable-container {
-    overflow-y: scroll;
-    height: 110vh;
-    scrollbar-width: none;
-    /* For Firefox */
-  }
+{%load static%}
 
-  .scrollable-container::-webkit-scrollbar {
-    display: none;
-    /* For Chrome, Safari, and Opera */
-  }
-</style>
+{%for room in rooms%}
+<div class="posts-section mb-5" style="margin-left: 15px;">
+  <div class="post border-bottom p-3 bg-white w-shadow">
 
 
-<div class="scrollable-container">
+    <div class="media text-muted pt-3">
+      <img src="{{ room.host.avatar.url }}" alt="Online user" class="mr-3 post-user-image" width="55px" height="55px">
+      <div class="media-body pb-3 mb-0 small lh-125">
+        <div class="d-flex justify-content-between align-items-center w-100">
+          <a href="{% url 'profile' room.host.id%}" class="text-gray-dark post-user-name">{{ room.host.name }}</a>
+          {% if room.host.id == request.user.id %}
+          <div class="dropdown">
+            <a href="#" class="post-more-settings" role="button" data-toggle="dropdown" id="postOptions"
+              aria-haspopup="true" aria-expanded="false">
+              <i class='bx bx-dots-horizontal-rounded'></i>
+            </a>
+            
+            <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-left post-dropdown-menu">
 
-  {%for room in rooms%}
-  <div class="roomListRoom">
-    {%if room.is_private%}
-    <div class="roomListRoom__header">
-      <a href="{% url 'profile' room.host.id%}" class="roomListRoom__author">
-        <div class="avatar avatar--small">
-          <img src="{{ room.host.avatar.url }}" />
+              <a href="{% url 'update-room' room.id %}" class="dropdown-item" aria-describedby="reportPost">
+                <div class="row">
+                  <div class="col-md-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                      <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                      <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z"/>
+                    </svg>
+                    <span class="fs-9">Update</span>
+                  </div>
+                  <div class="col-md-10">
+                    
+                    <small id="reportPost" class="form-text text-muted">{{room.name}}</small>
+                  </div>
+                </div>
+              </a>
+              <a href="{% url 'delete-room' room.id%}" class="dropdown-item" aria-describedby="reportPost">
+                <div class="row">
+                  <div class="col-md-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                      <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                      <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                    </svg>
+                    <span class="fs-9">Delete</span>
+                  </div>
+                  <div class="col-md-10">
+                    
+                    <small id="reportPost" class="form-text text-muted">{{room.name}}</small>
+                  </div>
+                </div>
+              </a>
+            </div>
+       
+          </div>
+          {%endif%}
         </div>
-        <span style="color: #001e1d;">@{{room.host.username}}</span>
-      </a>
-      <div class="roomListRoom__actions">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="001e1d" 
-          class="bi bi-person-fill-lock" viewBox="0 0 16 16" >
-          <path 
-            d="M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0m-9 8c0 1 1 1 1 1h5v-1a2 2 0 0 1 .01-.2 4.49 4.49 0 0 1 1.534-3.693Q8.844 9.002 8 9c-5 0-6 3-6 4m7 0a1 1 0 0 1 1-1v-1a2 2 0 1 1 4 0v1a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1zm3-3a1 1 0 0 0-1 1v1h2v-1a1 1 0 0 0-1-1" />
-        </svg>
-        <span style="color: #001e1d;">{{room.created|timesince}} ago</span>
+        <span class="d-block">{{ room.created |timesince }}
+          {%if room.is_private%}
+
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="001e1d" class="bi bi-person-fill-lock"
+            viewBox="0 0 16 16">
+            <path
+              d="M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0m-9 8c0 1 1 1 1 1h5v-1a2 2 0 0 1 .01-.2 4.49 4.49 0 0 1 1.534-3.693Q8.844 9.002 8 9c-5 0-6 3-6 4m7 0a1 1 0 0 1 1-1v-1a2 2 0 1 1 4 0v1a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1zm3-3a1 1 0 0 0-1 1v1h2v-1a1 1 0 0 0-1-1" />
+          </svg>
+
+          {%else%}
+
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-globe-asia-australia" viewBox="0 0 16 16">
+            <path d="m10.495 6.92 1.278-.619a.483.483 0 0 0 .126-.782c-.252-.244-.682-.139-.932.107-.23.226-.513.373-.816.53l-.102.054c-.338.178-.264.626.1.736a.48.48 0 0 0 .346-.027ZM7.741 9.808V9.78a.413.413 0 1 1 .783.183l-.22.443a.6.6 0 0 1-.12.167l-.193.185a.36.36 0 1 1-.5-.516l.112-.108a.45.45 0 0 0 .138-.326M5.672 12.5l.482.233A.386.386 0 1 0 6.32 12h-.416a.7.7 0 0 1-.419-.139l-.277-.206a.302.302 0 1 0-.298.52z"/>
+            <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0M1.612 10.867l.756-1.288a1 1 0 0 1 1.545-.225l1.074 1.005a.986.986 0 0 0 1.36-.011l.038-.037a.88.88 0 0 0 .26-.755c-.075-.548.37-1.033.92-1.099.728-.086 1.587-.324 1.728-.957.086-.386-.114-.83-.361-1.2-.207-.312 0-.8.374-.8.123 0 .24-.055.318-.15l.393-.474c.196-.237.491-.368.797-.403.554-.064 1.407-.277 1.583-.973.098-.391-.192-.634-.484-.88-.254-.212-.51-.426-.515-.741a7 7 0 0 1 3.425 7.692 1 1 0 0 0-.087-.063l-.316-.204a1 1 0 0 0-.977-.06l-.169.082a1 1 0 0 1-.741.051l-1.021-.329A1 1 0 0 0 11.205 9h-.165a1 1 0 0 0-.945.674l-.172.499a1 1 0 0 1-.404.514l-.802.518a1 1 0 0 0-.458.84v.455a1 1 0 0 0 1 1h.257a1 1 0 0 1 .542.16l.762.49a1 1 0 0 0 .283.126 7 7 0 0 1-9.49-3.409Z"/>
+          </svg>
+
+          {%endif%}</span>
       </div>
     </div>
-
-    <div class="roomListRoom__content">
-      <a href="{%url 'room' room.id%}">{{room.name}}</a>
+    <div class="mt-3">
+      <h4>{{ room.name }}</h4>
+    </div>
+    <div class="mt-3">
+      <p>{{ room.description }}</p>
     </div>
 
-    <div class="roomListRoom__meta">
-      <a href="{%url 'room' room.id%}" class="roomListRoom__joined">
-        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-          <title>user-group</title>
-          <path
-            d="M30.539 20.766c-2.69-1.547-5.75-2.427-8.92-2.662 0.649 0.291 1.303 0.575 1.918 0.928 0.715 0.412 1.288 1.005 1.71 1.694 1.507 0.419 2.956 1.003 4.298 1.774 0.281 0.162 0.456 0.487 0.456 0.85v4.65h-4v2h5c0.553 0 1-0.447 1-1v-5.65c0-1.077-0.56-2.067-1.461-2.584z">
-          </path>
-          <path
-            d="M22.539 20.766c-6.295-3.619-14.783-3.619-21.078 0-0.901 0.519-1.461 1.508-1.461 2.584v5.65c0 0.553 0.447 1 1 1h22c0.553 0 1-0.447 1-1v-5.651c0-1.075-0.56-2.064-1.461-2.583zM22 28h-20v-4.65c0-0.362 0.175-0.688 0.457-0.85 5.691-3.271 13.394-3.271 19.086 0 0.282 0.162 0.457 0.487 0.457 0.849v4.651z">
-          </path>
-          <path
-            d="M19.502 4.047c0.166-0.017 0.33-0.047 0.498-0.047 2.757 0 5 2.243 5 5s-2.243 5-5 5c-0.168 0-0.332-0.030-0.498-0.047-0.424 0.641-0.944 1.204-1.513 1.716 0.651 0.201 1.323 0.331 2.011 0.331 3.859 0 7-3.141 7-7s-3.141-7-7-7c-0.688 0-1.36 0.131-2.011 0.331 0.57 0.512 1.089 1.075 1.513 1.716z">
-          </path>
-          <path
-            d="M12 16c3.859 0 7-3.141 7-7s-3.141-7-7-7c-3.859 0-7 3.141-7 7s3.141 7 7 7zM12 4c2.757 0 5 2.243 5 5s-2.243 5-5 5-5-2.243-5-5c0-2.757 2.243-5 5-5z">
-          </path>
-        </svg>
-        {{room.participants.all.count}} Joined
-      </a>
+    <div class="mb-3">
+      <!-- Reactions -->
+      <div class="argon-reaction">
+        <span class="like-btn">
+          <a href="{%url 'room' room.id%}" class="post-card-buttons" id="reactions"><svg version="1.1"
+              xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 32 32">
+              <title>user-group</title>
+              <path
+                d="M30.539 20.766c-2.69-1.547-5.75-2.427-8.92-2.662 0.649 0.291 1.303 0.575 1.918 0.928 0.715 0.412 1.288 1.005 1.71 1.694 1.507 0.419 2.956 1.003 4.298 1.774 0.281 0.162 0.456 0.487 0.456 0.85v4.65h-4v2h5c0.553 0 1-0.447 1-1v-5.65c0-1.077-0.56-2.067-1.461-2.584z">
+              </path>
+              <path
+                d="M22.539 20.766c-6.295-3.619-14.783-3.619-21.078 0-0.901 0.519-1.461 1.508-1.461 2.584v5.65c0 0.553 0.447 1 1 1h22c0.553 0 1-0.447 1-1v-5.651c0-1.075-0.56-2.064-1.461-2.583zM22 28h-20v-4.65c0-0.362 0.175-0.688 0.457-0.85 5.691-3.271 13.394-3.271 19.086 0 0.282 0.162 0.457 0.487 0.457 0.849v4.651z">
+              </path>
+              <path
+                d="M19.502 4.047c0.166-0.017 0.33-0.047 0.498-0.047 2.757 0 5 2.243 5 5s-2.243 5-5 5c-0.168 0-0.332-0.030-0.498-0.047-0.424 0.641-0.944 1.204-1.513 1.716 0.651 0.201 1.323 0.331 2.011 0.331 3.859 0 7-3.141 7-7s-3.141-7-7-7c-0.688 0-1.36 0.131-2.011 0.331 0.57 0.512 1.089 1.075 1.513 1.716z">
+              </path>
+              <path
+                d="M12 16c3.859 0 7-3.141 7-7s-3.141-7-7-7c-3.859 0-7 3.141-7 7s3.141 7 7 7zM12 4c2.757 0 5 2.243 5 5s-2.243 5-5 5-5-2.243-5-5c0-2.757 2.243-5 5-5z">
+              </path>
+            </svg>
+            {{room.participants.all.count}} Joined</a>
 
-      <p class="roomListRoom__topic">{{room.topic}}</p>
-
-    </div>
-    {%else%}
-    <div class="roomListRoom__header">
-      <a href="{% url 'profile' room.host.id%}" class="roomListRoom__author">
-        <div class="avatar avatar--small">
-          <img src="{{ room.host.avatar.url }}" />
-        </div>
-        <span>@{{room.host.username}}</span>
+        </span>
+      </div>
+      <a href="" class="post-card-buttons" id="show-comments"> {{ room.message_count }} <i
+          class='bx bx-message-rounded mr-2'></i>
       </a>
-      <div class="roomListRoom__actions">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-          class="bi bi-globe-asia-australia" viewBox="0 0 16 16">
-          <path
-            d="m10.495 6.92 1.278-.619a.483.483 0 0 0 .126-.782c-.252-.244-.682-.139-.932.107-.23.226-.513.373-.816.53l-.102.054c-.338.178-.264.626.1.736a.48.48 0 0 0 .346-.027ZM7.741 9.808V9.78a.413.413 0 1 1 .783.183l-.22.443a.6.6 0 0 1-.12.167l-.193.185a.36.36 0 1 1-.5-.516l.112-.108a.45.45 0 0 0 .138-.326M5.672 12.5l.482.233A.386.386 0 1 0 6.32 12h-.416a.7.7 0 0 1-.419-.139l-.277-.206a.302.302 0 1 0-.298.52z" />
-          <path
-            d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0M1.612 10.867l.756-1.288a1 1 0 0 1 1.545-.225l1.074 1.005a.986.986 0 0 0 1.36-.011l.038-.037a.88.88 0 0 0 .26-.755c-.075-.548.37-1.033.92-1.099.728-.086 1.587-.324 1.728-.957.086-.386-.114-.83-.361-1.2-.207-.312 0-.8.374-.8.123 0 .24-.055.318-.15l.393-.474c.196-.237.491-.368.797-.403.554-.064 1.407-.277 1.583-.973.098-.391-.192-.634-.484-.88-.254-.212-.51-.426-.515-.741a7 7 0 0 1 3.425 7.692 1 1 0 0 0-.087-.063l-.316-.204a1 1 0 0 0-.977-.06l-.169.082a1 1 0 0 1-.741.051l-1.021-.329A1 1 0 0 0 11.205 9h-.165a1 1 0 0 0-.945.674l-.172.499a1 1 0 0 1-.404.514l-.802.518a1 1 0 0 0-.458.84v.455a1 1 0 0 0 1 1h.257a1 1 0 0 1 .542.16l.762.49a1 1 0 0 0 .283.126 7 7 0 0 1-9.49-3.409Z" />
-        </svg>
-        <span>{{room.created|timesince}} ago</span>
+      <div class="dropdown dropup share-dropup">
+
       </div>
     </div>
-
-    <div class="roomListRoom__content">
-      <a href="{%url 'room' room.id%}">{{room.name}}</a>
-      <!-- <img src="{{room.host.avatar.url}}" alt="" width="420" height="400"> -->
-      <p>
-        {{room.description}}
-      </p>
-    </div>
-
-    <div class="roomListRoom__meta">
-      <a href="{%url 'room' room.id%}" class="roomListRoom__joined">
-        <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-          <title>user-group</title>
-          <path
-            d="M30.539 20.766c-2.69-1.547-5.75-2.427-8.92-2.662 0.649 0.291 1.303 0.575 1.918 0.928 0.715 0.412 1.288 1.005 1.71 1.694 1.507 0.419 2.956 1.003 4.298 1.774 0.281 0.162 0.456 0.487 0.456 0.85v4.65h-4v2h5c0.553 0 1-0.447 1-1v-5.65c0-1.077-0.56-2.067-1.461-2.584z">
-          </path>
-          <path
-            d="M22.539 20.766c-6.295-3.619-14.783-3.619-21.078 0-0.901 0.519-1.461 1.508-1.461 2.584v5.65c0 0.553 0.447 1 1 1h22c0.553 0 1-0.447 1-1v-5.651c0-1.075-0.56-2.064-1.461-2.583zM22 28h-20v-4.65c0-0.362 0.175-0.688 0.457-0.85 5.691-3.271 13.394-3.271 19.086 0 0.282 0.162 0.457 0.487 0.457 0.849v4.651z">
-          </path>
-          <path
-            d="M19.502 4.047c0.166-0.017 0.33-0.047 0.498-0.047 2.757 0 5 2.243 5 5s-2.243 5-5 5c-0.168 0-0.332-0.030-0.498-0.047-0.424 0.641-0.944 1.204-1.513 1.716 0.651 0.201 1.323 0.331 2.011 0.331 3.859 0 7-3.141 7-7s-3.141-7-7-7c-0.688 0-1.36 0.131-2.011 0.331 0.57 0.512 1.089 1.075 1.513 1.716z">
-          </path>
-          <path
-            d="M12 16c3.859 0 7-3.141 7-7s-3.141-7-7-7c-3.859 0-7 3.141-7 7s3.141 7 7 7zM12 4c2.757 0 5 2.243 5 5s-2.243 5-5 5-5-2.243-5-5c0-2.757 2.243-5 5-5z">
-          </path>
-        </svg>
-        {{room.participants.all.count}} Joined
-      </a>
-
-      <p class="roomListRoom__topic">{{room.topic}}</p>
-
-    </div>
-    {%endif%}
   </div>
-  {%endfor%}
 </div>
+{%endfor%}

@@ -13,12 +13,15 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os
 from pathlib import Path
 
+# from celery import Celery
+
 LANGUAGE_CODE = 'vi'
 
 USE_I18N = True
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+TIME_ZONE = 'Asia/Ho_Chi_Minh'
+USE_TZ = True
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -99,6 +102,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                
             ],
         },
     },
@@ -180,10 +184,7 @@ EMAIL_HOST_PASSWORD = 'azmsffbcrfwvwysl'  # Thay thế bằng mật khẩu của
 # settings.py
 
 #Celery
+# APIKEY
+
 # settings.py
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
-CELERY_ACCEPT_CONTENT = ['json']
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_TIMEZONE = 'UTC'
+OPENWEATHERMAP_API_KEY = '37fe5cc824c2bc1fce3c2dbdee155b5d'

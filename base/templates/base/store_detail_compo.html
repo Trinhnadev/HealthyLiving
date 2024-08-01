@@ -1,376 +1,52 @@
-<style>
-  .event-card {
-    width: 1000px;
-    /* or 100% for full width */
-    background-color: #ffffff;
-    /* border-radius: 10px; */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    margin: 0;
-    overflow: hidden;
-  }
-
-  .event-header {
-    background-color:#abd1c6;
-    color: #001e1d;
-    position: relative;
-    padding: 20px;
-    display: flex;
-    align-items: center;
-    max-height: 80px;
-  }
-
-  .date-badge {
-    background-color: #4e9af1;
-    padding: 20px;
-    border-radius: 5px;
-    font-size: 32px;
-    font-weight: bold;
-  }
-
-  .event-title h1 {
-    font-size: 24px;
-    margin: 0 0 10px 20px;
-  }
-
-  .event-title h2 {
-    font-size: 18px;
-    margin: 0 0 5px 20px;
-  }
-
-  .event-title p {
-    margin: 0 0 0 20px;
-  }
-
-  .date-info {
-    margin-left: auto;
-    text-align: right;
-  }
-
-  .event-body {
-    padding: 20px;
-    /* Style for your event body */
-    background-color: #004643;
-  }
-
-  .event-footer {
-    padding: 20px;
-    background-color: #eeeeee;
-    /* Style for your event footer */
-
-
-
-  }
-
-  .event-details-container {
-    background-color: #1e1e1e;
-    border-radius: 8px;
-    padding: 20px;
-    color: #f0f0f0;
-    max-width: 790px;
-    margin: 0 auto;
-  }
-
-  .event-details-title {
-    font-size: 24px;
-    margin-bottom: 16px;
-  }
-
-  .event-details-list {
-    list-style: none;
-    padding: 0;
-    margin-bottom: 20px;
-  }
-
-  .event-details-list li {
-    margin-bottom: 10px;
-    font-size: 14px;
-  }
-
-  .icon {
-    margin-right: 8px;
-  }
-
-  .event-summary {
-    text-align: center;
-    margin-bottom: 16px;
-  }
-
-  .event-summary-flower {
-    font-size: 20px;
-  }
-
-  .event-summary-text {
-    font-weight: bold;
-    margin: 0 8px;
-  }
-
-  .event-description {
-    font-size: 14px;
-    line-height: 1.6;
-    margin-bottom: 20px;
-  }
-
-  .event-more {
-    color: #4e9af1;
-    text-decoration: none;
-  }
-
-  .event-more:hover {
-    text-decoration: underline;
-  }
-
-  .event-location-tag {
-    display: inline-block;
-    background-color: #4e9af1;
-    color: #fff;
-    padding: 4px 8px;
-    border-radius: 4px;
-    font-size: 12px;
-  }
-
-  .event-action {
-    background-color: #ff4081;
-    color: white;
-    border: none;
-    padding: 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-  }
-
-  /* Add responsive design and other styles as needed */
-  .dropdownh {
-  position: relative;
-  display: inline-block;
-}
-
-.dropdown-toggleh {
-  cursor: pointer;
-  font-size: 24px;
-  /* Adjust size as needed */
-  user-select: none;
-}
-
-.dropdown-menuh {
-  display: none;
-  position: absolute;
-  min-width: 160px;
-  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-  z-index: 1;
-  right: 0; /* Menu sẽ nằm bên phải của toggle */
-  bottom: 100%; /* Hiển thị menu ở phía trên */
-}
-
-.dropdown-menuh a {
-  color: black;
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
-}
-
-.dropdown-menuh a:hover {
-  background-color: #f1f1f1;
-}
-
-
-
-  .event-container {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(250px, 1fr));
-    gap: 20px;
-    padding: 20px;
-    background-color: #004643;
-  }
-
-  .event-card-product {
-    background-color: white;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    overflow: hidden;
-    transition: transform 0.2s ease-in-out;
-  }
-
-  .event-card-product:hover {
-    transform: translateY(-5px);
-  }
-
-  .event-image {
-    width: 100%;
-    height: 150px;
-    object-fit: cover;
-  }
-
-  .event-info {
-    padding: 15px;
-  }
-
-  .event-info h3 {
-    font-size: 1.1em;
-    margin-bottom: 10px;
-  }
-
-  .event-location,
-  .event-interest {
-    font-size: 0.9em;
-    color: #666;
-    margin-bottom: 5px;
-  }
-
-  .event-action {
-    background-color:#f9bc60;
-    color: white;
-    border: none;
-    padding: 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-  }
-
-  .event-action:hover {
-    background-color: #e5376a;
-  }
-
-  .store-container {
-    overflow-y: scroll;
-    height: 300px;
-    scrollbar-width: none;
-    /* For Firefox */
-  }
-
-  .store-container::-webkit-scrollbar {
-    display: none;
-    /* For Chrome, Safari, and Opera */
-  }
-</style>
-<div class="event-card">
-  <div class="event-img">
-    <img src="{{store.img.url}}" alt="" style="height: 250px;">
-  </div>
-  <div class="event-header">
-    <div class="event-title">
-      <h1>{{store.name}}</h1>
-    </div>
-    <div class="date-info">
-      {%if request.user == store.owner%}
-      <div class="dropdown-toggleh" id="dropdownMenuButtonh">
-        <span>⋮</span>
-      </div>
-      <div class="dropdown-menu" aria-labelledby="dropdownMenuButtonh">
-        <a class="dropdown-itemh" href="{%url 'update_store' store.id%}">Edit <svg enable-background="new 0 0 24 24"
-            height="16" viewBox="0 -1 24 24" width="16" xmlns="http://www.w3.org/2000/svg">
-            <title>edit</title>
-            <g>
-              <path d="m23.5 22h-15c-.276 0-.5-.224-.5-.5s.224-.5.5-.5h15c.276 0 .5.224.5.5s-.224.5-.5.5z" />
-            </g>
-            <g>
-              <g>
-                <path
-                  d="m2.5 22c-.131 0-.259-.052-.354-.146-.123-.123-.173-.3-.133-.468l1.09-4.625c.021-.09.067-.173.133-.239l14.143-14.143c.565-.566 1.554-.566 2.121 0l2.121 2.121c.283.283.439.66.439 1.061s-.156.778-.439 1.061l-14.142 14.141c-.065.066-.148.112-.239.133l-4.625 1.09c-.038.01-.077.014-.115.014zm1.544-4.873-.872 3.7 3.7-.872 14.042-14.041c.095-.095.146-.22.146-.354 0-.133-.052-.259-.146-.354l-2.121-2.121c-.19-.189-.518-.189-.707 0zm3.081 3.283h.01z" />
-              </g>
-              <g>
-                <path
-                  d="m17.889 10.146c-.128 0-.256-.049-.354-.146l-3.535-3.536c-.195-.195-.195-.512 0-.707s.512-.195.707 0l3.536 3.536c.195.195.195.512 0 .707-.098.098-.226.146-.354.146z" />
-              </g>
-            </g>
-          </svg>
-        </a>
-        <a class="dropdown-itemh" href="{%url 'delete_store' store.id%}">Delete <svg
-            xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3"
-            viewBox="0 0 16 16">
-            <path
-              d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
-          </svg>
-        </a>
-      </div>
-</div>
-      {%else%}
-      <form action="{%url 'toggle_like' store.id%}">
-        <button class="event-action">
-          {% if request.user in store.liker.all %}
-          Dislike
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart-fill"
-            viewBox="0 0 16 16">
-            <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314" />
-          </svg>
-          {%else%}
-
-          Like
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart"
-            viewBox="0 -2 16 16">
-            <path
-              d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15" />
-          </svg>
-          {%endif%}
-        </button>
-      </form>
-
-
-      {%endif%}
-    </div>
-  </div>
-
-
-
-  <div class="event-body">
-    <div class="store-container">
-      <div class="event-container">
-        <!-- Event Card -->
-        {%for p in products%}
-        <form action="{% url 'add_to_cart' p.id %}">
-        <div class="event-card-product">
-          <img src="{{p.image.url}}" alt="Sakura Festival" class="event-image">
-          <div class="event-info">
-            <h3>{{p.name}}</h3>
-            <p class="event-location">{{p.price}}</p>
-            <button class="event-action"> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart-dash" viewBox="0 0 16 16">
-              <path d="M6.5 7a.5.5 0 0 0 0 1h4a.5.5 0 0 0 0-1z"/>
-              <path d="M.5 1a.5.5 0 0 0 0 1h1.11l.401 1.607 1.498 7.985A.5.5 0 0 0 4 12h1a2 2 0 1 0 0 4 2 2 0 0 0 0-4h7a2 2 0 1 0 0 4 2 2 0 0 0 0-4h1a.5.5 0 0 0 .491-.408l1.5-8A.5.5 0 0 0 14.5 3H2.89l-.405-1.621A.5.5 0 0 0 2 1zm3.915 10L3.102 4h10.796l-1.313 7zM6 14a1 1 0 1 1-2 0 1 1 0 0 1 2 0m7 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
-            </svg>
-            Buy</button>
-          </div>
+<div class="col-md-10 second-section" id="page-content-wrapper">
+    {%if store.status == 'approved'%}
+    <div class="mb-3">
+        <div class="btn-group d-flex top-links-fg">
+            <a href="{% url 'product_create' store.id%}" class="btn btn-quick-links">
+                <img src="../static/assets/images/icons/theme/create.png" class="mr-2" alt="quick links icon">
+                <span class="fs-8">Create</span>
+            </a>
         </div>
-      </form>
-        {%endfor%}
-      </div>
     </div>
-  </div>
-  <script>
-  document.addEventListener('DOMContentLoaded', function () {
-        var menuItems = document.querySelectorAll('.menu-itemh');
+    {%endif%}
 
-        menuItems.forEach(function (item) {
-            item.addEventListener('click', function () {
-                // Xóa class 'active' khỏi tất cả các mục
-                menuItems.forEach(function (item) {
-                    item.classList.remove('active');
-                });
+    <div class="jumbotron groups-banner">
+        <div class="container group-banner-content">
+            <h1 class="jumbotron-heading mt-auto banner-about"><img
+                    src="assets/images/icons/theme/shopping-bag-white.png" class="mr-3" alt="Welcome to groups">
+                Marketplace</h1>
+            <p>Get most popular products.</p>
+        </div>
+    </div>
 
-                // Thêm class 'active' vào mục được nhấp
-                this.classList.add('active');
-            });
-        });
-    });
+    <!-- Groups -->
+    <div class="groups products py-3 px-4">
+        <div class="card-head d-flex justify-content-between">
+            <h5 class="mb-4">Popular Products</h5>
+            <div class="mb-3">
+                <a href="{%url 'update_store' store.id%}" class="btn btn-link">Update</a>
+                <a href="{%url 'delete_store' store.id%}" class="btn btn-link">Delete</a>
+            </div>
 
+        </div>
+        <div class="row">
+            {%for p in products%}
+            <div class="col-md-2 col-sm-6">
 
-    document.addEventListener('DOMContentLoaded', function () {
-    var dropdown = document.getElementById('dropdownMenuButtonh');
-    dropdown.onclick = function (event) {
-      event.stopPropagation();
-      var dropdownMenu = dropdown.nextElementSibling;
-      dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
-    };
+                <div class="card group-card">
+                    <img style="height:160px" src="{{p.image.url}}" class="card-img-top group-card-image"
+                        alt="Group image">
+                    <div class="card-body">
+                        <h5 class="product-card-price">${{p.price}}</h5>
+                        <h5 class="card-title"><a href="#">{{p.name}}</a></h5>
+                        <p class="card-text">California, CA</p>
+                        <a href="#" class="btn btn-quick-link join-group-btn border w-100">Details</a>
+                    </div>
+                </div>
+            </div>
+            {%endfor%}
 
-    // Close the dropdown if clicked outside
-    window.onclick = function (event) {
-      if (!event.target.matches('.dropdown-toggleh')) {
-        var dropdownMenus = document.getElementsByClassName('dropdown-menuh');
-        for (var i = 0; i < dropdownMenus.length; i++) {
-          var openDropdown = dropdownMenus[i];
-          if (openDropdown.style.display === 'block') {
-            openDropdown.style.display = 'none';
-          }
-        }
-      }
-    };
-  });
-  </script>
+        </div>
+    </div>
+
+</div>

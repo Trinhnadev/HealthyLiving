@@ -4,17 +4,18 @@
   <style>
 
   </style>
-<main class="layout layout--3">
-  <div class="container">
-    <!-- Topics Start -->
+<div class="container-fluid" id="wrapper">
+  <div class="row newsfeed-size">
+      <div class="col-md-12 newsfeed-right-side">
+          <div class="row newsfeed-right-side-content mt-3">
     {% include 'base/store_action.html'%}
       
     <!-- Topics End -->
 
     <!-- Room List Start -->
-    <div class="EventList">
+
         {%include 'base/cart_detail_compo.html'%}
-    </div>
+
     <!-- Room List End -->
 
     <!-- Activities Start -->
@@ -22,7 +23,10 @@
 
     <!-- Activities End -->
   </div>
-</main>
+</div>
+
+</div>
+
 
 
 {%endblock%}

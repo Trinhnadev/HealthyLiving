@@ -2,145 +2,155 @@
 
 {% block content %}
 <style>
-  
   .password-input-container {
     position: relative;
     display: flex;
     align-items: center;
-}
+  }
 
-input[type=password] {
+  input[type=password], input[type=text] {
     padding-right: 30px; /* Make space for the icon */
-}
+  }
 
-.toggle-password {
+  .toggle-password {
     position: absolute;
     right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
     cursor: pointer;
-}
-.scrollable-container {
-        overflow-y: scroll;
-        height: 80vh;
-        scrollbar-width: none;
-        /* For Firefox */
-    }
+  }
 
-    .scrollable-container::-webkit-scrollbar {
-        display: none;
-        /* For Chrome, Safari, and Opera */
-    }
+  .scrollable-container {
+    overflow-y: scroll;
+    height: 80vh;
+    scrollbar-width: none; /* For Firefox */
+  }
+
+  .scrollable-container::-webkit-scrollbar {
+    display: none; /* For Chrome, Safari, and Opera */
+  }
+
+  .form-outline {
+    margin-bottom: 1.5rem;
+  }
+
+  .form-outline label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+  }
+
+  .form-outline input {
+    width: 100%;
+    padding: 0.5rem;
+    font-size: 1rem;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
+  }
+
+  .form-outline .form-control-lg {
+    font-size: 1.25rem;
+    padding: 0.75rem;
+  }
+
+  .btn-lg {
+    padding: 0.75rem 1.25rem;
+    font-size: 1.25rem;
+  }
+
+  .card {
+    max-width: 900px;
+    margin: 0 auto;
+  }
 </style>
+
 <main class="auth layout">
+  <section class="vh-100" style="background-color: #9A616D;">
+    <div class="container py-5 h-100">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col col-xl-10">
+          <div class="card" style="border-radius: 1rem;">
+            <div class="row g-0">
+              <div class="col-md-6 col-lg-5 d-none d-md-block">
+                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-login-form/img1.webp"
+                  alt="login form" class="img-fluid" style="border-radius: 1rem 0 0 1rem;" />
+              </div>
+              <div class="col-md-6 col-lg-7 d-flex align-items-center">
+                <div class="card-body p-4 p-lg-5 text-black">
+                  {% if page == 'login' %}
+                  <form action="" method="POST">
+                    {% csrf_token %}
+                    <div class="d-flex align-items-center mb-3 pb-1">
+                      <svg xmlns="http://www.w3.org/2000/svg" style="color: #ff6219;" width="36" height="36" fill="currentColor" class="bi bi-activity me-3" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M6 2a.5.5 0 0 1 .47.33L10 12.036l1.53-4.208A.5.5 0 0 1 12 7.5h3.5a.5.5 0 0 1 0 1h-3.15l-1.88 5.17a.5.5 0 0 1-.94 0L6 3.964 4.47 8.171A.5.5 0 0 1 4 8.5H.5a.5.5 0 0 1 0-1h3.15l1.88-5.17A.5.5 0 0 1 6 2"/>
+                      </svg>
+                      <span class="h1 fw-bold mb-0">Health Care</span>
+                    </div>
 
-  {% if page == 'login' %}
-  <div class="container">
-    <div class="layout__box">
-      <div class="layout__boxHeader">
-        <div class="layout__boxTitle">
-          <h3>Login</h3>
-        </div>
-      </div>
-      <div class="layout__body">
-         <h1 class="auth__tagline" style="font-family: cursive; font-size: 30px;">HealthCare</h1>
+                    <h5 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">Sign into your account</h5>
 
-        <form class="form" action="" method="POST">
-          {% csrf_token %}
-          <div class="form__group form__group">
-            <label for="room_name">Email</label>
-            <input id="username" name="username" type="text" placeholder="e.g. dennis_ivy@email.com "/>
+                    <div class="form-outline mb-4">
+                      <input id="username" name="username" type="text" placeholder="e.g. dennis_ivy@email.com" class="form-control form-control-lg" />
+                     
+                    </div>
+
+                    <div class="form-outline mb-4 password-input-container">
+                      <input id="password" name="password" type="password" placeholder="••••••••" class="form-control form-control-lg" />
+                      <span class="toggle-password" onclick="togglePasswordVisibility()">👁</span>
+                    </div>
+
+                    <div class="pt-1 mb-4">
+                      <button class="btn btn-dark btn-lg btn-block" type="submit">Login</button>
+                    </div>
+
+                    <a class="small text-muted" href="{% url 'password_reset_request' %}">Forgot password?</a>
+                    <p class="mb-5 pb-lg-2" style="color: #393f81;">Don't have an account? <a href="{% url 'sign' %}" style="color: #393f81;">Register here</a></p>
+
+
+                    
+                  </form>
+                  {% else %}
+                  <form action="" method="POST">
+                    {% csrf_token %}
+                    <div class="d-flex align-items-center mb-3 pb-1">
+                      <svg xmlns="http://www.w3.org/2000/svg" style="color: #ff6219;" width="36" height="36" fill="currentColor" class="bi bi-activity me-3" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M6 2a.5.5 0 0 1 .47.33L10 12.036l1.53-4.208A.5.5 0 0 1 12 7.5h3.5a.5.5 0 0 1 0 1h-3.15l-1.88 5.17a.5.5 0 0 1-.94 0L6 3.964 4.47 8.171A.5.5 0 0 1 4 8.5H.5a.5.5 0 0 1 0-1h3.15l1.88-5.17A.5.5 0 0 1 6 2"/>
+                      </svg>
+                      <span class="h1 fw-bold mb-0">Health Care</span>
+                    </div>
+
+                    <h5 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">Register your account</h5>
+
+                    {% for field in form %}
+                    <div class="form-outline mb-4">
+                      <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+                      {{ field }}
+                    </div>
+                    {% endfor %}
+
+                    <div class="pt-1 mb-4">
+                      <button class="btn btn-dark btn-lg btn-block" type="submit">Register</button>
+                    </div>
+
+                    <p class="mb-5 pb-lg-2" style="color: #393f81;">Already signed up? <a href="{% url 'login' %}" style="color: #393f81;">Sign In</a></p>
+                    
+                  </form>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
           </div>
-          <div class=" form__group">
-            <label for="password">Password</label>
-            <div class="password-input-container">
-              <input id="password" name="password" type="password" placeholder="••••••••" />
-              <span class="toggle-password" onclick="togglePasswordVisibility()">👁</span>
-          </div>
-          </div>
-
-          <button class="btn btn--main" type="submit">
-            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-              <title>lock</title>
-              <path
-                d="M27 12h-1v-2c0-5.514-4.486-10-10-10s-10 4.486-10 10v2h-1c-0.553 0-1 0.447-1 1v18c0 0.553 0.447 1 1 1h22c0.553 0 1-0.447 1-1v-18c0-0.553-0.447-1-1-1zM8 10c0-4.411 3.589-8 8-8s8 3.589 8 8v2h-16v-2zM26 30h-20v-16h20v16z">
-              </path>
-              <path
-                d="M15 21.694v4.306h2v-4.306c0.587-0.348 1-0.961 1-1.694 0-1.105-0.895-2-2-2s-2 0.895-2 2c0 0.732 0.413 1.345 1 1.694z">
-              </path>
-            </svg>
-
-            Login
-          </button>
-        </form>
-
-        <div class="auth__action">
-          <a href="{% url 'password_reset_request' %}" class="btn btn--link">Forgot password?</a>
-          <p style="color: #001e1d;">Haven't signed up yet? <a href="{% url 'sign' %}" class="btn btn--link">Sign Up</a></p>
-          
-          <br>
-          {% if messages %}
-<ul class="messages">
-    {% for message in messages %}
-    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-    {% endfor %}
-</ul>
-{% endif %}
-          
-        </div>
-      </div>
-    </div>
-  </div>
-  {% else %}
-  <div class="container">
-    <div class="layout__box">
-      <div class="layout__boxHeader">
-        <div class="layout__boxTitle">
-          <h3>Register</h3>
-        </div>
-      </div>
-      <div class="scrollable-container">
-      <div class="layout__body">
-        <form class="form" action="" method="POST">
-          {% csrf_token %}
-
-          {% for field in form %}
-          <div class="form__group form__group">
-            <label for="room_name">{{field.label}}</label>
-            {{field}}
-          </div>
-          {% endfor %}
-
-
-          <button class="btn btn--main" type="submit">
-            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-              <title>lock</title>
-              <path
-                d="M27 12h-1v-2c0-5.514-4.486-10-10-10s-10 4.486-10 10v2h-1c-0.553 0-1 0.447-1 1v18c0 0.553 0.447 1 1 1h22c0.553 0 1-0.447 1-1v-18c0-0.553-0.447-1-1-1zM8 10c0-4.411 3.589-8 8-8s8 3.589 8 8v2h-16v-2zM26 30h-20v-16h20v16z">
-              </path>
-              <path
-                d="M15 21.694v4.306h2v-4.306c0.587-0.348 1-0.961 1-1.694 0-1.105-0.895-2-2-2s-2 0.895-2 2c0 0.732 0.413 1.345 1 1.694z">
-              </path>
-            </svg>
-
-            Register
-          </button>
-        </form>
-
-        <div class="auth__action">
-          <p style="color: #001e1d;">Already signed up yet?</p>
-          <a href="{% url 'login' %}" class="btn btn--link">Sign Up</a>
         </div>
       </div>
     </div>
-    </div>
-  </div>
-  {% endif %}
+  </section>
 </main>
+
 <script>
   function togglePasswordVisibility() {
-      var passwordInput = document.getElementById('password');
-      var passwordType = passwordInput.type === 'password' ? 'text' : 'password';
-      passwordInput.type = passwordType;
+    var passwordInput = document.getElementById('password');
+    var passwordType = passwordInput.type === 'password' ? 'text' : 'password';
+    passwordInput.type = passwordType;
   }
-  </script>
-  
+</script>
 {% endblock content %}

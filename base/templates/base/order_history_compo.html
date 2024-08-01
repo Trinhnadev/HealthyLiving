@@ -1,80 +1,332 @@
 <style>
-    .order-history {
-    width: 1000px;
-    margin: 0 auto;
-    background-color: #004643;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;900&display=swap');
 
-h1 {
-    font-size: 24px;
-    margin: 0;
-}
-
-.order-list {
-    list-style-type: none;
+/* Resetting */
+* {
     padding: 0;
-    overflow-y: auto;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    
+}
+
+
+
+#main-content {
+    padding: 30px;
+    border-radius: 15px;
+}
+
+#main-content .h5,
+#main-content .text-uppercase {
+    font-weight: 600;
+    margin-bottom: 0;
+}
+
+#main-content .h5+div {
+    font-size: 0.9rem;
+}
+
+#main-content .box {
+    padding: 10px;
+    border-radius: 6px;
+    width: 170px;
+    height: 90px;
+}
+
+#main-content .box img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+
+#main-content .box .tag {
+    font-size: 0.9rem;
+    color: #000;
+    font-weight: 500;
+}
+
+#main-content .box .number {
+    font-size: 1.5rem;
+    font-weight: 600;
 }
 
 .order {
-    width: 950px;
-    border: 1px solid #ddd;
+    padding: 10px 30px;
+    min-height: 150px;
+}
+
+.order .order-summary {
+    height: 100%;
+}
+
+.order .blue-label {
+    background-color: #aeaeeb;
+    color: #0046dd;
+    font-size: 0.9rem;
+    padding: 0px 3px;
+}
+
+.order .green-label {
+    background-color: #a8e9d0;
+    color: #008357;
+    font-size: 0.9rem;
+    padding: 0px 3px;
+}
+
+.order .fs-8 {
+    font-size: 0.85rem;
+}
+
+.order .rating img {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
+
+.order .rating .fas,
+.order .rating .far {
+    font-size: 0.9rem;
+}
+
+.order .rating .fas {
+    color: #daa520;
+}
+
+.order .status {
+    font-weight: 600;
+}
+
+.order .btn.btn-primary {
+    background-color: #fff;
+    color: #4e2296;
+    border: 1px solid #4e2296;
+}
+
+.order .btn.btn-primary:hover {
+    background-color: #4e2296;
+    color: #fff;
+}
+
+.order .progressbar-track {
+    margin-top: 20px;
     margin-bottom: 20px;
-    padding: 20px;
-    background-color: #51546e;
+    position: relative;
 }
 
-.order-details {
-    margin: 0;
+.order .progressbar-track .progressbar {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 0rem;
 }
 
-.order-date {
-    font-weight: bold;
-    margin: 0;
+.order .progressbar-track .progressbar li {
+    font-size: 1.5rem;
+    border: 1px solid #333;
+    padding: 5px 10px;
+    border-radius: 50%;
+    background-color: #dddddd;
+    z-index: 100;
+    position: relative;
 }
 
-.order-details h2 {
-    font-size: 20px;
-    margin: 0;
+.order .progressbar-track .progressbar li.green {
+    border: 1px solid #007965;
+    background-color: #d5e6e2;
 }
 
-.order-details p {
-    margin: 10px 0;
+.order .progressbar-track .progressbar li::after {
+    position: absolute;
+    font-size: 0.9rem;
+    top: 50px;
+    left: 0px;
+}
+
+#tracker {
+    position: absolute;
+    border-top: 1px solid #bbb;
+    width: 100%;
+    top: 25px;
+}
+
+#step-1::after {
+    content: 'Placed';
+}
+
+#step-2::after {
+    content: 'Accepted';
+    left: -10px;
+}
+
+#step-3::after {
+    content: 'Packed';
+}
+
+#step-4::after {
+    content: 'Shipped';
+}
+
+#step-5::after {
+    content: 'Delivered';
+    left: -10px;
+}
+
+
+
+/* Backgrounds */
+.bg-purple {
+    background-color: #55009b;
+}
+
+.bg-light {
+    background-color: #f0ecec !important;
+}
+
+.green {
+    color: #007965 !important;
+}
+
+/* Media Queries */
+@media(max-width: 1199.5px) {
+    nav ul li {
+        padding: 0 10px;
+    }
+}
+
+@media(max-width: 500px) {
+    .order .progressbar-track .progressbar li {
+        font-size: 1rem;
+    }
+
+    .order .progressbar-track .progressbar li::after {
+        font-size: 0.8rem;
+        top: 35px;
+    }
+
+    #tracker {
+        top: 20px;
+    }
+}
+
+@media(max-width: 440px) {
+    #main-content {
+        padding: 20px;
+    }
+
+    .order {
+        padding: 20px;
+    }
+
+    #step-4::after {
+        left: -5px;
+    }
+}
+
+@media(max-width: 395px) {
+    .order .progressbar-track .progressbar li {
+        font-size: 0.8rem;
+    }
+
+    .order .progressbar-track .progressbar li::after {
+        font-size: 0.7rem;
+        top: 35px;
+    }
+
+    #tracker {
+        top: 15px;
+    }
+
+    .order .btn.btn-primary {
+        font-size: 0.85rem;
+    }
+}
+
+@media(max-width: 355px) {
+    #main-content {
+        padding: 15px;
+    }
+
+    .order {
+        padding: 10px;
+    }
 }
 </style>
 
 
 
+
+<div class="container mt-4">
+    <div class="row" style="width: 1550px;">
         
-    <div class="room__top">
-        <div class="room__topLeft">
-          <a href="{{request.META.HTTP_REFERER}}">
-            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-              <title>arrow-left</title>
-              <path
-                d="M13.723 2.286l-13.723 13.714 13.719 13.714 1.616-1.611-10.96-10.96h27.625v-2.286h-27.625l10.965-10.965-1.616-1.607z">
-              </path>
-            </svg>
-          </a>
-          <h3>History</h3>
+        <div class="col-lg-9 my-lg-0 my-1">
+            <div id="main-content" class="bg-white border">
+                <div class="d-flex flex-column">
+                    
+                    <div class="h5">Hello {{request.user.name}},</div>
+                    <div>Logged in as: {{request.user.email}}</div>
+                </div>
+
+                <div class="text-uppercase">My recent orders</div>
+                {%for o in orders%}
+
+                <div class="order my-3 bg-light">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <div class="d-flex flex-column justify-content-between order-summary">
+                                <div class="d-flex align-items-center">
+                                    <div class="text-uppercase">Order #{{o.id}}</div>
+                                    <div class="blue-label ms-auto text-uppercase">Cod</div>
+                                </div>
+                                <!-- <div class="fs-8">Products #03</div> -->
+                                <div class="fs-8">Address: {{o.address}}</div>
+                                <div class="fs-8">Date: {{o.order_date}}</div>
+                                <div class="rating d-flex align-items-center pt-1">
+                                    <img src="https://www.freepnglogos.com/uploads/like-png/like-png-hand-thumb-sign-vector-graphic-pixabay-39.png"
+                                        alt=""><span class="px-2">Rating:</span>
+                                    <span class="fas fa-star"></span>
+                                    <span class="fas fa-star"></span>
+                                    <span class="fas fa-star"></span>
+                                    <span class="fas fa-star"></span>
+                                    <span class="far fa-star"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-8">
+                            <div class="d-sm-flex align-items-sm-start justify-content-sm-between">
+                                <div class="status">Status : Delivered</div>
+                                <a href="{%url 'order_detail' o.id%}"><div class="btn btn-primary text-uppercase">order info</div></a>
+                            </div>
+                            <div class="progressbar-track">
+                                <ul class="progressbar">
+                                    <li id="step-1" class="text-muted green">
+                                        <span class="fas fa-gift"></span>
+                                    </li>
+                                    <li id="step-2" class="text-muted green">
+                                        <span class="fas fa-check"></span>
+                                    </li>
+                                    <li id="step-3" class="text-muted green">
+                                        <span class="fas fa-box"></span>
+                                    </li>
+                                    <li id="step-4" class="text-muted green">
+                                        <span class="fas fa-truck"></span>
+                                    </li>
+                                    <li id="step-5" class="text-muted green">
+                                        <span class="fas fa-box-open"></span>
+                                    </li>
+                                </ul>
+                                <div id="tracker"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        {%endfor%}
+                
+            </div>
+
         </div>
 
-      </div>
-      <div class="order-history">
-  <ul class="order-list">
-      {%for o in orders%}
-      <a href="{%url 'order_detail' o.id%}" style="text-decoration:none; color: #b2bdbd;"><li class="order">
-          <div class="order-details">
-              <p class="order-date">Code orders: {{o.id}}</p>
-              <p class="order-date">Order date:{{o.order_date}}</p>
-              <p></p>
-          </div>
-      </li>
-  </a>
-      {%endfor%}
-      
-      <!-- Thêm các đơn hàng khác ở đây -->
-  </ul>
+    </div>
+
 </div>

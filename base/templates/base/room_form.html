@@ -1,6 +1,202 @@
 {% extends 'main.html' %}
 
 {% block content %}
+
+<style>
+  /* General styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f6f8;
+    margin: 0;
+    padding: 0;
+}
+
+.scrollable-container {
+    overflow-y: auto;
+    height: 90vh;
+    scrollbar-width: thin;
+    scrollbar-color: #ccc #f4f6f8;
+}
+
+.scrollable-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.scrollable-container::-webkit-scrollbar-track {
+    background: #f4f6f8;
+}
+
+.scrollable-container::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 10px;
+    border: 3px solid #f4f6f8;
+}
+
+.create-room.layout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.container {
+    width: 1250px;
+    margin: 1px auto;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.layout__box {
+    padding: 20px;
+}
+
+.layout__boxHeader {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #e0e0e0;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+.layout__boxTitle {
+    display: flex;
+    align-items: center;
+}
+
+.layout__boxTitle a {
+    margin-right: 10px;
+    color: #007bff;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.layout__boxTitle a:hover {
+    color: #0056b3;
+}
+
+.layout__boxTitle h3 {
+    margin: 0;
+    font-size: 20px;
+    color: #333;
+}
+
+.layout__body {
+    display: flex;
+    flex-direction: column;
+}
+
+.form {
+    width: 100%;
+}
+
+.form__group {
+    margin-bottom: 15px;
+}
+
+.form__group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #555;
+}
+
+.form__group input,
+.form__group textarea,
+.form__group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    color: #333;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s;
+}
+
+.form__group input:focus,
+.form__group textarea:focus,
+.form__group select:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+.form__group img {
+    display: block;
+    margin: 10px 0;
+    max-width: 100%;
+    height: auto;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.form__action {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.btn-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s;
+}
+
+.btn--dark {
+    background-color: #333;
+    color: #fff;
+}
+
+.btn--dark:hover {
+    background-color: #555;
+}
+
+.btn--main {
+    background-color: #007bff;
+    color: #fff;
+}
+
+.btn--main:hover {
+    background-color: #0056b3;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .container {
+        width: 100%;
+        margin: 1px 10px;
+    }
+
+    .layout__box {
+        padding: 15px;
+    }
+
+    .layout__boxHeader h3 {
+        font-size: 18px;
+    }
+
+    .form__group {
+        margin-bottom: 15px;
+    }
+
+    .form__action {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .form__action .btn {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+}
+
+</style>
+
 <main class="create-room layout">
   <div class="container">
     <div class="layout__box">
@@ -68,8 +264,8 @@
 
           </div>
           <div class="form__action">
-            <a class="btn btn--dark" href="{{request.META.HTTP_REFERER}}">Cancel</a>
-            <button class="btn btn--main" type="submit">Submit</button>
+            <a class="btn-btn btn--dark" href="{{request.META.HTTP_REFERER}}">Cancel</a>
+            <button class="btn-btn btn--main" type="submit">Submit</button>
           </div>
         </form>
       </div>

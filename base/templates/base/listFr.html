@@ -1,125 +1,38 @@
-<style>
-  .sidebar {
-    width: 320px;
-    background-color: #333;
-    color: white;
-    height: 100vh;
-    padding: 20px;
-    box-sizing: border-box;
-  }
   
-  .search input[type="search"] {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 20px;
-    border: none;
-    border-radius: 20px;
-  }
+
+<div class="bg-white py-3 px-4 shadow-sm">
+  <div class="card-head d-flex justify-content-between">
+      <h5 class="mb-4">Latest Active Friends</h5>
+      <a href="#" class="btn btn-link">See All</a>
+  </div>
+  <div class="row">
+    {% for room in chat_rooms %}
+    {% for f in room.members.all %}
+    {% if f != user %}
+      <div class="col-md-4 col-sm-6">
+          <div class="card group-card shadow-sm">
+              <img src="{{ f.avatar.url }}" class="card-img-top group-card-image" alt="Group image" height="190px" >
+              <div class="card-body">
+                  <h5 class="card-title">{{f.name}}</h5>
+                  <p class="card-text">10k Members 20+ post a week</p>
+                  <div class="btn-group w-100" role="group">
+                      <a href=" {% url 'profile' f.id %}" class="btn btn-quick-link join-group-btn border w-100">Profile</a>
+                      <div class="btn-group" role="group">
+                          <button id="friendsMore" type="button" class="btn btn-quick-link join-group-btn border btn-group-drop" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              <i class='bx bx-dots-horizontal-rounded'></i>
+                          </button>
+                          <div class="dropdown-menu" aria-labelledby="friendsMore">
+                              <a class="dropdown-item" href="{% url 'open_chat' room.id %}">Messgaes</a>
+                              <a class="dropdown-item" href="{% url 'reject' f.id%}">Remove</a>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+      {% endif %}
+    {% endfor %}
+    {% endfor %}
   
-  .menu {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  
-  .menu-item {
-  border-radius: 5px;
-  display: flex; /* Sử dụng Flexbox */
-  align-items: center; /* Căn chỉnh các items theo trục dọc giữa */
-  text-decoration: none; /* Loại bỏ gạch chân của liên kết */
-  color: inherit; /* Kế thừa màu chữ từ phần tử cha */
-  padding: 10px; /* Thêm một chút đệm */
-}
-.menu-item-t {
-  border-radius: 5px;
-  display: flex; /* Sử dụng Flexbox */
-  align-items: center; /* Căn chỉnh các items theo trục dọc giữa */
-  text-decoration: none; /* Loại bỏ gạch chân của liên kết */
-  color: inherit; /* Kế thừa màu chữ từ phần tử cha */
-  padding: 10px; /* Thêm một chút đệm */
-}
-
-
-.avatar {
-  margin-right: 10px; /* Thêm khoảng cách giữa avatar và tên */
-}
-
-.avatar img {
-  display: block;
-  width: 40px; /* Đặt chiều rộng cho avatar */
-  height: 40px; /* Đặt chiều cao cho avatar */
-  border-radius: 50%; /* Làm cho avatar trở nên tròn */
-}
-  
-  .menu-item.active,
-  .menu-item:hover {
-    background-color: #505050;
-  }
-  .menu-item-t.active,
-  .menu-item-t:hover {
-    background-color: #505050;
-  }
-  
-  .btn-new-event {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    margin-top: 20px;
-    background-color: #0b79f7;
-    color: white;
-    text-align: center;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: background 0.3s;
-  }
-  
-  .btn-new-event:hover {
-    background-color: #0966d2;
-  }
-  
-  .suggested-events {
-    margin-top: 20px;
-  }
-  .scrollable-container {
-    overflow-y: scroll;
-    height: 110vh;
-    scrollbar-width: none;
-    /* For Firefox */
-  }
-
-  .scrollable-container::-webkit-scrollbar {
-    display: none;
-    /* For Chrome, Safari, and Opera */
-  }
-</style>
-
-<div class="activities__content" id="friendList" style="display: none;">
-  
-  {% for room in chat_rooms %}
-      {%for f in room.members.all%}
-      {% if f != user %}
-      <a href="{%url 'open_chat' room.id%}" class="menu-item " style="color : #001e1d">
-        <div class="avatar avatar--small">
-          <img src="{{f.avatar.url}}" alt=""/>
-        </div>
-        {{f.username}}</a>
-      
-      {%endif%}
-      {%endfor%}
-      {%endfor%}
-
-
-
-
- 
-<a class="btn btn--link" href="{%url 'myfriend'%}" style="float: right;">
-  More
-  <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-    <title>chevron-down</title>
-    <path d="M16 21l-13-13h-3l16 16 16-16h-3l-13 13z"></path>
-  </svg>
-</a>
+  </div>
 </div>
-
-    

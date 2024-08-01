@@ -1,6 +1,19 @@
 {% extends 'main.html' %}
 
 {% block content %}
+
+<style>
+  
+  .scrollable-container {
+    overflow-y: scroll;
+    height: 100vh;
+    scrollbar-width: none;
+  }
+
+  .scrollable-container::-webkit-scrollbar {
+    display: none;
+  }
+</style>
 <main class="layout">
   <div class="container">
     <div class="layout__box">
@@ -18,7 +31,7 @@
           <h3>Recent Activities</h3>
         </div>
       </div>
-
+      <div class="scrollable-container">
       <div class="activities-page layout__body">
 
         {% for message in room_messages %}
@@ -56,7 +69,9 @@
           </div>
         </div>
         {% endfor %}
-
+      </div>
+      </div>
+        
       </div>
     </div>
   </div>

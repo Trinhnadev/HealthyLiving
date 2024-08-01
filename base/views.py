@@ -30,27 +30,75 @@ from django.db.models.functions import ExtractMonth
 from django.views.decorators.http import require_POST
 from django.views.decorators.csrf import csrf_exempt
 from decimal import Decimal
-
+from itertools import chain
+from operator import attrgetter
+from .decorators import role_required
 
 
 @login_required
 def home(request):
     q = request.GET.get('q') if request.GET.get('q') != None else ''
-    topic =Topic.objects.all()[0:5]
+    topic = Topic.objects.all()[0:5]
     user = request.user
     chat_rooms = ChatRoom.objects.filter(members=user)
     rooms = Room.objects.filter(
-        Q(topic__name__icontains =q) |
-        Q(name__icontains = q)
+        Q(topic__name__icontains=q) |
+        Q(name__icontains=q)
     )
     sent = Friendship.objects.filter(receiver=request.user, status='pending')
     room_count = rooms.count()
     room_message = Message.objects.filter(
-        Q(room__topic__name__icontains =q))[0:5]
+        Q(room__topic__name__icontains=q)
+    )[0:5]
+
+    invitations = Invitation.objects.filter(invitee=request.user, accepted=False)
+    accepted_friends = Friendship.objects.filter(
+        Q(sender=request.user, status='accepted') | 
+        Q(receiver=request.user, status='accepted')
+    )
+
+    users_in_same_rooms = User.objects.filter(room__participants=user).exclude(id=user.id)
+
+    user_counts = users_in_same_rooms.values('id').annotate(room_count=Count('room')).order_by('-room_count')
+    top_users = [entry['id'] for entry in user_counts]
+    user_friends = user.friendship_sent.filter(status='accepted').values_list('receiver_id', flat=True)
+    random_users = User.objects.filter(id__in=top_users).exclude(id__in=user_friends)[:10]
+
+    rooms_with_message_count = rooms.annotate(message_count=Count('message'))
+
+    combined_notifications = sorted(
+        chain(invitations, sent),
+        key=attrgetter('created_at'),
+        reverse=True
+    )
+
+    context = {
+        'rooms': rooms_with_message_count,
+        'topic': topic,
+        'chat_rooms': chat_rooms,
+        'room_count': room_count,
+        'room_message': room_message,
+        'random_users': random_users,
+        'users': accepted_friends,
+        'combined_notifications': combined_notifications
+    }
+
+    return render(request, 'base/home.html', context)
+
+
+@login_required
+def userProfile(request,pk):
+    user = get_object_or_404(User, id=pk)
     
+    friendship = Friendship.objects.filter(
+        Q(sender=request.user, receiver=user) | Q(sender=user, receiver=request.user)
+    ).first()
+    sent = Friendship.objects.filter(receiver=request.user, status='pending')
 
-    accepted_friends = Friendship.objects.filter(Q(sender=request.user, status='accepted') | Q(receiver=request.user, status='accepted'))
-
+    accepted_friends = Friendship.objects.filter(
+        Q(sender=request.user, status='accepted') | 
+        Q(receiver=request.user, status='accepted')
+    )
 
     users_in_same_rooms = User.objects.filter(room__participants=user).exclude(id=user.id)
 
@@ -65,61 +113,61 @@ def home(request):
 
     # Loại bỏ các người dùng đã là bạn bè của user
     random_users = User.objects.filter(id__in=top_users).exclude(id__in=user_friends)[:10]
-    context = {'rooms':rooms,'topic':topic, 'chat_rooms':chat_rooms,
-               'room_count':room_count,'room_message':room_message ,'random_users':random_users,'users':accepted_friends,'sent':sent}
-
-    return render(request,'base/home.html',context)
-
-
-@login_required
-def userProfile(request,pk):
-    user = User.objects.get(id=pk)
-    friendship = Friendship.objects.filter(
-        Q(sender=request.user, receiver=user) | Q(sender=user, receiver=request.user)
-    ).first()
-    sent = Friendship.objects.filter(receiver=request.user, status='pending')
-
-    accepted_friends = Friendship.objects.filter(Q(sender=request.user, status='accepted') | Q(receiver=request.user, status='accepted'))
-
-
-    #cac ban be thuoc chua request va da reject
-    all_users = User.objects.exclude(
-    Q(id=request.user.id) | 
-    Q(friendship_sent__receiver=request.user, friendship_sent__status='accepted') | 
-    Q(friendship_received__sender=request.user, friendship_received__status='accepted') | 
-    Q(friendship_sent__receiver=request.user, friendship_sent__status='pending') | 
-    Q(friendship_received__sender=request.user, friendship_received__status='pending')
-    )
-    random_users = random.sample(list(all_users), min(5, len(all_users)))
-    rooms = user.room_set.all()
+    
+    # Lấy các phòng và đếm số lượng tin nhắn cho từng phòng
+    rooms = user.room_set.annotate(message_count=Count('message'))
     room_message = user.message_set.all()[0:5]
     topic = Topic.objects.all()[0:5]
-    context ={'user':user,'rooms':rooms,
-              'room_message':room_message,
-              'topic':topic ,
-              'random_users':random_users ,
-              'users':accepted_friends,
-              'sent':sent,
-              'friendship':friendship,}
-    return render(request,'base/profile.html',context)
+    
+    chat_room = ChatRoom.objects.filter(members=request.user).filter(members=user).first()
+    if not chat_room and friendship and friendship.status == 'accepted':
+        chat_room = ChatRoom.objects.create()
+        chat_room.members.add(request.user, user)
+
+    context = {
+        'user': user,
+        'rooms': rooms,
+        'room_message': room_message,
+        'topic': topic,
+        'random_users': random_users,
+        'users': accepted_friends,
+        'sent': sent,
+        'friendship': friendship,
+        'chat_room': chat_room,
+    }
+    return render(request, 'base/profile.html', context)
 
 
 @login_required(login_url='login')
 def update_avatar(request):
     user = request.user
-    form =ProfileForm(instance=user)
-    context ={'form':form}
-    if request.method =='POST':
-        form =ProfileForm(request.POST,request.FILES,instance=user)
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES, instance=user)
         if form.is_valid():
             form.save()
-            return redirect('profile',pk =user.id)
-    return render(request,'base/upload_profile_image.html',context)
+            return JsonResponse({'status': 'success', 'message': 'Avatar updated successfully'})
+        else:
+            return JsonResponse({'status': 'error', 'message': 'Invalid form data'})
+    else:
+        form = ProfileForm(instance=user)
+        context = {'form': form}
+        return render(request, 'base/upload_profile_image.html', context)
+
+@login_required
+@csrf_exempt
+def update_coveravatar(request):
+    if request.method == 'POST' and request.FILES.get('coveravatar'):
+        user = request.user
+        user.coveravatar = request.FILES['coveravatar']
+        user.save()
+        return JsonResponse({'status': 'success', 'message': 'Cover photo updated successfully!'})
+    return JsonResponse({'status': 'error', 'message': 'Failed to update cover photo.'})
 
 
 
 def loginPage(request):
     page = 'login'
+    login_result = ''
     if request.method == 'POST':
         username = request.POST.get('username').lower()
         password = request.POST.get('password')
@@ -131,14 +179,15 @@ def loginPage(request):
             # Thêm bước kiểm tra để xem người dùng có bị cấm không
             if user.is_banned:
                 messages.error(request, 'Your account has been banned. Please contact the administrator for more information.')
-                return redirect('login')  # Hoặc bất kỳ đâu bạn muốn chuyển hướng họ
+                login_result = 'banned'
             else:
                 login(request, user)
+                login_result = 'success'
                 return redirect('home')
         else:
-            messages.error(request, 'Username or password incorrect.')
+            login_result = 'error'
 
-    context = {'page': page}
+    context = {'page': page, 'login_result': login_result}
     return render(request, 'base/login_sign.html', context)
 
 
@@ -164,24 +213,32 @@ def sign(request):
                 login(request, user)
                 return redirect('home')
         else:
+            print(form.errors)  # In ra lỗi của form để kiểm tra
             messages.error(request, "Đăng ký không thành công. Vui lòng kiểm tra lại thông tin.")
 
     context = {'form': form}
     return render(request, 'base/login_sign.html', context)
 
 
-@login_required(login_url='login')
 def updateUser(request):
     user = request.user
-    form =UserForm(instance=user)
-    context ={'form':form}
-    if request.method =='POST':
-        form =UserForm(request.POST,request.FILES,instance=user)
-        if form.is_valid():
-            form.save()
-            return redirect('profile',pk =user.id)
-    return render(request,'base/update-user.html',context)
 
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        username = request.POST.get('username')
+        email = request.POST.get('email')
+        bio = request.POST.get('bio')
+
+        user.name = name
+        user.username = username
+        user.email = email
+        user.bio = bio
+        user.save()
+
+        return redirect('profile', pk=user.id)
+
+    context = {'user': user}
+    return render(request, 'base/update-user.html', context)
 
 #End profile
 
@@ -191,36 +248,36 @@ def room(request,pk):
     room = Room.objects.get(id=pk)
     pa = room.participants.all()
     messages = room.message_set.all()
+    sent = Friendship.objects.filter(receiver=request.user, status='pending')
     if request.user == room.host or room.is_private==False or request.user in pa:
-        if request.method == 'POST':
+        if request.method == 'POST' and 'body' in request.POST:
             message = Message.objects.create(
-                user = request.user,
-                room = room,
-                body =request.POST.get('body'),
-                image =request.FILES.get('image'),
+                user=request.user,
+                room=room,
+                body=request.POST.get('body'),
+                image=request.FILES.get('image'),
             )
             room.participants.add(request.user)
-            return redirect('room',pk=room.id)
-        context = {'rooms':room, 'message':messages, 'participants': pa,
-                   'created_at': datetime.now(),  # Dummy value, replace it with the actual creation time
-                    'message_id': None}
-        return render(request,'base/room.html',context)
+            return redirect('room', pk=room.id)
+        context = {
+            'rooms': room,
+            'message': messages,
+            'participants': pa,
+            'created_at': datetime.now(),  # Dummy value, replace it with the actual creation time
+            'message_id': None
+        }
+        return render(request, 'base/room.html', context)
 
     if room.is_private and request.user not in pa:
         if request.method == 'POST' and 'answer' in request.POST:
             user_answer = request.POST.get('answer', '').strip().lower()
-            # Tách chuỗi answer của phòng thành một mảng các keyword
-            correct_answers = room.answer.lower().split(',')  # Giả sử answer được lưu dưới dạng 'keyword1,keyword2,...'
-            # Kiểm tra xem có bất kỳ keyword nào trong mảng có trong chuỗi người dùng nhập không
+            correct_answers = room.answer.lower().split(',')
             if any(keyword.strip() in user_answer for keyword in correct_answers):
                 room.participants.add(request.user)
                 return redirect('room', pk=room.id)
             else:
-                # Có thể thêm thông báo lỗi nếu cần
                 return redirect('home')
-
-        # Hiển thị form trả lời cho người dùng nếu là GET request hoặc câu trả lời sai
-        return render(request, 'base/room_question.html', {'room': room})
+        return render(request, 'base/room_question.html', {'room': room, 'sent': sent})
 
     
 
@@ -231,7 +288,7 @@ def room(request,pk):
 def createRoom(request):
     form = RoomForm()
     topic = Topic.objects.all()
-
+    sent = Friendship.objects.filter(receiver=request.user, status='pending')
 
     answer_keywords = request.POST.get('answer', '').strip()
     answer_keywords = ','.join([keyword.strip() for keyword in answer_keywords.split(',')])
@@ -251,12 +308,13 @@ def createRoom(request):
             answer = answer_keywords,
         )
         return redirect('home')
-    context = {'form':form,"topic":topic}
+    context = {'form':form,"topic":topic,"sent":sent}
     return render(request,'base/room_form.html',context)
     
 
 @login_required(login_url='login')
 def updateRoom(request,pk):
+    sent = Friendship.objects.filter(receiver=request.user, status='pending')
     room = Room.objects.get(id= pk)
     form = RoomForm(instance=room)
     topic = Topic.objects.all()
@@ -273,7 +331,7 @@ def updateRoom(request,pk):
 
         return redirect('home')
 
-    context = {'form':form,'topic':topic,'room':room}
+    context = {'form':form,'topic':topic,'room':room,"sent":sent}
     return render(request,'base/room_form.html',context)
 
 @login_required(login_url='login')
@@ -307,6 +365,28 @@ def topicsPage(request):
 def friendPages(request):
     q = request.GET.get('q', '')
     current_user = request.user
+    chat_rooms = ChatRoom.objects.filter(members=current_user)
+    users = User.objects.exclude(id=current_user.id).filter(username__icontains=q)
+
+    # Fetch all accepted friends
+    friendships_accepted = Friendship.objects.filter(
+        Q(sender=current_user, status='accepted') | Q(receiver=current_user, status='accepted')
+    )
+    accepted_friends = [friendship.sender if friendship.receiver == current_user else friendship.receiver for friendship in friendships_accepted]
+
+    return render(request, 'base/Friend.html', {
+        'users': users,
+        'user': current_user,
+        'accepted_friends': accepted_friends,
+        'chat_rooms': chat_rooms,
+    })
+
+
+@login_required
+def AllFriend(request):
+    q = request.GET.get('q', '')
+    current_user = request.user
+    chat_rooms = ChatRoom.objects.filter(members=current_user)
     users = User.objects.exclude(id=current_user.id).filter(username__icontains=q)
 
     friendships_sent = Friendship.objects.filter(sender=current_user, status='pending')
@@ -318,14 +398,16 @@ def friendPages(request):
     friendships_accepted = Friendship.objects.filter(Q(sender=current_user, status='accepted') | Q(receiver=current_user, status='accepted'))
     accepted_friends = [friendship.sender if friendship.receiver == current_user else friendship.receiver for friendship in friendships_accepted]
 
+
+    
     return render(request, 'base/allFriend.html', {
         'users': users,
-        'current_user': current_user,
+        'user': current_user,
         'sent_friend_requests': sent_friend_requests,
         'received_friend_requests': received_friend_requests,
         'accepted_friends': accepted_friends,
+        'chat_rooms':chat_rooms,
     })
-
 
 @login_required
 def myFriends(request):
@@ -337,6 +419,8 @@ def myFriends(request):
         & (Q(sender__username__icontains=q) | Q(receiver__username__icontains=q))
     )
     return render(request,'base/myfriend.html',{'user':user})
+
+
 
 def activityPages(request):
     room_message = Message.objects.all()
@@ -489,6 +573,7 @@ def delete_message_chat(request, message_id):
 #done
 def shopping (request):
     # products = Product.objects.all()
+    sent = Friendship.objects.filter(receiver=request.user, status='pending')
     q = request.GET.get('q', '')
     # Lấy store của người dùng hiện tại
     
@@ -503,7 +588,7 @@ def shopping (request):
     stores = user_store.filter(
         Q(name__icontains=q),
     )
-    context = {'products': products, 'stores': stores}
+    context = {'products': products, 'stores': stores,"sent":sent}
     return render(request, 'base/store.html', context)
 
 #done
@@ -528,6 +613,7 @@ def create_store(request):
 
 @login_required
 def update_store(request, pk):
+    sent = Friendship.objects.filter(receiver=request.user, status='pending')
     store = get_object_or_404(Store, pk=pk, owner=request.user)
     if request.method == 'POST':
         form = StoreForm(request.POST, request.FILES, instance=store)
@@ -538,31 +624,33 @@ def update_store(request, pk):
             return redirect('shop')
     else:
         form = StoreForm(instance=store)
-    return render(request, 'base/store_form.html', {'form': form, 'store': store})
+    return render(request, 'base/store_form.html', {'form': form, 'store': store,"sent":sent})
 
 
 
 @login_required
 def delete_store(request, pk):
     store = get_object_or_404(Store, pk=pk, owner=request.user)
-    if request.method == 'POST':
-        store.delete()
-        return redirect('shop')
-    return render(request, 'base/delete.html', {'store': store})
+
+    store.delete()
+    return redirect('shop')
+
 
 
 def store_detail(request,pk):
+    sent = Friendship.objects.filter(receiver=request.user, status='pending')
     store = get_object_or_404(Store, id=pk)
     products = Product.objects.filter(store=store)
     stores = Store.objects.filter(owner=request.user,status ="approved")
     # Tìm kiếm cửa hàng của người dùng hiện tại
 
-    context = {'store':store, 'products':products ,'stores':stores}
+    context = {'store':store, 'products':products ,'stores':stores,"sent":sent}
     return render(request,'base/store_profile_detail.html',context)
 
 
 
 def store_products(request, store_id):
+    sent = Friendship.objects.filter(receiver=request.user, status='pending')
     store = get_object_or_404(Store, id=store_id)
     query = request.GET.get('q')
     stores = Store.objects.filter(owner=request.user,status='approved')
@@ -576,13 +664,15 @@ def store_products(request, store_id):
     else:
         products = Product.objects.filter(store=store)
 
-    return render(request, 'base/store_detail.html', {'store': store, 'products': products,'stores':stores})
+    return render(request, 'base/store_detail.html', {'store': store, 'products': products,'stores':stores,"sent":sent})
 
 
 
 @login_required
 def product_create(request, store_id):
+    sent = Friendship.objects.filter(receiver=request.user, status='pending')
     store = get_object_or_404(Store, id=store_id, owner=request.user)
+    stores = Store.objects.filter(owner=request.user)
     if request.method == "POST":
         form = ProductForm(request.POST, request.FILES)
         if form.is_valid():
@@ -592,10 +682,11 @@ def product_create(request, store_id):
             return redirect('store_products', store_id=store.id)
     else:
         form = ProductForm()
-    return render(request, 'base/product_form.html', {'form': form, 'store': store})
+    return render(request, 'base/product_form.html', {'form': form, 'store': store,'stores': stores,"sent":sent})
 
 @login_required
 def product_update(request, store_id, product_id):
+    sent = Friendship.objects.filter(receiver=request.user, status='pending')
     store = get_object_or_404(Store, id=store_id, owner=request.user)
     product = get_object_or_404(Product, id=product_id, store=store)
     if request.method == "POST":
@@ -607,24 +698,52 @@ def product_update(request, store_id, product_id):
             return redirect('store_products', store_id=store.id)
     else:
         form = ProductForm(instance=product)
-    return render(request, 'base/product_form.html', {'form': form, 'store': store})
+    return render(request, 'base/product_form.html', {'form': form, 'store': store,"sent":sent})
+
+
+
+@login_required
+@require_POST
+def update_product_quantity(request):
+    product_id = request.POST.get('product_id')
+    quantity = int(request.POST.get('quantity'))
+
+    product = get_object_or_404(Product, id=product_id)
+
+    if quantity > 0:
+        product.quantity += quantity
+        product.save()
+
+    return redirect('store_products', store_id=product.store.id)
 
 @login_required
 def product_delete(request, store_id, product_id):
     store = get_object_or_404(Store, id=store_id, owner=request.user)
     product = get_object_or_404(Product, id=product_id, store=store)
-    if request.method == "POST":
-        product.delete()
-        return redirect('store_products', store_id=store.id)
-    return render(request, 'base/delete.html', {'product': product, 'store': store})
+    
+    product.delete()
+    return redirect('store_products', store_id=store.id)
+    
 
 
 
 def product_detail(request, store_id, product_id):
+    sent = Friendship.objects.filter(receiver=request.user, status='pending')
     stores = Store.objects.filter(owner=request.user)
 
     product = get_object_or_404(Product, store__id=store_id, id=product_id)
-    return render(request, 'base/product_detail.html', {'product': product,'stores':stores})
+    
+    # Tính tổng số lượng của sản phẩm cụ thể
+    total_quantity = OrderDetail.objects.filter(product=product).aggregate(total=Sum('quantity'))['total']
+    if total_quantity is None:
+        total_quantity = 0
+    
+    return render(request, 'base/product_detail.html', {
+        'product': product,
+        'stores': stores,
+        'sent': sent,
+        'total_quantity': total_quantity  # Truyền tổng số lượng sản phẩm vào context
+    })
 
 
 
@@ -659,6 +778,7 @@ def add_to_cart(request, product_id):
 
 
 def cart_detail(request):
+    sent = Friendship.objects.filter(receiver=request.user, status='pending')
     stores = Store.objects.filter(owner=request.user,status='approved')
 
     if request.user.is_authenticated:
@@ -673,6 +793,7 @@ def cart_detail(request):
         'cart_items': items,
         'total_price': total_price,
         'stores':stores,
+        "sent":sent,
     }
     return render(request, 'base/cart_detail.html', context)
 
@@ -689,14 +810,19 @@ def remove_from_cart(request, item_id):
 def checkout(request):
     cart = request.user.cart
     if request.method == 'POST':
-        form = CheckoutForm(request.POST)
-        if form.is_valid():
+        full_name = request.POST.get('full_name')
+        phone_number = request.POST.get('phone_number')
+        address = request.POST.get('address')
+        
+        if full_name and phone_number and address:
             with transaction.atomic():  # Use a transaction to ensure data integrity
-                order = form.save(commit=False)
-                order.user = request.user
-                # Assuming the first product's store is representative of the entire cart
-                order.store = cart.items.first().product.store
-                order.save()
+                order = Order.objects.create(
+                    user=request.user,
+                    full_name=full_name,
+                    phone_number=phone_number,
+                    address=address,
+                    store=cart.items.first().product.store if cart.items.exists() else None
+                )
 
                 # Move cart items to order details and update stock
                 insufficient_stock = []
@@ -715,10 +841,11 @@ def checkout(request):
                         insufficient_stock.append(item.product.name)
 
                 if insufficient_stock:  # If any products have insufficient stock
-                    # Handle insufficient stock scenario, e.g., show a message to the user
-                    return render(request, 'checkout.html', {
-                        'form': form,
-                        'error_message': f'Insufficient stock for: {", ".join(insufficient_stock)}'
+                    return render(request, 'template_name.html', {  # Update with your actual template name
+                        'error_message': f'Insufficient stock for: {", ".join(insufficient_stock)}',
+                        'cart_items': cart.items.all(),
+                        'total_price': cart.get_total_price(),
+                        'form_data': request.POST,
                     })
 
                 # Clear the cart after successful transaction
@@ -726,15 +853,24 @@ def checkout(request):
 
                 # Redirect to an order confirmation page
                 return redirect('order_detail', order.id)
-    else:
-        form = CheckoutForm()
+        else:
+            return render(request, 'template_name.html', {  # Update with your actual template name
+                'error_message': 'Please fill out all fields.',
+                'cart_items': cart.items.all(),
+                'total_price': cart.get_total_price(),
+                'form_data': request.POST,
+            })
 
-    return render(request, 'base/checkout_form.html', {'form': form})
+    return render(request, 'template_name.html', {  # Update with your actual template name
+        'cart_items': cart.items.all(),
+        'total_price': cart.get_total_price(),
+    })
 
 
 #dơn hang cua shop
 @login_required
 def store_order_history(request, store_id):
+    sent = Friendship.objects.filter(receiver=request.user, status='pending')
     stores = Store.objects.filter(owner = request.user,status='approved')
     store = get_object_or_404(Store, id=store_id, owner=request.user)
 
@@ -755,11 +891,13 @@ def store_order_history(request, store_id):
         'store': store,
         'orders': orders,
         'order_totals': order_totals,
+        'sent':sent,
     })
 
 
 @login_required
 def store_order_detail(request, store_id, order_id):
+    sent = Friendship.objects.filter(receiver=request.user, status='pending')
     store = get_object_or_404(Store, id=store_id, owner=request.user)
     order = get_object_or_404(Order, id=order_id, store=store)
 
@@ -774,10 +912,12 @@ def store_order_detail(request, store_id, order_id):
         'order': order,
         'order_details': order_details,
         'order_total': order_total,
+        'sent':sent
     })
 
 @login_required
 def revenue(request, store_id):
+    sent = Friendship.objects.filter(receiver=request.user, status='pending')
     stores = Store.objects.filter(owner=request.user, status='approved')
     try:
         store = Store.objects.get(id=store_id)
@@ -830,27 +970,25 @@ def revenue(request, store_id):
         'orders_per_month': orders_per_month,
         'total_orders': total_orders,
         'total_revenue': total_revenue,
-        'months': [(i, calendar.month_name[i]) for i in range(1, 13)],  # Passing months to the template
+        'months': [(i, calendar.month_name[i]) for i in range(1, 13)],
+          'sent':sent,  # Passing months to the template
     })
 
 
 @login_required
 def dashboard(request, store_id):
+    sent = Friendship.objects.filter(receiver=request.user, status='pending')
     stores = Store.objects.filter(owner=request.user, status="approved")
-    try:
-        store = Store.objects.get(id=store_id)
-    except Store.DoesNotExist:
-        messages.error(request, "Store not found.")
-        return redirect('store_order_history')
+    store = get_object_or_404(Store, id=store_id)
 
     month = request.GET.get('month')
-    if month:
+    if month and month != 'all':
         month = datetime.strptime(month, '%Y-%m')
         orders = Order.objects.filter(orderdetail__product__store=store, order_date__year=month.year, order_date__month=month.month).distinct().order_by('-order_date').prefetch_related('orderdetail_set__product__store')
-        top_products = OrderDetail.objects.filter(product__store=store, order__order_date__year=month.year, order__order_date__month=month.month).values('product__name').annotate(total_sold=Sum('quantity')).order_by('-total_sold')[:5]
+        top_products = OrderDetail.objects.filter(product__store=store, order__order_date__year=month.year, order__order_date__month=month.month).values('product__name', 'product__image').annotate(total_sold=Sum('quantity'), total_revenue=Sum('subtotal')).order_by('-total_sold')[:5]
     else:
         orders = Order.objects.filter(orderdetail__product__store=store).distinct().order_by('-order_date').prefetch_related('orderdetail_set__product__store')
-        top_products = OrderDetail.objects.filter(product__store=store).values('product__name').annotate(total_sold=Sum('quantity')).order_by('-total_sold')[:5]
+        top_products = OrderDetail.objects.filter(product__store=store).values('product__name', 'product__image').annotate(total_sold=Sum('quantity'), total_revenue=Sum('subtotal')).order_by('-total_sold')[:5]
 
     store_orders = defaultdict(lambda: {'orders': [], 'total': 0, 'details': defaultdict(list)})
 
@@ -865,25 +1003,43 @@ def dashboard(request, store_id):
     store_orders = dict((store, {'orders': data['orders'], 'total': data['total'], 'details': dict(data['details'])}) for store, data in store_orders.items())
     product_names = [product['product__name'] for product in top_products]
     product_sales = [product['total_sold'] for product in top_products]
-
+    product_revenues = [product['total_revenue'] for product in top_products]
+    
     total_orders = orders.count()
-    total_revenue = sum(order.orderdetail_set.aggregate(total=Sum('subtotal'))['total'] for order in orders)
+    store_revenue = sum(order.orderdetail_set.filter(product__store=store).aggregate(total=Sum('subtotal'))['total'] for order in orders)
 
-    # Generate list of all months in the current year
     current_year = datetime.now().year
-    month_list = [f"{current_year}-{str(month).zfill(2)}" for month in range(1, 13)]
+    month_list = [('all', 'All Months')] + [(f"{current_year}-{str(m).zfill(2)}", datetime(current_year, m, 1).strftime('%B')) for m in range(1, 13)]
+
+    # Create a list of product data for template context
+    top_products_data = []
+    for product in top_products:
+        name = product['product__name']
+        image = product['product__image']
+        orders_count = product['total_sold']
+        revenue = product['total_revenue']
+        orders_percentage = (orders_count / total_orders * 100) if total_orders else 0
+        revenue_percentage = (revenue / store_revenue * 100) if store_revenue else 0
+        top_products_data.append({
+            'name': name,
+            'image': image,
+            'orders_count': orders_count,
+            'orders_percentage': orders_percentage,
+            'revenue': revenue,
+            'revenue_percentage': revenue_percentage,
+        })
 
     return render(request, 'base/dashboard.html', {
         'store': store,
         'orders': orders,
         'stores': stores,
         'store_orders': store_orders,
-        'product_names': product_names,
-        'product_sales': product_sales,
+        'top_products': top_products_data,
         'total_orders': total_orders,
-        'total_revenue': total_revenue,
-        'selected_month': month.strftime('%Y-%m') if month else '',
+        'store_revenue': store_revenue,
+        'selected_month': month.strftime('%Y-%m') if month and month != 'all' else 'all',
         'month_list': month_list,
+        'sent': sent,
     })
 
 
@@ -896,19 +1052,30 @@ def history(request):
 #cac dơn hang cua khach
 @login_required
 def order_history(request):
+    sent = Friendship.objects.filter(receiver=request.user, status='pending')
     stores = Store.objects.filter(owner=request.user,status='approved')
 
     orders = Order.objects.filter(user=request.user).order_by('-order_date')  # Get all orders for the user, ordered by date
     
-    return render(request, 'base/order_history.html', {'orders': orders ,'stores':stores})
+    return render(request, 'base/order_history.html', {'orders': orders ,'stores':stores,'sent':sent})
 
 #chi tiet don hang
 def order_detail(request, order_id):
+    sent = Friendship.objects.filter(receiver=request.user, status='pending')
     stores = Store.objects.filter(owner=request.user)
-
     order = get_object_or_404(Order, id=order_id, user=request.user)  # Ensure the order belongs to the logged-in user
     order_items = order.orderdetail_set.all()  # Retrieve all items associated with this order
-    return render(request, 'base/order_detail.html', {'order': order, 'order_items': order_items,'stores':stores})
+    
+    # Calculate the total amount
+    total_amount = sum(item.subtotal for item in order_items)
+    
+    return render(request, 'base/order_detail.html', {
+        'order': order,
+        'order_items': order_items,
+        'stores': stores,
+        'total_amount': total_amount,
+        'sent':sent
+    })
 
 
 
@@ -1290,56 +1457,36 @@ def change_password(request):
         messages.success(request, 'Password has been updated successfully.')
         return redirect('change_password')
 
-    return render(request, 'base/password_change_form.html')
+    return render(request, 'base/change_password.html')
 
 
 
 
 @login_required
-def report_mess(request, mess_id):
-    reported_message = get_object_or_404(Message, id=mess_id)
+def report_mess(request):
     if request.method == 'POST':
-        form = ReportForm(request.POST)
-        if form.is_valid():
-            reason = form.cleaned_data['reason']  # Giả sử reason là một chuỗi
+        reported_message_id = request.POST.get('reported_message_id')
+        reasons = request.POST.get('reasons').split(',')
+        detail = request.POST.get('detail', '')
 
-            # Kiểm tra xem đã có báo cáo nào cho tin nhắn này chưa, không quan tâm tới reason
-            existing_reports = MessageReport.objects.filter(reported_message=reported_message)
-
-            # Kiểm tra xem reason đã tồn tại trong bất kỳ báo cáo nào không
-            report_with_reason = existing_reports.filter(reason=reason).first()
-
-            if report_with_reason:
-                # Nếu reason đã tồn tại, chỉ thêm người dùng vào báo cáo đó nếu họ chưa có
-                if not report_with_reason.reporting_users.filter(id=request.user.id).exists():
-                    report_with_reason.reporting_users.add(request.user)
-                    messages.info(request, "You have been added to the existing report for this reason.")
-                else:
-                    messages.info(request, "You have already reported this message for this reason.")
-            else:
-                # Nếu reason chưa tồn tại, tạo báo cáo mới hoặc thêm vào báo cáo hiện có
-                if existing_reports.exists():
-                    # Chọn một báo cáo hiện có để thêm reason mới (nếu có thể)
-                    report = existing_reports.first()
-                else:
-                    # Không có báo cáo nào, tạo báo cáo mới
-                    report = form.save(commit=False)
-                    report.reported_message = reported_message
-                    report.reason = reason
-                    report.save()
-
+        try:
+            reported_message = get_object_or_404(Message, id=reported_message_id)
+            for reason in reasons:
+                report = MessageReport.objects.create(
+                    reported_message=reported_message,
+                    reason=reason,
+                    detail=detail
+                )
                 report.reporting_users.add(request.user)
-                messages.success(request, "Your report has been successfully submitted.")
-
-            return redirect('home')
-    else:
-        form = ReportForm()
-
-    context = {'form': form, 'reported_message': reported_message}
-    return render(request, 'base/report_user.html', context)
+            return JsonResponse({'success': True})
+        except Message.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Message not found'})
+    return JsonResponse({'success': False, 'error': 'Invalid request'})
 
 
 
+# Admin
+@role_required(allowed_roles=['AD'])
 def manageUser(request):
     query = request.GET.get('q', '')
     users = User.objects.exclude(id=request.user.id).exclude(is_banned=True)
@@ -1368,7 +1515,7 @@ def unban_user(request, user_id):
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
-
+@role_required(allowed_roles=['AD'])
 def manageUserBanned(request):
     query = request.GET.get('q', '')
     users = User.objects.exclude(id=request.user.id).exclude(is_banned=False)
@@ -1378,7 +1525,7 @@ def manageUserBanned(request):
     return render(request,'base/manage-ban.html',{'users':users})
 
 
-
+@role_required(allowed_roles=['AD','MO'])
 def reported_messages(request):
     query = request.GET.get('q', '')
 
@@ -1399,7 +1546,7 @@ def reported_messages(request):
 
 
 
-
+@role_required(allowed_roles=['AD','MO'])
 def manageRoom(request):
     q = request.GET.get('q') if request.GET.get('q') != None else ''
     rooms = Room.objects.filter(
@@ -1410,6 +1557,8 @@ def manageRoom(request):
 
     return render(request,'base/manage-room.html',{'rooms':rooms})
 
+
+@role_required(allowed_roles=['AD','MO'])
 def manageStore(request):
     q = request.GET.get('q') if request.GET.get('q') != None else ''
     stores = Store.objects.filter(
@@ -1421,6 +1570,10 @@ def manageStore(request):
 
     return render(request,'base/manage_store.html',{'stores':stores})
 
+
+
+
+@role_required(allowed_roles=['AD'])
 def create_account(request):
     if request.method == 'POST':
         email = request.POST.get('email')
@@ -1450,6 +1603,7 @@ def create_account(request):
     return render(request, 'base/create-account.html')
 
 
+@role_required(allowed_roles=['AD','MO'])
 def ManageEvent(request):
     invitations = Invitation.objects.filter(invitee=request.user, accepted=False)
 
@@ -1490,6 +1644,9 @@ def reject_store(request, pk):
     return redirect('manage_stores')
 
 
+
+
+@role_required(allowed_roles=['AD','MO'])
 def manageProduct(request):
     q = request.GET.get('q') if request.GET.get('q') != None else ''
     products = Product.objects.filter(
@@ -1538,7 +1695,7 @@ def delete_event_message(request, event_id, message_id):
 
 
 
-
+@role_required(allowed_roles=['AD','MO'])
 #analys 
 def top_stores_by_revenue(request):
     current_month = datetime.now().month
@@ -1574,7 +1731,7 @@ def top_stores_by_revenue(request):
     return render(request, 'base/top_store_revenue.html', context)
 
 
-
+@role_required(allowed_roles=['AD','MO'])
 def top_products_by_month(request):
     current_month = datetime.now().month
     current_year = datetime.now().year
@@ -1618,3 +1775,7 @@ def top_products_by_month(request):
     }
 
     return render(request, 'base/top_products_by_month.html', context)
+
+
+def unauthorized(request):
+    return render(request, 'base/unauthorized.html')

@@ -1,158 +1,96 @@
-<style>
-  .event-container {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(250px, 1fr));
-    gap: 20px;
-    padding: 20px;
-  }
+<div class="col-md-10 second-section" id="page-content-wrapper">
 
-  .event-card {
-    background-color: white;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    overflow: hidden;
-    transition: transform 0.2s ease-in-out;
-  }
 
-  .event-card:hover {
-    transform: translateY(-5px);
-  }
-
-  .event-image {
-    width: 100%;
-    height: 150px;
-    object-fit: cover;
-  }
-
-  .event-info {
-    padding: 15px;
-  }
-
-  .event-info h3 {
-    font-size: 1.1em;
-    margin-bottom: 10px;
-  }
-
-  .event-location,
-  .event-interest {
-    font-size: 0.9em;
-    color: #666;
-    margin-bottom: 5px;
-  }
-
-  .event-action {
-    background-color: #f9bc60;
-    color: #001e1d;
-    border: none;
-    padding: 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.2s;
-  }
-
-  .event-action:hover {
-    background-color: #e5376a;
-  }
-
-  .scrollable-container {
-    overflow-y: scroll;
-    height: 110vh;
-    scrollbar-width: none;
-    /* For Firefox */
-  }
-
-  .scrollable-container::-webkit-scrollbar {
-    display: none;
-    /* For Chrome, Safari, and Opera */
-  }
-</style>
-<div class="scrollable-container">
-  <div class="event-container">
-    <!-- Event Card -->
-    {% for e in event %}
-    <div class="event-card">
-      <img src="{{ e.img.url }}" alt="Sakura Festival" class="event-image">
-      <div class="event-info">
-        <a href="{% url 'event_detail' e.id %}">
-          <h3 style="color:#001e1d">{{ e.title }}</h3>
-        </a>
-        <p class="event-location">
-          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
-            <path
-              d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A32 32 0 0 1 8 14.58a32 32 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10" />
-            <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4m0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
-          </svg>
-          {{ e.location }}
-        </p>
-        <p class="event-interest">
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
-            <path
-              d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z" />
-          </svg>
-          {{ e.par.count }} Joined
-        </p>
-
-        {% if e.status != "rejected" %}
-          {% if user in e.par.all %}
-            <a href="{% url 'events' e.id %}">
-              <button class="event-action">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-envelope" viewBox="0 -2 16 16">
-                  <path
-                    d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z" />
-                </svg>
-                Mời
-              </button>
-            </a>
-
-            {% if user != e.host %}
-              <a href="{% url 'discareAbout' e.id %}">
-                <button class="event-action">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill" viewBox="0 0 16 16">
-                    <path
-                      d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
-                  </svg>
-                  Not Interested
-                </button>
-              </a>
-            {% endif %}
-          {% else %}
-            {% if user != e.host %}
-              <a href="{% url 'careAbout' e.id %}">
-                <button class="event-action">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star" viewBox="0 0 16 16">
-                    <path
-                      d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.56.56 0 0 0-.163-.505L1.71 6.745l4.052-.576a.53.53 0 0 0 .393-.288L8 2.223l1.847 3.658a.53.53 0 0 0 .393.288l4.052.575-2.906 2.77a.56.56 0 0 0-.163.506l.694 3.957-3.686-1.894a.5.5 0 0 0-.461 0z" />
-                  </svg>
-                  Care About
-                </button>
-              </a>
-            {% endif %}
-          {% endif %}
-
-          {% if user in e.like.all %}
-            <a href="{% url 'dislike_event' e.id %}">
-              <button class="event-action">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star" viewBox="0 0 16 16">
-                  <path
-                    d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.56.56 0 0 0-.163-.505L1.71 6.745l4.052-.576a.53.53 0 0 0 .393-.288L8 2.223l1.847 3.658a.53.53 0 0 0 .393.288l4.052.575-2.906 2.77a.56.56 0 0 0-.163.506l.694 3.957-3.686-1.894a.5.5 0 0 0-.461 0z" />
-                </svg>
-                Dislike
-              </button>
-            </a>
-          {% else %}
-            <a href="{% url 'like_event' e.id %}">
-              <button class="event-action">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star" viewBox="0 0 16 16">
-                  <path
-                    d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.56.56 0 0 0-.163-.505L1.71 6.745l4.052-.576a.53.53 0 0 0 .393-.288L8 2.223l1.847 3.658a.53.53 0 0 0 .393.288l4.052.575-2.906 2.77a.56.56 0 0 0-.163.506l.694 3.957-3.686-1.894a.5.5 0 0 0-.461 0z" />
-                </svg>
-                Like
-              </button>
-            </a>
-          {% endif %}
-        {% endif %}
-      </div>
+  <div class="jumbotron groups-banner">
+    <div class="container group-banner-content">
+      <h1 class="jumbotron-heading mt-auto banner-about"><img src="assets/images/icons/theme/shopping-bag-white.png"
+          class="mr-3" alt="Welcome to groups"> Marketplace</h1>
+      <p>Get most popular products.</p>
     </div>
-    {% endfor %}
   </div>
-</div>
+
+  <!-- Groups -->
+  <div class="groups products py-3 px-4">
+    <div class="card-head d-flex justify-content-between">
+      <h5 class="mb-4">Popular Products</h5>
+
+
+    </div>
+    <div class="row">
+      {% for e in event %}
+      <div class="col-md-2 col-sm-6">
+
+        <div class="card group-card">
+          <img style="height:160px" src="{{e.img.url}}" class="card-img-top group-card-image" alt="Group image">
+          <div class="card-body">
+            <h5 class="product-card-price"> <a href="{% url 'event_detail' e.id%}">{{e.title}}</a></h5>
+            <h5 class="card-title"><a href="#"> <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
+                  fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
+                  <path
+                    d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z" />
+                </svg>
+                {{ e.par.count }} Joined</a></h5>
+            <p class="card-text"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" fill="currentColor"
+                class="bi bi-geo-alt" viewBox="0 0 16 16">
+                <path
+                  d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A32 32 0 0 1 8 14.58a32 32 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10" />
+                <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4m0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
+              </svg>
+              {{ e.location }}</p>
+
+
+            <div class="btn-group w-100" role="group">
+              {% if request.user in e.par.all %}
+              <a href="{% url 'discareAbout' e.id %}" class="btn btn-quick-link join-group-btn border w-100">Not Interested</a>
+            {% else %}
+              <a href="{% url 'careAbout' e.id %}" class="btn btn-quick-link join-group-btn border w-100">Interested</a>
+            {% endif %}
+            <div class="btn-group" role="group">
+              <button id="friendsMore" type="button" class="btn btn-quick-link join-group-btn border btn-group-drop"
+                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class='bx bx-dots-horizontal-rounded'></i>
+              </button>
+              <div class="dropdown-menu" aria-labelledby="friendsMore">
+                {% if e.status == 'approved' %}
+                  {% if request.user in e.par.all or request.user == e.host %}
+                    <a class="dropdown-item" href="{% url 'events' e.id %}">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-envelope" viewBox="0 -2 16 16">
+                        <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z"/>
+                      </svg>
+                      Invite
+                    </a>
+                  {% endif %}
+                  {% if request.user in e.like.all %}
+                    <a class="dropdown-item" href="{% url 'dislike_event' e.id %}">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star" viewBox="0 0 16 16">
+                        <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.56.56 0 0 0-.163-.505L1.71 6.745l4.052-.576a.53.53 0 0 0 .393-.288L8 2.223l1.847 3.658a.53.53 0 0 0 .393.288l4.052.575-2.906 2.77a.56.56 0 0 0-.163.506l.694 3.957-3.686-1.894a.5.5 0 0 0-.461 0z"/>
+                      </svg>
+                      Dislike
+                    </a>
+                  {% else %}
+                    <a class="dropdown-item" href="{% url 'like_event' e.id %}">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star" viewBox="0 0 16 16">
+                        <path d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.56.56 0 0 0-.163-.505L1.71 6.745l4.052-.576a.53.53 0 0 0 .393-.288L8 2.223l1.847 3.658a.53.53 0 0 0 .393.288l4.052.575-2.906 2.77a.56.56 0 0 0-.163.506l.694 3.957-3.686-1.894a.5.5 0 0 0-.461 0z"/>
+                      </svg>
+                      Like
+                    </a>
+                  {% endif %}
+                {% else %}
+                  <a class="dropdown-item" href="{% url 'update_event' e.id %}">Update</a>
+                  <a class="dropdown-item" href="{% url 'delete_event' e.id %}">Delete</a>
+                {% endif %}
+                </div>
+
+
+
+              </div>
+            </div>
+          </div>
+          
+
+        </div>
+      </div>
+      {%endfor%}
+
+    </div>
+    

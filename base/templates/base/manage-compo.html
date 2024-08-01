@@ -1,229 +1,352 @@
 <style>
+  body {
+      background-color: #f0f0f5;
+      font-family: Arial, sans-serif;
+  }
+  .dashboard {
+      width: 1250px;
+      margin: 1px auto;
+      background-color: #ffffff;
+      padding: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      height: 90vh;
+  }
+  .room__top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+  }
+  .room__topLeft {
+      display: flex;
+      align-items: center;
+  }
+  .room__topLeft svg {
+      margin-right: 10px;
+  }
+  .room__topLeft h3 {
+      margin: 0;
+      font-size: 24px;
+      color: #333;
+  }
   .cart {
-    width: 1000px;
-    margin: 0 auto;
-    background-color: #3f4156;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    color: #b2bdbd;
-    height: 70vh;
-
-
+      width: 100%;
+      height: 85vh;
+      background-color: #fff;
+      padding: 20px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      color: #001e1d;
   }
-
   h1 {
-    font-size: 24px;
-    margin: 0;
+      font-size: 24px;
+      margin: 0;
   }
-
   table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
   }
-
   table th,
   table td {
-    border: 1px solid #fff;
-    padding: 10px;
-    text-align: left;
+      border: 1px solid #001e1d;
+      padding: 10px;
+      text-align: left;
   }
-
   table th {
-    background-color: #51546e;
-    color: #fff;
+      background-color: #51546e;
+      color: #fff;
   }
-
   table td img {
-    max-width: 50px;
-    height: auto;
+      max-width: 50px;
+      height: auto;
   }
-
   .checkout {
-    text-align: right;
-    margin-top: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
   }
-
-  button {
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-
-  button:hover {
-    background-color: #0056b3;
-  }
-
-
-  .checkout {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-  }
-
   .search-form {
-    display: flex;
-    gap: 10px;
-    /* Adjust the space between the search input and the button */
+      display: flex;
+      gap: 10px;
+  }
+  .search-input {
+      width: 400px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+  }
+  
+  .create-account-btn {
+      padding: 10px 20px;
+      background-color: #337ab7;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+      display: inline-block;
+      cursor: pointer;
+  }
+  .create-account-btn:hover {
+      background-color: #286090;
+  }
+  .pagination {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+  }
+  .pagination a {
+      padding: 5px 10px;
+      margin: 0 5px;
+      background-color: #51546e;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+      cursor: pointer;
+  }
+  .pagination a.active {
+      background-color: #007bff;
   }
 
-  .search-input {
-    width: 400px;
-    /* As specified in your inline style */
-    padding: 10px;
+/* Modal styles */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0, 0, 0); /* Fallback color */
+    background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+    padding-top: 60px;
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto; /* 5% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+    max-width: 600px; /* Maximum width */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); /* Box shadow */
+}
+
+.close-btn {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close-btn:hover,
+.close-btn:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.container {
+    padding: 16px;
+}
+
+.layout__box {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 16px;
+    background-color: #fff;
+}
+
+.layout__boxHeader {
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 8px;
+    margin-bottom: 16px;
+}
+
+.layout__boxTitle h3 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.layout__body .auth__tagline {
+    font-family: cursive;
+    font-size: 30px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.form__group {
+    margin-bottom: 16px;
+}
+
+.form__group label {
+    display: block;
+    margin-bottom: 8px;
+}
+
+.form__group input,
+.form__group select {
+    width: 100%;
+    padding: 8px;
+    box-sizing: border-box;
     border: 1px solid #ccc;
     border-radius: 4px;
-  }
+}
 
-  .search-button {
-    padding: 10px 20px;
+.btn--main {
+    background-color: #4CAF50; /* Green */
     border: none;
-    background-color: #5cb85c;
     color: white;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-
-  .search-button:hover {
-    background-color: #4cae4c;
-    /* Darker green on hover */
-  }
-
-  .create-account-btn {
     padding: 10px 20px;
-    background-color: #337ab7;
-    color: white;
+    text-align: center;
     text-decoration: none;
-    border-radius: 4px;
     display: inline-block;
-    /* To allow padding and margin */
+    font-size: 16px;
+    margin: 4px 2px;
     cursor: pointer;
-  }
-
-  .create-account-btn:hover {
-    background-color: #286090;
-    /* Darker blue on hover */
-  }
-
-  .pagination {
-    margin-top: 20px;
-    display: flex;
-    justify-content: center;
-    /* Căn giữa theo chiều ngang */
-  }
-
-  .pagination a {
-    padding: 5px 10px;
-    margin: 0 5px;
-    background-color: #51546e;
-    color: white;
-    text-decoration: none;
     border-radius: 4px;
+}
+
+.btn--link {
+    background: none;
+    border: none;
+    color: #00f;
+    padding: 0;
+    text-align: center;
+    text-decoration: underline;
     cursor: pointer;
-  }
+    font-size: 16px;
+}
 
-  .pagination a.active {
-    background-color: #007bff;
-  }
 </style>
-<div class="room__top">
+</head>
+<body>
+<div class="dashboard">
 
-  <div class="room__topLeft">
-    <a href="">
-      <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-        <title>arrow-left</title>
-        <path
-          d="M13.723 2.286l-13.723 13.714 13.719 13.714 1.616-1.611-10.96-10.96h27.625v-2.286h-27.625l10.965-10.965-1.616-1.607z">
-        </path>
-      </svg>
-    </a>
-    <h3>Manage Account</h3>
-  </div>
-
-</div>
-
-<div class="cart">
-  <div class="checkout">
-    <form action="" method="GET" class="search-form">
-      <input type="search" name="q" placeholder="Search Account" class="search-input">
-      <button type="submit" class="search-button" hidden>Search</button>
-    </form>
-    <a href="{%url 'create_account' %}" class="create-account-btn">+ Create new Account</a>
-
-  </div>
-  <div class="chat-header">{{users.count}} Account </div>
+<div class="cart" >
+    <div class="checkout">
+        <form action="" method="GET" class="search-form">
+            <input type="search" name="q" placeholder="Search Account" class="search-input">
+            <button type="submit" class="search-button" hidden>Search</button>
+        </form>
+        <button id="create-account-btn" class="create-account-btn">+ Create new Account</button>
+    </div>
+    
+  <div class="chat-header">{{users.count}} Account</div>
   <table>
-    <thead>
+      <thead>
       <tr>
-        <th>Avatar</th>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Role</th>
-        <th>Action</th>
-
-
-
+          <th>Avatar</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Action</th>
       </tr>
-    </thead>
-    <tbody>
-      {%for u in users%}
-      <tr>
-        <td><img src="{{u.avatar.url}}" alt="Sản phẩm 1"></td>
-        <td>{{u.username}}</td>
-        <td>{{u.email}}</td>
-        <td>{{u.role}}</td>
-
-        <td>
-          <a href="" style="color:  #b2bdbd;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash"
-              viewBox="0 0 16 16">
-              <path
-                d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
-              <path
-                d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
-            </svg>
-          </a>
-          <a href="{%url 'ban_user' u.id%}" style="color:  #b2bdbd;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-ban"
-              viewBox="0 0 16 16">
-              <path
-                d="M15 8a6.97 6.97 0 0 0-1.71-4.584l-9.874 9.875A7 7 0 0 0 15 8M2.71 12.584l9.874-9.875a7 7 0 0 0-9.874 9.874ZM16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0" />
-            </svg>
-          </a>
-        </td>
-      </tr>
-      {%endfor%}
-      <!-- Thêm các sản phẩm khác ở đây -->
-    </tbody>
-
+      </thead>
+      <tbody>
+      {% for u in users %}
+          <tr>
+              <td><img src="{{u.avatar.url}}" alt="Avatar"></td>
+              <td>{{u.username}}</td>
+              <td>{{u.email}}</td>
+              <td>{{u.role}}</td>
+              <td>
+                  <a href="" style="color: #b2bdbd;">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                           class="bi bi-trash" viewBox="0 0 16 16">
+                          <path
+                              d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z"/>
+                          <path
+                              d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z"/>
+                      </svg>
+                  </a>
+                  <a href="{%url 'ban_user' u.id%}" style="color: #b2bdbd;">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                           class="bi bi-ban" viewBox="0 0 16 16">
+                          <path
+                              d="M15 8a6.97 6.97 0 0 0-1.71-4.584l-9.874 9.875A7 7 0 0 0 15 8M2.71 12.584l9.874-9.875a7 7 0 0 0-9.874 9.874ZM16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0"/>
+                      </svg>
+                  </a>
+              </td>
+          </tr>
+      {% endfor %}
+      </tbody>
   </table>
+ 
 </div>
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const rowsPerPage = 4;
-    const table = document.querySelector("table");
-    const tbody = table.querySelector("tbody");
-    const rows = tbody.querySelectorAll("tr");
-    const numPages = Math.ceil(rows.length / rowsPerPage);
-    let currentPage = 1;
+</div>
 
-    function showRows(page) {
+
+<div id="create-account-modal" class="modal">
+    <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <div class="container">
+            <div class="layout__box">
+                <div class="layout__boxHeader">
+                    <div class="layout__boxTitle">
+                        <h3>Create Account</h3>
+                    </div>
+                </div>
+                <div class="layout__body">
+                    <form class="form" action="{% url 'create_account' %}" method="POST">
+                        {% csrf_token %}
+                        <div class="form__group">
+                            <label for="email">Email</label>
+                            <input id="email" name="email" type="email" placeholder="youremail@example.com"/>
+                        </div>
+                        <div class="form__group">
+                            <label for="name">Name</label>
+                            <input id="name" name="name" type="text" placeholder="Your Name"/>
+                        </div>
+                        <div class="form__group">
+                            <label for="password1">Password</label>
+                            <input id="password1" name="password1" type="password" placeholder="••••••••"/>
+                        </div>
+                        <div class="form__group">
+                            <label for="password2">Confirm Password</label>
+                            <input id="password2" name="password2" type="password" placeholder="••••••••"/>
+                        </div>
+                        <div class="form__group">
+                            <label for="role">Role</label>
+                            <select id="role" name="role">
+                                <option value="US">User</option>
+                                <option value="AD">Admin</option>
+                                <option value="MO">Moder</option>
+                            </select>
+                        </div>
+                        <button class="btn btn--main" type="submit">Create Account</button>
+                    </form>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const rowsPerPage = 5;
+  const table = document.querySelector("table");
+  const tbody = table.querySelector("tbody");
+  const rows = tbody.querySelectorAll("tr");
+  const numPages = Math.ceil(rows.length / rowsPerPage);
+  let currentPage = 1;
+
+  function showRows(page) {
       const start = (page - 1) * rowsPerPage;
       const end = start + rowsPerPage;
       rows.forEach((row, index) => {
-        if (index >= start && index < end) {
-          row.style.display = "table-row";
-        } else {
-          row.style.display = "none";
-        }
+          if (index >= start && index < end) {
+              row.style.display = "table-row";
+          } else {
+              row.style.display = "none";
+          }
       });
-    }
+  }
 
-    function createNavigation() {
+  function createNavigation() {
       const nav = document.createElement("div");
       nav.classList.add("pagination");
 
@@ -232,27 +355,26 @@
       prevPageLink.href = "#";
       prevPageLink.classList.add("prev-page");
       prevPageLink.addEventListener("click", function (event) {
-        event.preventDefault();
-        if (currentPage > 1) {
-          currentPage--;
-          showRows(currentPage);
-          updateActivePage();
-        }
+          event.preventDefault();
+          if (currentPage > 1) {
+              currentPage--;
+              showRows(currentPage);
+              updateActivePage();
+          }
       });
       nav.appendChild(prevPageLink);
 
-      // Tạo liên kết cho trang hiện tại và các trang trước và sau
-      for (let i = Math.max(1, currentPage - 3); i <= Math.min(numPages, currentPage + 3); i++) {
-        const pageLink = document.createElement("a");
-        pageLink.textContent = i;
-        pageLink.href = "#";
-        pageLink.addEventListener("click", function (event) {
-          event.preventDefault();
-          currentPage = i;
-          showRows(currentPage);
-          updateActivePage();
-        });
-        nav.appendChild(pageLink);
+      for (let i = 1; i <= numPages; i++) {
+          const pageLink = document.createElement("a");
+          pageLink.textContent = i;
+          pageLink.href = "#";
+          pageLink.addEventListener("click", function (event) {
+              event.preventDefault();
+              currentPage = i;
+              showRows(currentPage);
+              updateActivePage();
+          });
+          nav.appendChild(pageLink);
       }
 
       const nextPageLink = document.createElement("a");
@@ -260,31 +382,50 @@
       nextPageLink.href = "#";
       nextPageLink.classList.add("next-page");
       nextPageLink.addEventListener("click", function (event) {
-        event.preventDefault();
-        if (currentPage < numPages) {
-          currentPage++;
-          showRows(currentPage);
-          updateActivePage();
-        }
+          event.preventDefault();
+          if (currentPage < numPages) {
+              currentPage++;
+              showRows(currentPage);
+              updateActivePage();
+          }
       });
       nav.appendChild(nextPageLink);
 
       table.insertAdjacentElement("afterend", nav);
-    }
+  }
 
-    function updateActivePage() {
+  function updateActivePage() {
       const pageLinks = document.querySelectorAll(".pagination a");
       pageLinks.forEach(link => {
-        if (parseInt(link.textContent) === currentPage) {
-          link.classList.add("active");
-        } else {
-          link.classList.remove("active");
-        }
+          if (parseInt(link.textContent) === currentPage) {
+              link.classList.add("active");
+          } else {
+              link.classList.remove("active");
+          }
       });
-    }
+  }
 
-    showRows(currentPage);
-    createNavigation();
-    updateActivePage();
-  });
+  showRows(currentPage);
+  createNavigation();
+  updateActivePage();
+});
+
+
+
+
+document.getElementById('create-account-btn').onclick = function() {
+    document.getElementById('create-account-modal').style.display = 'block';
+}
+
+document.getElementsByClassName('close-btn')[0].onclick = function() {
+    document.getElementById('create-account-modal').style.display = 'none';
+}
+
+window.onclick = function(event) {
+    if (event.target == document.getElementById('create-account-modal')) {
+        document.getElementById('create-account-modal').style.display = 'none';
+    }
+}
+
+
 </script>

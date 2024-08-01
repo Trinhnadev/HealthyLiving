@@ -1,30 +1,36 @@
-<div class="topics">
-    <div class="topics__header">
-      <h2>Browse Topics</h2>
+{%load static%}
+  
+  
+  <div class="col-md-3 newsfeed-left-side sticky-top shadow-sm" id="sidebar-wrapper">
+    <div class="card newsfeed-user-card h-100">
+        <ul class="list-group list-group-flush newsfeed-left-sidebar">
+            <li class="list-group-item">
+                <h6>Home</h6>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center sd-active">
+                <a href="{%url 'home'%}" class="sidebar-item"><img src="{% static 'assets/images/icons/left-sidebar/newsfeed.png' %}" alt="newsfeed"> News Feed</a>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <a href="{%url 'chat'%}" class="sidebar-item"><img src="{% static 'assets/images/icons/left-sidebar/message.png' %}" alt="message"> Messages</a>
+                <span class="badge badge-primary badge-pill">2</span>
+            </li>
+
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <a href="{%url 'event'%}" class="sidebar-item"><img src="{% static 'assets/images/icons/left-sidebar/event.png' %}" alt="event"> Events</a>
+                <span class="badge badge-primary badge-pill">3</span>
+            </li>
+        
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <a href="{% url 'all-friend'%}" class="sidebar-item"><img src="{% static 'assets/images/icons/left-sidebar/find-friends.png' %}" alt="find-friends"> Find Friends</a>
+                <span class="badge badge-primary badge-pill"><i class='bx bx-chevron-right'></i></span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <a href="{%url 'shop'%}" class="sidebar-item"><img src="{% static 'assets/images/icons/left-sidebar/market.png' %}" alt="find-friends"> Marketplace</a>
+                <span class="badge badge-primary badge-pill"><i class='bx bx-chevron-right'></i></span>
+            </li>
+            
+        </ul>
     </div>
-    <ul class="topics__list">
-      <li>
-        <a href="{%url 'home'%}" class="active">All <span>{{topic.count}}</span></a>
-      </li>
-      {%for t in topic%}
-      <li>
-        <a href="{%url 'home' %}?q={{t.name}}">{{t.name}} <span>{{t.room_set.all.count}}</span></a>
-      </li>
-      {%endfor%}
-    </ul>
-    <a class="btn btn--link" href="{%url 'topics'%}">
-      More
-      <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-        <title>chevron-down</title>
-        <path d="M16 21l-13-13h-3l16 16 16-16h-3l-13 13z"></path>
-      </svg>
-    </a>
-
-    <hr>
-
-    {%include 'base/suggest.html' %}
-   
-  </div>
-
+</div>
 
   
