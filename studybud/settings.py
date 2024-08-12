@@ -16,12 +16,13 @@ from pathlib import Path
 # from celery import Celery
 
 LANGUAGE_CODE = 'vi'
+TIME_ZONE = 'Asia/Ho_Chi_Minh'
+USE_TZ = True
 
 USE_I18N = True
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-TIME_ZONE = 'Asia/Ho_Chi_Minh'
-USE_TZ = True
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -52,6 +53,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'channels',
+    
+    
 ]
 
 CRONJOBS = [
@@ -82,7 +85,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
     "corsheaders.middleware.CorsMiddleware",
-    
+
 
 
 ]
@@ -144,13 +147,6 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
-
-USE_I18N = True
-
-USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)
@@ -178,6 +174,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'nguyenanhtrinh05@gmail.com'  # Thay thế bằng email Gmail của bạn
 EMAIL_HOST_PASSWORD = 'azmsffbcrfwvwysl'  # Thay thế bằng mật khẩu của bạn
+
 
 
 

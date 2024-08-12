@@ -73,18 +73,7 @@
                         {% else %}
                         <a href="{%url 'addFriend' user.id%}" class="btn btn-follow mr-9"><i class='bx bx-plus'></i> Add Friend</a>
                         {% endif %}
-                          <button type="button" class="btn btn-follow" id="moreMobile" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class='bx bx-dots-horizontal-rounded'></i> <span class="fs-8">More</span></button>
-                          <div class="dropdown-menu dropdown-menu-right profile-ql-dropdown" aria-labelledby="moreMobile">
-                              <a href="newsfeed.html" class="dropdown-item">Timeline</a>
-                              <a href="about.html" class="dropdown-item">About</a>
-                              <a href="followers.html" class="dropdown-item">Followers</a>
-                              <a href="following.html" class="dropdown-item">Following</a>
-                              <a href="photos.html" class="dropdown-item">Photos</a>
-                              <a href="videos.html" class="dropdown-item">Videos</a>
-                              <a href="check-ins.html" class="dropdown-item">Check-Ins</a>
-                              <a href="events.html" class="dropdown-item">Events</a>
-                              <a href="likes.html" class="dropdown-item">Likes</a>
-                          </div>
+                          
                       </div>
                   </div>
                   <div class="intro mt-5 mv-hidden">
@@ -129,18 +118,7 @@
                               
                           </ul>
                           
-                          <div class="bg-white profile-posts-options mt-5 mb-4 py-3 d-flex justify-content-between shadow-sm">
-                              <div class="col-md-3 col-sm-12">
-                                  <h6 class="timeline-title">Posts</h6>
-                              </div>
-                              <div class="col-md-9 col-sm-12">
-                                  <div class="timeline-manage">
-                                      <button type="button" class="btn btn-quick-link join-group-btn border btn-sm tmo-buttons"><i class='bx bxs-cog'></i> Manage Posts</button>
-                                      <button type="button" class="btn btn-quick-link join-group-btn border btn-sm tmo-buttons"><i class='bx bx-align-middle'></i> List View</button>
-                                      <button type="button" class="btn btn-quick-link join-group-btn border btn-sm tmo-buttons"><i class='bx bxs-grid-alt'></i> Grid View</button>
-                                  </div>
-                              </div>
-                          </div>
+                          
                           {% include 'base/feed.html' %}
                       </div>
                       

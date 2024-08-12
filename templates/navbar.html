@@ -243,6 +243,14 @@
             
                     <!-- notify content -->
                     <div class="drop-content">
+
+                        <ul>
+                            {% for notification in notifications %}
+                                <li>{{ notification.message }} - {{ notification.created_at }}</li>
+                            {% empty %}
+                                <li>No new notifications</li>
+                            {% endfor %}
+                        </ul>
                         {% for notification in combined_notifications %}
                             {% if notification.event %}
                                 <li class="notification-item">

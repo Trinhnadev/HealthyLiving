@@ -9,6 +9,10 @@ https://docs.djangoproject.com/en/4.2/howto/deployment/wsgi/
 
 import os
 
+import threading
+import time
+
+
 from django.core.wsgi import get_wsgi_application
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'studybud.settings')
@@ -16,5 +20,4 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'studybud.settings')
 application = get_wsgi_application()
 
 
-from django.core.management import call_command
-call_command('event_scheduler')
+

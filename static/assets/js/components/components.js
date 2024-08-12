@@ -63,29 +63,7 @@ $("#status-options ul li").click(function () {
     $("#status-options").removeClass("messenger-user-active");
 });
 
-function newMessage() {
-    message = $(".message-input input").val();
-    if ($.trim(message) == '') {
-        return false;
-    }
-    $('<li class="message-reply"><p>' + message + '</p></li>').appendTo($('.messages ul'));
-    $('.message-input input').val(null);
-    $('.contact.active .preview').html('<span>You: </span>' + message);
-    $(".messages").animate({
-        scrollTop: $(document).height()
-    }, "fast");
-};
 
-$('#send-message').click(function () {
-    newMessage();
-});
-
-$(window).on('keydown', function (e) {
-    if (e.which == 13) {
-        newMessage();
-        return false;
-    }
-});
 
 // Enable tooltip
 $(function () {

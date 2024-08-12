@@ -2,15 +2,16 @@
 {% extends 'main.html' %}
 {%load static%}
 {% block content %}
-<div class="container-fluid newsfeed d-flex" id="wrapper">
-  <div class="row newsfeed-size">
-      <div class="col-md-12 message-right-side">
-          <div class="row message-right-side-content">
-              <div class="col-md-12">
-                  <div id="message-frame">
-                      <div class="message-sidepanel">
-                          <div class="message-profile">
-                              <div class="wrap">
+<div class="col-md-12 second-section" id="page-content-wrapper">
+    <div class="container-fluid newsfeed d-flex col-md-12" id="wrapper">
+      <div class="row newsfeed-size col-md-12">
+        <div class="col-md-12 message-right-side">
+          <div class="row message-right-side-content col-md-12">
+            <div class="col-md-12">
+              <div id="message-frame">
+                <div class="message-sidepanel">
+                  <div class="message-profile">
+                    <div class="wrap">
                                   <img src="{{request.user.avatar.url}}" class="online conv-img" alt="Conversation user"/>
                                   <p>{{request.user.name}}</p>
                               </div>
@@ -24,7 +25,7 @@
                           <div class="row" style="width:1100px"> 
                               
 
-                              <div class="col-md-12" style="max-height: 532px;">
+                              <div class="col-md-12" style="height: 600px;">
                                   <div class="messages">
                                       Not Found
                                   </div>
@@ -35,8 +36,8 @@
                           </div>
                       </div>
                       {% else %}
-                      <div class="content">
-                          <div class="row" style="width:1100px">
+                      <div class="content col-md-12">
+                          <div class="row col-md-12">
                               <div class="col-md-12 messenger-top-section">
                                   <div class="contact-profile d-flex align-items-center justify-content-between">
                                       <div class="messenger-top-luser df-aic">
@@ -63,7 +64,7 @@
                                   </div>
                               </div>
 
-                              <div class="col-md-12" style="max-height: 532px;">
+                              <div class="col-md-12" style="height: 600px;">
                                   <div class="messages">
                                       <ul id="chat-container" class="messages-content">
                                           {% for message in messages %}
@@ -85,14 +86,17 @@
                               <div class="col-md-12">
                                   <div class="message-input">
                                       <div class="wrap">
-                                          <form id="chat-form" class="d-inline form-inline">
-                                              <div class="d-flex align-items-center justify-content-between messenger-icons">
-                                                  <div class="input-group messenger-input">
+                                          <form id="chat-form" class="d-inline form-inline" action="" method="POST" enctype="multipart/form-data">
+                                            {% csrf_token %}
+                                              <div class="d-flex align-items-center justify-content-between messenger-icons col-md-12">
+                                                  <div class="input-group messenger-input col-sm-12">
                                                       <input type="text" id="chat-input" class="form-control search-input" placeholder="Type a message..." aria-label="Type a message..." aria-describedby="button-addon2">
                                                       <input type="file" id="image-upload" class="d-none">
                                                       <div class="input-group-append">
-                                                          <button type="button" class="btn search-button" id="send-message">
-                                                              <img src="{% static 'assets/images/icons/messenger/m-send.png' %}" alt="Messenger icons">
+                                                          <button type="submit" class="btn search-button" id="send-message">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-arrow-up-circle-fill" viewBox="0 0 16 16">
+                                                                <path d="M16 8A8 8 0 1 0 0 8a8 8 0 0 0 16 0m-7.5 3.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707z"/>
+                                                              </svg>
                                                           </button>
                                                       </div>
                                                   </div>

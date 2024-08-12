@@ -2,10 +2,12 @@ import calendar
 import json
 import os
 import random
+import threading
+import time
 from django.shortcuts import render,redirect
 from django.contrib import messages
 from django.http import HttpResponse
-from .models import Room, Topic, Message ,User , Friendship ,Chat ,Product,Order,OrderDetail, Cart , CartItem , Event,Invitation,Store,ChatRoom,MessageReport,EventMessage
+from .models import Room, Topic, Message ,User , Friendship ,Chat ,Product,Order,OrderDetail, Cart , CartItem , Event,Invitation,Store,ChatRoom,MessageReport,EventMessage,Notification
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required ,user_passes_test
 from .forms import RoomForm, UserForm ,ProfileForm ,MyUserCreationForm,EventsForm,StoreForm,ProductForm,CheckoutForm,ReportForm
@@ -16,7 +18,8 @@ from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from django.http import HttpResponseRedirect
 from django.db import transaction
-from datetime import datetime
+from datetime import datetime,  timedelta
+from django.utils import timezone
 from django.core.mail import send_mail
 import random
 import string
@@ -33,13 +36,18 @@ from decimal import Decimal
 from itertools import chain
 from operator import attrgetter
 from .decorators import role_required
+from django.core.management import call_command
 
+from pytz import timezone as pytz_timezone
+# Múi giờ Việt Nam
+VIETNAM_TZ = pytz_timezone('Asia/Ho_Chi_Minh')
 
 @login_required
 def home(request):
     q = request.GET.get('q') if request.GET.get('q') != None else ''
     topic = Topic.objects.all()[0:5]
     user = request.user
+
     chat_rooms = ChatRoom.objects.filter(members=user)
     rooms = Room.objects.filter(
         Q(topic__name__icontains=q) |
@@ -72,6 +80,8 @@ def home(request):
         reverse=True
     )
 
+
+
     context = {
         'rooms': rooms_with_message_count,
         'topic': topic,
@@ -80,7 +90,7 @@ def home(request):
         'room_message': room_message,
         'random_users': random_users,
         'users': accepted_friends,
-        'combined_notifications': combined_notifications
+        'combined_notifications': combined_notifications,
     }
 
     return render(request, 'base/home.html', context)
@@ -1183,6 +1193,8 @@ def discareAbout(request,pk):
 #event
 
 #Tạo một Event
+
+
 @login_required(login_url='login')
 def createEvent(request):
     form = EventsForm(request.POST or None, request.FILES or None)
@@ -1194,11 +1206,16 @@ def createEvent(request):
             event.save()
             event.par.add(request.user)  # Add the host to the participants
             event.save()
+
             return redirect('event')
     else:
         form = EventsForm()
-    context = {'form':form}
-    return render(request,'base/event_form.html',context)
+    
+    # Lấy tất cả các sự kiện đã được phê duyệt (approved)
+
+
+    context = {'form': form}
+    return render(request, 'base/event_form.html', context)
 
 
 #Update một event
@@ -1779,3 +1796,14 @@ def top_products_by_month(request):
 
 def unauthorized(request):
     return render(request, 'base/unauthorized.html')
+
+
+
+
+
+
+
+
+# Notification
+
+

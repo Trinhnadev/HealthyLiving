@@ -200,8 +200,8 @@
       <div class="col-md-12 newsfeed-right-side">
         <div class="row newsfeed-right-side-content mt-3">
           {%include 'base/event_action.html'%}
-  <main class="create-room layout">
-    <div class="container">
+
+    <div class="container-fluid col-md-9 mx-2" style="margin-right: 0;" >
       <div class="layout__box">
         <div class="layout__boxHeader">
           <div class="layout__boxTitle">
@@ -301,7 +301,7 @@
       // Run on initial load in case of form errors and re-rendering
       window.onload = toggleQuestionAnswer;
   </script>
-  </main>
+
   
 
 {% endblock content %}

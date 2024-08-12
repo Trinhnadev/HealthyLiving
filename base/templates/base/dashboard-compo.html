@@ -7,7 +7,7 @@
         padding: 0;
     }
     .container {
-        width: 90%;
+        width: 100%;
         margin: 20px auto;
         background-color: #fff;
         border-radius: 8px;
@@ -59,43 +59,55 @@
     }
 </style>
 
-    <div class="container">
-        <div class="header">
-            <h2>Best Selling Products</h2>
-        </div>
-        <table class="table">
-            <thead>
-                <tr>
+<div class="container-fluid col-md-9" style="margin-right: 0;" id="wrapper">
+    <div class="row col-12">
+      <div class="col-12">
+        <div class="card mt-3 ">
+          <div class="card-header">
+            <h2 class="card-title">Best Selling Products</h2>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
                     <th>Product</th>
                     <th>Orders ({{ total_orders }})</th>
                     <th>Order(%)</th>
                     <th>Revenue (${{ store_revenue }})</th>
                     <th>Revenue(%)</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for product in top_products %}
-                <tr>
-                    <td class="product-name">
-                        <img src="{{ product.image.url }}" alt="{{ product.name }}"> 
-                        {{ product.name }}
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for product in top_products %}
+                  <tr>
+                    <td class="d-flex align-items-center">
+                      <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-thumbnail" style="width: 50px; height: auto; margin-right: 15px;">
+                      {{ product.name }}
                     </td>
                     <td>{{ product.orders_count }}</td>
                     <td>{{ product.orders_percentage|floatformat:2 }}%</td>
                     <td>${{ product.revenue|floatformat:2 }}</td>
                     <td>{{ product.revenue_percentage|floatformat:2 }}%</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        <div class="footer">
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card-footer text-end">
             <form method="get">
-                <select name="month" onchange="this.form.submit()">
-                    <option value="all" {% if selected_month == 'all' %}selected{% endif %}>All Months</option>
-                    {% for month, month_name in month_list %}
-                    <option value="{{ month }}" {% if month == selected_month %}selected{% endif %}>{{ month_name }}</option>
-                    {% endfor %}
+              <div class="form-group">
+                <select name="month" class="form-select" onchange="this.form.submit()">
+                  <option value="all" {% if selected_month == 'all' %}selected{% endif %}>All Months</option>
+                  {% for month, month_name in month_list %}
+                  <option value="{{ month }}" {% if month == selected_month %}selected{% endif %}>{{ month_name }}</option>
+                  {% endfor %}
                 </select>
+              </div>
             </form>
+          </div>
         </div>
+      </div>
     </div>
+  </div>

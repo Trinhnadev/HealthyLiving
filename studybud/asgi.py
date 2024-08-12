@@ -19,6 +19,6 @@ application = ProtocolTypeRouter({
 
 
 
-from django.core.management import call_command
-call_command('event_scheduler')
+
+
 

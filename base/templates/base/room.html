@@ -7,7 +7,8 @@
 <style>
 .message-receive {
   position: relative;
-  padding-right: 40px; /* Đảm bảo có đủ khoảng trống cho nút ba chấm */
+  padding-right: 40px; 
+  /* Đảm bảo có đủ khoảng trống cho nút ba chấm */
 }
 
 .menu-button {
@@ -45,30 +46,28 @@
 
 .menu ul li {
   padding: 10px 20px;
+  
   cursor: pointer;
 }
 
 .menu ul li:hover {
   background-color: #f0f0f0;
+  
 }
+
 </style>
-<!-- new content -->
-<div class="row newsfeed-right-side-content mt-3">
-<!-- {%include 'base/topics_compo.html'%} -->
-<div class="col-md-6 second-section" id="page-content-wrapper">
-  <div class="container-fluid newsfeed d-flex" id="wrapper" >
-    <div class="row newsfeed-size">
+<div class="col-md-12 second-section" id="page-content-wrapper">
+  <div class="container-fluid newsfeed d-flex col-md-12" id="wrapper">
+    <div class="row newsfeed-size col-md-12">
       <div class="col-md-12 message-right-side">
-        <div class="row message-right-side-content">
+        <div class="row message-right-side-content col-md-12">
           <div class="col-md-12">
-            <div id="message-frame" style="width: 1450px;">
+            <div id="message-frame">
               <div class="message-sidepanel">
                 <div class="message-profile">
                   <div class="wrap">
-                    
                     <img src="{{rooms.host.avatar.url }}" class="online conv-img" alt="Conversation user" />
                     <p>{{rooms.host.name }}</p>
-                    
                   </div>
                   <h6>Topic : {{rooms.topic}} </h6>
                 </div>
@@ -76,163 +75,125 @@
 
                 <div class="message-contacts">
                   <ul class="conversations">
-
                     {% for p in participants %}
                     <li class="contact">
-                      <a href="{%url 'profile' p.id%}">
-                      <div class="wrap">
-                        <span class="contact-status online"></span>
-                        <img src="{{p.avatar.url}}" alt="Conversation user" />
-                        
-                        <div class="meta">
-                          <p class="name">{{p.name}}</p>
-                          <p class="preview"></p>
+                      <a href="{% url 'profile' p.id %}">
+                        <div class="wrap">
+                          <span class="contact-status online"></span>
+                          <img src="{{p.avatar.url}}" alt="Conversation user" />
+                          <div class="meta">
+                            <p class="name">{{p.name}}</p>
+                            <p class="preview"></p>
+                          </div>
                         </div>
-                      </div>
-                    </a>
+                      </a>
                     </li>
-                    {%endfor%}
-
-
+                    {% endfor %}
                   </ul>
                 </div>
               </div>
 
-
-              <div class="content" >
+              <div class="content col-md-12">
                 <div class="row">
-                  <div class="col-md-12 messenger-top-section">
-                    <div class="contact-profile d-flex align-items-center justify-content-between">
-                      <div class="messenger-top-luser df-aic">
-                        
-                        <h6 class="message-profile-name"> Room: {{rooms.name }}</h6>
-                      </div>
-                      {%if request.user == rooms.host%}
-                      <div class="social-media messenger-top-ricon df-aic">
-
-                        <span class="dropdown">
-                          <a href="#" role="button" id="message-options" data-toggle="dropdown" aria-haspopup="true"
-                            aria-expanded="false">
-                            <i class='bx bx-dots-vertical-rounded'></i>
-                          </a>
-                          <div class="dropdown-menu dropdown-menu-right fs-9" aria-labelledby="message-options">
-                            <a href="{% url 'update-room' rooms.id %}" class="dropdown-item">
-                              <svg enable-background="new 0 0 24 24" height="16" viewBox="0 0 24 24" width="16"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <title>edit</title>
-                                <g>
-                                  <path
-                                    d="m23.5 22h-15c-.276 0-.5-.224-.5-.5s.224-.5.5-.5h15c.276 0 .5.224.5.5s-.224.5-.5.5z" />
-                                </g>
-                                <g>
-                                  <g>
-                                    <path
-                                      d="m2.5 22c-.131 0-.259-.052-.354-.146-.123-.123-.173-.3-.133-.468l1.09-4.625c.021-.09.067-.173.133-.239l14.143-14.143c.565-.566 1.554-.566 2.121 0l2.121 2.121c.283.283.439.66.439 1.061s-.156.778-.439 1.061l-14.142 14.141c-.065.066-.148.112-.239.133l-4.625 1.09c-.038.01-.077.014-.115.014zm1.544-4.873-.872 3.7 3.7-.872 14.042-14.041c.095-.095.146-.22.146-.354 0-.133-.052-.259-.146-.354l-2.121-2.121c-.19-.189-.518-.189-.707 0zm3.081 3.283h.01z" />
-                                  </g>
-                                  <g>
-                                    <path
-                                      d="m17.889 10.146c-.128 0-.256-.049-.354-.146l-3.535-3.536c-.195-.195-.195-.512 0-.707s.512-.195.707 0l3.536 3.536c.195.195.195.512 0 .707-.098.098-.226.146-.354.146z" />
-                                  </g>
-                                </g>
-                              </svg>Update</a>
-                            <div class="dropdown-divider"></div>
-                            <a href="{% url 'delete-room' rooms.id %}" class="dropdown-item">
-                              <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                viewBox="0 0 32 32">
-                                <title>remove</title>
-                                <path
-                                  d="M27.314 6.019l-1.333-1.333-9.98 9.981-9.981-9.981-1.333 1.333 9.981 9.981-9.981 9.98 1.333 1.333 9.981-9.98 9.98 9.98 1.333-1.333-9.98-9.98 9.98-9.981z">
-                                </path>
-                              </svg>
-
-                              Delete</a>
-
-                          </div>
-                        </span>
-                      </div>
-                      {%endif%}
-
+                  <div class="col-md-12 messenger-top-section d-flex justify-content-between align-items-center">
+                    <div class="messenger-top-luser">
+                      <h6 class="message-profile-name">Room: {{rooms.name }}</h6>
                     </div>
+                    {% if request.user == rooms.host %}
+                    <div class="social-media messenger-top-ricon">
+                      <span class="dropdown">
+                        <a href="#" role="button" id="message-options" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          <i class='bx bx-dots-vertical-rounded'></i>
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right fs-9" aria-labelledby="message-options">
+                          <a href="{% url 'update-room' rooms.id %}" class="dropdown-item">
+                            <svg enable-background="new 0 0 24 24" height="16" viewBox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg">
+                              <title>edit</title>
+                              <g><path d="m23.5 22h-15c-.276 0-.5-.224-.5-.5s.224-.5.5-.5h15c.276 0 .5.224.5.5s-.224.5-.5.5z"/></g>
+                              <g><g><path d="m2.5 22c-.131 0-.259-.052-.354-.146-.123-.123-.173-.3-.133-.468l1.09-4.625c.021-.09.067-.173.133-.239l14.143-14.143c.565-.566 1.554-.566 2.121 0l2.121 2.121c.283.283.439.66.439 1.061s-.156.778-.439 1.061l-14.142 14.141c-.065.066-.148.112-.239.133l-4.625 1.09c-.038.01-.077.014-.115.014zm1.544-4.873-.872 3.7 3.7-.872 14.042-14.041c.095-.095.146-.22.146-.354 0-.133-.052-.259-.146-.354l-2.121-2.121c-.19-.189-.518-.189-.707 0zm3.081 3.283h.01z"/></g><g><path d="m17.889 10.146c-.128 0-.256-.049-.354-.146l-3.535-3.536c-.195-.195-.195-.512 0-.707s.512-.195.707 0l3.536 3.536c.195.195.195.512 0 .707-.098.098-.226.146-.354.146z"/></g></g>
+                            </svg>Update</a>
+                          <div class="dropdown-divider"></div>
+                          <a href="{% url 'delete-room' rooms.id %}" class="dropdown-item">
+                            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 32 32">
+                              <title>remove</title>
+                              <path d="M27.314 6.019l-1.333-1.333-9.98 9.981-9.981-9.981-1.333 1.333 9.981 9.981-9.981 9.98 1.333 1.333 9.981-9.98 9.98 9.98 1.333-1.333-9.98-9.98 9.98-9.981z"></path>
+                            </svg>
+                            Delete</a>
+                        </div>
+                      </span>
+                    </div>
+                    {% endif %}
                   </div>
 
-
-
-
-                  <div class="col-md-12" style="max-height: 532px;">
+                  <div class="col-md-12" style="height: 600px;">
                     <div class="messages">
                       <ul class="messages-content">
                         {% for message in message %}
-                        {%if request.user == message.user%}
+                        {% if request.user == message.user %}
                         <li class="message-reply">
                           <p>{{message.body}}</p>
                         </li>
-                        {%else%}
+                        {% else %}
                         <li class="message-receive">
-                          <a href="{% url 'profile' message.user.id %}"><img src="{{message.user.avatar.url}}"
-                              alt="Conversation user image" /> {{message.user.name}}</a><br>
+                          <a href="{% url 'profile' message.user.id %}">
+                            <img src="{{message.user.avatar.url}}" alt="Conversation user image" />
+                            {{message.user.name}}
+                          </a><br>
                           <p>{{message.body}}</p>
                           <div class="menu-button">⋮</div>
-                            <div class="menu">
-                              <ul>
-
-                                <li>
-                                  <a href="#" class="report-message" data-message-id="{{ message.id }}" data-toggle="modal" data-target="#reportModal">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-triangle-fill" viewBox="0 0 16 16">
-                                      <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
-                                    </svg>Report
-                                  </a></li>
-                              </ul>
-                            </div>
+                          <div class="menu">
+                            <ul >
+                              <li>
+                                <a href="#" class="report-message" data-message-id="{{ message.id }}" data-toggle="modal" data-target="#reportModal">
+                                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-triangle-fill" viewBox="0 0 16 16">
+                                    <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
+                                  </svg>Report
+                                </a>
+                              </li>
+                            </ul>
+                          </div>
                         </li>
-                        {%endif%}
-                        {%endfor%}
+                        {% endif %}
+                        {% endfor %}
                       </ul>
                     </div>
                   </div>
 
-
-
-
                   <div class="col-md-12">
-                    <div class="message-input" >
+                    <div class="message-input ">
                       <div class="wrap">
-
-
                         <form id="message-form" class="d-inline form-inline" action="" method="POST" enctype="multipart/form-data">
                           {% csrf_token %}
-                          <div class="d-flex align-items-center justify-content-between messenger-icons">
-                            <!-- <button type="button" class="btn search-button">
-                              <img src="{% static 'assets/images/icons/messenger/m-photo.png' %}" alt="Messenger icons">
-                            </button> -->
-                            <div class="input-group messenger-input">
-                              <input name="body" id="message-input" type="text" class="form-control search-input"
-                                placeholder="Type a message..." aria-label="Type a message..."
-                                aria-describedby="button-addon2">
+                          <div class="d-flex align-items-center justify-content-between messenger-icons col-md-12">
+                            <div class="input-group messenger-input col-sm-12">
+                              <input name="body" id="message-input" type="text" class="form-control search-input" placeholder="Type a message..." aria-label="Type a message...">
                               <div class="input-group-append">
                                 <button type="submit" class="btn search-button" id="message-submit">
-                                  <img src="{% static 'assets/images/icons/messenger/m-send.png' %}" alt="Messenger icons">
+                                  <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-arrow-up-circle-fill" viewBox="0 0 16 16">
+                                    <path d="M16 8A8 8 0 1 0 0 8a8 8 0 0 0 16 0m-7.5 3.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707z"/>
+                                  </svg>
                                 </button>
                               </div>
                             </div>
                           </div>
                         </form>
-
-
-
                       </div>
                     </div>
                   </div>
+
                 </div>
               </div>
+
             </div>
           </div>
+
         </div>
       </div>
     </div>
   </div>
+</div>
 
-
-  <!-- Report Modal -->
+<!-- Report Modal -->
 <div id="reportModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="reportModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -250,33 +211,23 @@
             <label>Reason</label>
             <div class="form-check">
               <input class="form-check-input" type="checkbox" name="reason" value="SP" id="reasonSpam">
-              <label class="form-check-label" for="reasonSpam">
-                Spam or misleading
-              </label>
+              <label class="form-check-label" for="reasonSpam">Spam or misleading</label>
             </div>
             <div class="form-check">
               <input class="form-check-input" type="checkbox" name="reason" value="HR" id="reasonHarassment">
-              <label class="form-check-label" for="reasonHarassment">
-                Harassment or bullying
-              </label>
+              <label class="form-check-label" for="reasonHarassment">Harassment or bullying</label>
             </div>
             <div class="form-check">
               <input class="form-check-input" type="checkbox" name="reason" value="IC" id="reasonInappropriateContent">
-              <label class="form-check-label" for="reasonInappropriateContent">
-                Inappropriate content
-              </label>
+              <label class="form-check-label" for="reasonInappropriateContent">Inappropriate content</label>
             </div>
             <div class="form-check">
               <input class="form-check-input" type="checkbox" name="reason" value="CR" id="reasonCopyright">
-              <label class="form-check-label" for="reasonCopyright">
-                Copyright violation
-              </label>
+              <label class="form-check-label" for="reasonCopyright">Copyright violation</label>
             </div>
             <div class="form-check">
               <input class="form-check-input" type="checkbox" name="reason" value="OT" id="reasonOther">
-              <label class="form-check-label" for="reasonOther">
-                Other
-              </label>
+              <label class="form-check-label" for="reasonOther">Other</label>
             </div>
           </div>
           <div class="form-group">
@@ -289,7 +240,6 @@
     </div>
   </div>
 </div>
-
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -365,7 +315,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 
-{%block scripts %}
+<!-- {%block scripts %}
 {{ rooms.id|json_script:"json-roomid" }}
 
 {{ request.user.username|json_script:"json_username"}}
@@ -474,7 +424,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 </script>
-  {% endblock %}
+  {% endblock %} -->
 
 
 {% endblock content %}

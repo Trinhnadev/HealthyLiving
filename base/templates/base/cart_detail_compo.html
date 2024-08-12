@@ -1,5 +1,5 @@
-<section class="h-100 h-custom" style="background-color: #eee; width: 1250px;">
-    <div class="container py-5 h-100">
+<section class="container-fluid col-md-9" style=" margin-right: 0;">
+    <div class="container py-5 h-100" >
       <div class="row d-flex justify-content-center align-items-center h-100">
         <div class="col">
           <div class="card">
@@ -62,18 +62,21 @@
                       <form method="POST" action="{% url 'checkout' %}">
                         {% csrf_token %}
                         <div data-mdb-input-init class="form-outline form-white mb-4">
-                          <input type="text" id="Name" name="full_name" class="form-control form-control-lg" placeholder="Cardholder's Name" required />
                           <label class="form-label" for="Name">Full Name</label>
+
+                          <input type="text" id="Name" name="full_name" class="form-control form-control-lg" placeholder="Cardholder's Name" required />
                         </div>
   
                         <div data-mdb-input-init class="form-outline form-white mb-4">
-                          <input type="text" id="phonenumber" name="phone_number" class="form-control form-control-lg" placeholder="1234 5678 9012 3457" required />
                           <label class="form-label" for="phonenumber">Phone Number</label>
+
+                          <input type="text" id="phonenumber" name="phone_number" class="form-control form-control-lg" placeholder="1234 5678 9012 3457" required />
                         </div>
   
                         <div data-mdb-input-init class="form-outline form-white mb-4">
-                          <input type="text" id="address" name="address" class="form-control form-control-lg" placeholder="Address" required />
                           <label class="form-label" for="address">Address</label>
+
+                          <input type="text" id="address" name="address" class="form-control form-control-lg" placeholder="Address" required />
                         </div>
   
                         <div class="d-flex justify-content-between">

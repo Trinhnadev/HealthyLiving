@@ -130,56 +130,65 @@
 </head>
 
 <body>
-<div class="dashboard">
-
-    <div class="cart">
-        <div class="checkout">
-            <form action="" method="GET" class="search-form">
-                <input type="search" name="q" placeholder="Search Account" class="search-input">
-                <button type="submit" class="search-button" hidden>Search</button>
-            </form>
+    <div class="container-fluid col-md-9" style="margin-right: 0;">
+        <div class="row justify-content-center col-lg-12">
+          <div class="col-lg-12">
+            <div class="card mb-4 col-lg-12">
+              <div class="card-body col-lg-12">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <form action="" method="GET" >
+                                <div class="input-group">
+                                    <input type="search" name="q" placeholder="Search Account" class="form-control">
+                                    <button type="submit" class="btn btn-outline-secondary" hidden>Search</button>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="chat-header mb-3">{{ reports.count }} {% if reports.count == 1 or reports.count == 0 %}Report{% else %}Reports{% endif %}</div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-hover w-100">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Avatar</th>
+                                        <th>Name</th>
+                                        <th>Message</th>
+                                        <th>Reason</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for r in reports %}
+                                    <tr>
+                                        <td><img src="{{ r.reported_message.user.avatar.url }}" alt="Avatar" class="img-thumbnail" style="width: 50px; height: auto;"></td>
+                                        <td><a href="{% url 'profile' r.reported_message.user.id %}">{{ r.reported_message.user.name }}</a></td>
+                                        <td>{{ r.reported_message.body }}</td>
+                                        <td>{{ r.reason }}</td>
+                                        <td>
+                                            <a href="{% url 'ban_user' r.reported_message.user.id %}" class="text-secondary me-2">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                                    class="bi bi-ban" viewBox="0 0 16 16">
+                                                    <path
+                                                        d="M15 8a6.97 6.97 0 0 0-1.71-4.584l-9.874 9.875A7 7 0 0 0 15 8M2.71 12.584l9.874-9.875a7 7 0 0 0-9.874 9.874ZM16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0" />
+                                                </svg>
+                                            </a>
+                                            <a href="{% url 'delete-message' r.reported_message.id %}" class="text-secondary me-2">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                                    class="bi bi-trash3" viewBox="0 0 16 16">
+                                                    <path
+                                                        d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
+                                                </svg>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="chat-header">{{reports.count}} {% if reports.count == 1 or reports.count == 0 %}Report{% else %} Reports{% endif %}</div>
-        <table>
-            <thead>
-                <tr>
-                    <th>Avatar</th>
-                    <th>Name</th>
-                    <th>Message</th>
-                    <th>Reason</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for r in reports %}
-                <tr>
-                    <td><img src="{{r.reported_message.user.avatar.url}}" alt="wht"></td>
-                    <td><a href="{% url 'profile' r.reported_message.user.id %}">{{r.reported_message.user.name}}</a></td>
-                    <td>{{ r.reported_message.body }}</td>
-                    <td>{{ r.reason }}</td>
-                    <td>
-                        <a href="{% url 'ban_user' r.reported_message.user.id %}" style="color: #b2bdbd;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                class="bi bi-ban" viewBox="0 0 16 16">
-                                <path
-                                    d="M15 8a6.97 6.97 0 0 0-1.71-4.584l-9.874 9.875A7 7 0 0 0 15 8M2.71 12.584l9.874-9.875a7 7 0 0 0-9.874 9.874ZM16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0" />
-                            </svg>
-                        </a>
-                        <a href="{% url 'delete-message' r.reported_message.id %}" style="color: #b2bdbd;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                class="bi bi-trash3" viewBox="0 0 16 16">
-                                <path
-                                    d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
-                            </svg>
-                        </a>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-
     </div>
-</div>
+    
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const rowsPerPage = 4;

@@ -1,0 +1,42 @@
+import threading
+from django.apps import AppConfig
+from django.utils import timezone
+from datetime import timedelta
+from pytz import timezone as pytz_timezone
+import time
+
+# Múi giờ Việt Nam
+VIETNAM_TZ = pytz_timezone('Asia/Ho_Chi_Minh')
+
+def countdown_timer(event_start_time, event_title):
+    current_time = timezone.now().astimezone(VIETNAM_TZ)
+    time_to_wait = event_start_time - timedelta(minutes=1)
+
+    while current_time < time_to_wait:
+        remaining_time = time_to_wait - current_time
+        minutes_left = remaining_time.total_seconds() // 60  # Tính số phút còn lại
+        print(f"Event '{event_title}': Phút còn lại trước khi bắt đầu sự kiện: {int(minutes_left)} phút", flush=True)
+        time.sleep(60)  # Dừng chương trình trong 1 phút
+        current_time = timezone.now().astimezone(VIETNAM_TZ)
+
+    print(f"Event '{event_title}': Còn 1 phút trước khi sự kiện bắt đầu.", flush=True)
+
+def check_approved_events():
+    from .models import Event  # Import model tại đây để tránh lỗi khởi động sớm
+    # Lấy tất cả các sự kiện đã được phê duyệt (approved)
+    approved_events = Event.objects.filter(status='approved')
+
+    for event in approved_events:
+        event_start_time = event.start_time.astimezone(VIETNAM_TZ)
+        event_title = event.title
+        # Khởi động một luồng để thực hiện việc in thời gian còn lại kèm theo tên sự kiện
+        countdown_thread = threading.Thread(target=countdown_timer, args=(event_start_time, event_title))
+        countdown_thread.start()  # Bắt đầu luồng
+
+class BaseConfig(AppConfig):
+    default_auto_field = 'django.db.models.BigAutoField'
+    name = 'base'
+
+    def ready(self):
+        # Khởi động kiểm tra khi server khởi động
+        check_approved_events()
