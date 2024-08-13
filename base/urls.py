@@ -16,7 +16,7 @@ urlpatterns = [
     path('room/<str:pk>/',views.room,name="room"),
     path('create-room/',views.createRoom, name ="create-room"),
     path('update-room/<slug:pk>/',views.updateRoom, name ="update-room"),
-    path('delete-room/<slug:pk>/',views.deleteRoom, name ="delete-room"),
+    path('delete-room/<int:room_id>/', views.delete_room, name='delete_room'),
     path('logout/',views.logoutUser,name="logout"),
     path('sign/',views.sign,name="sign"),
     path('profile/<str:pk>/',views.userProfile,name="profile"),
@@ -167,5 +167,17 @@ urlpatterns = [
 
     path('top-stores/', views.top_stores_by_revenue, name='top_stores_by_revenue'),
     path('unauthorized/', views.unauthorized, name='unauthorized'),
+
+
+
+
+    path('post/create/', views.post_create, name='post_create'),
+    path('like-post/<int:post_id>/', views.like_post, name='like-post'),
+    path('get-post/<int:post_id>/', views.get_post, name='get-post'),
+    path('update-post/<int:post_id>/', views.update_post, name='update-post'),
+    path('delete-post/<int:post_id>/', views.delete_post, name='delete_post'),
+    path('load-more-comments/', views.load_more_comments, name='load_more_comments'),
+    path('add-comment/<int:content_id>/', views.add_comment, name='add-comment'),
+    path('share-post/<int:post_id>/', views.share_post, name='share-post'),
 
 ]

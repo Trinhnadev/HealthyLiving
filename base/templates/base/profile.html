@@ -3,7 +3,19 @@
 {% block content %}
 
 
+<style>
+    .scrollable-container {
+    overflow-y: scroll;
+    height: 100vh;
+    scrollbar-width: none;
+    /* For Firefox */
+  }
 
+  .scrollable-container::-webkit-scrollbar {
+    display: none;
+    /* For Chrome, Safari, and Opera */
+  }
+</style>
 
 
 
@@ -117,9 +129,9 @@
                              
                               
                           </ul>
-                          
-                          
+
                           {% include 'base/feed.html' %}
+
                       </div>
                       
                   </div>

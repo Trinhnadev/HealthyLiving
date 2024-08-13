@@ -7,7 +7,7 @@ import time
 from django.shortcuts import render,redirect
 from django.contrib import messages
 from django.http import HttpResponse
-from .models import Room, Topic, Message ,User , Friendship ,Chat ,Product,Order,OrderDetail, Cart , CartItem , Event,Invitation,Store,ChatRoom,MessageReport,EventMessage,Notification
+from .models import Room, Topic, Message ,User , Friendship ,Chat ,Product,Order,OrderDetail, Cart , CartItem , Event,Invitation,Store,ChatRoom,MessageReport,EventMessage,Post,Comment,Share
 from django.db.models import Q
 from django.contrib.auth.decorators import login_required ,user_passes_test
 from .forms import RoomForm, UserForm ,ProfileForm ,MyUserCreationForm,EventsForm,StoreForm,ProductForm,CheckoutForm,ReportForm
@@ -37,24 +37,45 @@ from itertools import chain
 from operator import attrgetter
 from .decorators import role_required
 from django.core.management import call_command
-
+from django.template.loader import render_to_string
 from pytz import timezone as pytz_timezone
 # Múi giờ Việt Nam
 VIETNAM_TZ = pytz_timezone('Asia/Ho_Chi_Minh')
 
+from itertools import chain
+from operator import attrgetter
+
 @login_required
 def home(request):
     q = request.GET.get('q') if request.GET.get('q') != None else ''
-    topic = Topic.objects.all()[0:5]
     user = request.user
 
+    # Query for topics, chat rooms, and friendship requests
+    topic = Topic.objects.all()[0:5]
     chat_rooms = ChatRoom.objects.filter(members=user)
+    sent = Friendship.objects.filter(receiver=request.user, status='pending')
+    
+    # Query for rooms, posts, and shares based on the search query
     rooms = Room.objects.filter(
         Q(topic__name__icontains=q) |
         Q(name__icontains=q)
     )
-    sent = Friendship.objects.filter(receiver=request.user, status='pending')
-    room_count = rooms.count()
+    posts = Post.objects.filter(
+        Q(title__icontains=q) |
+        Q(content__icontains=q)
+    )
+    shares = Share.objects.filter(
+        Q(post__title__icontains=q) |
+        Q(post__content__icontains=q)
+    ).select_related('post')
+
+    # Combine the rooms, posts, and shares into a single queryset, ordered by creation time
+    combined_content = sorted(
+        chain(rooms, posts, shares),
+        key=attrgetter('created_at'),  # assuming `created_at` is a common field
+        reverse=True
+    )
+
     room_message = Message.objects.filter(
         Q(room__topic__name__icontains=q)
     )[0:5]
@@ -66,13 +87,10 @@ def home(request):
     )
 
     users_in_same_rooms = User.objects.filter(room__participants=user).exclude(id=user.id)
-
     user_counts = users_in_same_rooms.values('id').annotate(room_count=Count('room')).order_by('-room_count')
     top_users = [entry['id'] for entry in user_counts]
     user_friends = user.friendship_sent.filter(status='accepted').values_list('receiver_id', flat=True)
     random_users = User.objects.filter(id__in=top_users).exclude(id__in=user_friends)[:10]
-
-    rooms_with_message_count = rooms.annotate(message_count=Count('message'))
 
     combined_notifications = sorted(
         chain(invitations, sent),
@@ -80,13 +98,10 @@ def home(request):
         reverse=True
     )
 
-
-
     context = {
-        'rooms': rooms_with_message_count,
+        'combined_content': combined_content,
         'topic': topic,
         'chat_rooms': chat_rooms,
-        'room_count': room_count,
         'room_message': room_message,
         'random_users': random_users,
         'users': accepted_friends,
@@ -96,57 +111,68 @@ def home(request):
     return render(request, 'base/home.html', context)
 
 
+
 @login_required
-def userProfile(request,pk):
-    user = get_object_or_404(User, id=pk)
-    
+def userProfile(request, pk):
+    # Fetch the user profile
+    user_profile = get_object_or_404(User, id=pk)
+    current_user = request.user
+
+    # Query for friendships and chat rooms
     friendship = Friendship.objects.filter(
-        Q(sender=request.user, receiver=user) | Q(sender=user, receiver=request.user)
+        Q(sender=current_user, receiver=user_profile) | Q(sender=user_profile, receiver=current_user)
     ).first()
-    sent = Friendship.objects.filter(receiver=request.user, status='pending')
 
     accepted_friends = Friendship.objects.filter(
-        Q(sender=request.user, status='accepted') | 
-        Q(receiver=request.user, status='accepted')
+        Q(sender=current_user, status='accepted') | 
+        Q(receiver=current_user, status='accepted')
     )
 
-    users_in_same_rooms = User.objects.filter(room__participants=user).exclude(id=user.id)
-
-    # Đếm số lần mỗi người dùng khác xuất hiện trong các phòng mà user tham gia
-    user_counts = users_in_same_rooms.values('id').annotate(room_count=Count('room')).order_by('-room_count')
-
-    # Lấy các người dùng xuất hiện nhiều nhất trong các phòng mà user tham gia
-    top_users = [entry['id'] for entry in user_counts]
-
-    # Lấy danh sách bạn bè của user
-    user_friends = user.friendship_sent.filter(status='accepted').values_list('receiver_id', flat=True)
-
-    # Loại bỏ các người dùng đã là bạn bè của user
-    random_users = User.objects.filter(id__in=top_users).exclude(id__in=user_friends)[:10]
-    
-    # Lấy các phòng và đếm số lượng tin nhắn cho từng phòng
-    rooms = user.room_set.annotate(message_count=Count('message'))
-    room_message = user.message_set.all()[0:5]
-    topic = Topic.objects.all()[0:5]
-    
-    chat_room = ChatRoom.objects.filter(members=request.user).filter(members=user).first()
+    chat_room = ChatRoom.objects.filter(members=current_user).filter(members=user_profile).first()
     if not chat_room and friendship and friendship.status == 'accepted':
         chat_room = ChatRoom.objects.create()
-        chat_room.members.add(request.user, user)
+        chat_room.members.add(current_user, user_profile)
+
+    # Query for topics
+    topic = Topic.objects.all()[:5]
+
+    # Query for rooms, posts, and shares associated with the user profile
+    rooms = Room.objects.filter(participants=user_profile)
+    posts = Post.objects.filter(author=user_profile)
+    shares = Share.objects.filter(user=user_profile).select_related('post')
+
+    # Combine the rooms, posts, and shares into a single queryset, ordered by creation time
+    combined_content = sorted(
+        chain(rooms, posts, shares),
+        key=attrgetter('created_at'),
+        reverse=True
+    )
+
+    # Query for recent messages and friendship requests
+    room_message = Message.objects.filter(room__participants=user_profile)[:5]
+    sent_requests = Friendship.objects.filter(receiver=current_user, status='pending')
+
+    # Query for users in the same rooms
+    users_in_same_rooms = User.objects.filter(room__participants=user_profile).exclude(id=user_profile.id)
+    user_counts = users_in_same_rooms.values('id').annotate(room_count=Count('room')).order_by('-room_count')
+    top_users = [entry['id'] for entry in user_counts]
+    user_friends = user_profile.friendship_sent.filter(status='accepted').values_list('receiver_id', flat=True)
+    random_users = User.objects.filter(id__in=top_users).exclude(id__in=user_friends)[:10]
 
     context = {
-        'user': user,
+        'user': user_profile,
+        'combined_content': combined_content,
         'rooms': rooms,
         'room_message': room_message,
         'topic': topic,
         'random_users': random_users,
         'users': accepted_friends,
-        'sent': sent,
+        'sent': sent_requests,
         'friendship': friendship,
         'chat_room': chat_room,
     }
-    return render(request, 'base/profile.html', context)
 
+    return render(request, 'base/profile.html', context)
 
 @login_required(login_url='login')
 def update_avatar(request):
@@ -345,12 +371,18 @@ def updateRoom(request,pk):
     return render(request,'base/room_form.html',context)
 
 @login_required(login_url='login')
-def deleteRoom(request,pk):
-    room = Room.objects.get(id = pk)
+def delete_room(request, room_id):
+    room = get_object_or_404(Room, id=room_id)
+
     if request.method == 'POST':
-        room.delete()
-        return redirect('home')
-    return render(request,'base/delete.html',{'obj':room})
+        # Kiểm tra quyền của người dùng
+        if request.user == room.host:
+            room.delete()
+            messages.success(request, 'The room was successfully deleted.')
+        else:
+            messages.error(request, 'You are not authorized to delete this room.')
+        
+        return redirect('home')  # Redirect về trang chủ sau khi xóa
 
 
 @login_required(login_url='login')
@@ -1804,6 +1836,125 @@ def unauthorized(request):
 
 
 
-# Notification
+# POst
+@login_required
+def post_create(request):
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        content = request.POST.get('content')
+        image = request.FILES.get('image')  # Handle file upload
+
+        # Create the post with or without an image
+        post = Post.objects.create(
+            author=request.user, 
+            title=title, 
+            content=content,
+            image=image  # Save the image if uploaded
+        )
+
+        # If using AJAX, you could return JSON data here
+        return JsonResponse({'status': 'success', 'post_id': post.id})
+
+        # If not using AJAX, redirect to the home page after creation
+        return redirect('home')
+    return redirect('home')
 
 
+
+@login_required
+def like_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    user = request.user
+
+    if user in post.likes.all():
+        post.likes.remove(user)
+        liked = False
+    else:
+        post.likes.add(user)
+        liked = True
+
+    return JsonResponse({
+        'liked': liked,
+        'like_count': post.like_count(),
+    })
+
+
+def get_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    data = {
+        'id': post.id,
+        'title': post.title,
+        'content': post.content,
+        'image': post.image.url if post.image else None,
+    }
+    return JsonResponse(data)
+
+@csrf_exempt
+
+def update_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+
+    if request.method == 'POST':
+        post.title = request.POST.get('title')
+        post.content = request.POST.get('content')
+
+        if 'image' in request.FILES:
+            post.image = request.FILES['image']
+
+        post.save()
+        return JsonResponse({'success': True})
+
+    return JsonResponse({'success': False}, status=400)
+
+
+def delete_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+
+    if request.method == 'POST':
+        # Kiểm tra quyền của người dùng
+        if request.user == post.author:
+            post.delete()
+            messages.success(request, 'The post was successfully deleted.')
+        else:
+            messages.error(request, 'You are not authorized to delete this post.')
+        
+        return redirect('home') 
+    
+
+
+def load_more_comments(request):
+    post_id = request.GET.get('post_id')
+    offset = int(request.GET.get('offset', 0))
+    comments = Comment.objects.filter(post_id=post_id).order_by('created_at')[offset:offset + 5]
+
+    comments_data = []
+    for comment in comments:
+        comments_data.append({
+            'user': comment.user.username,
+            'avatar_url': comment.user.avatar.url,
+            'created_at': comment.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+            'content': comment.content,
+        })
+
+    return JsonResponse({'comments': comments_data})
+
+
+@login_required
+
+def add_comment(request, content_id):
+    post = get_object_or_404(Post, id=content_id)
+    if request.method == 'POST':
+        content = request.POST.get('content')
+        if content:
+            comment = Comment.objects.create(post=post, user=request.user, content=content)
+            html = render_to_string('base/comment.html', {'comment': comment}, request=request)
+            return JsonResponse({'html': html})
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+
+
+
+def share_post(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    Share.objects.create(post=post, user=request.user)
+    return redirect('home')  # hoặc trang mà bạn muốn chuyển hướng sau khi chia sẻ

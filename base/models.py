@@ -56,6 +56,8 @@ class Room(models.Model):
     is_private = models.BooleanField(default=False)  # New field to indicate privacy
     question = models.CharField(max_length=200,null=True, blank=True)  # New field for question
     answer = models.CharField(max_length=200,null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
 
     class Meta:
         ordering = ['-updated','created']
@@ -249,12 +251,45 @@ class OrderDetail(models.Model):
 
 
 
-class Notification(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    event = models.ForeignKey(Event, on_delete=models.CASCADE, null=True, blank=True)  # Add this line
-    message = models.TextField()
+class Post(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
+    title = models.CharField(max_length=255)
+    content = models.TextField()
+    likes = models.ManyToManyField(User, related_name='liked_posts', blank=True)
+    image = models.ImageField(upload_to='post_images/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    is_read = models.BooleanField(default=False)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created_at']
 
     def __str__(self):
-        return f'Notification for {self.user.username}'
+        return self.title
+
+    def like_count(self):
+        return self.likes.count()
+
+    def share_count(self):
+        return self.shares.count()
+
+class Comment(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f'Comment by {self.user.username} on {self.post.title}'
+    
+
+class Share(models.Model):
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='shares')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='shared_posts')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.user.username} shared {self.post.title}'
