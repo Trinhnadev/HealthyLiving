@@ -161,7 +161,7 @@
                                         <td>{{ r.description }}</td>
                                         <td><a href="{% url 'profile' r.host.id %}">{{ r.host.name }}</a></td>
                                         <td>
-                                            <a href="{% url 'delete-room' r.id %}" class="text-secondary me-2">
+                                            <a href="{% url 'delete_room' r.id %}" class="text-secondary me-2">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                                     class="bi bi-x-lg" viewBox="0 0 16 16">
                                                     <path
@@ -182,7 +182,7 @@
     
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const rowsPerPage = 4;
+        const rowsPerPage = 6;
         const table = document.querySelector("table");
         const tbody = table.querySelector("tbody");
         const rows = tbody.querySelectorAll("tr");

@@ -2,133 +2,155 @@
 
 {% if request.path != '/sign/' and request.path != '/' %}
 <style>
-/* Dropdown Menu Styles */
-/* Dropdown Menu Styles */
-/* Dropdown Menu Styles */
-.nav-item {
-    position: relative;
-}
+    /* Dropdown Menu Styles */
+    /* Dropdown Menu Styles */
+    /* Dropdown Menu Styles */
+    .nav-item {
+        position: relative;
+    }
 
-.dropdown-menu {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    left: auto;
-    z-index: 1050;
-    display: none;
-    min-width: 12rem; /* Slightly increased width for more space */
-    padding: 0.75rem 0; /* Increased padding for a roomier feel */
-    margin: 0.125rem 0 0;
-    font-size: 0.95rem; /* Slightly reduced font size for a cleaner look */
-    color: #333; /* Darker text color for better readability */
-    text-align: left;
-    list-style: none;
-    background-color: #f8f9fa; /* Softer background color */
-    background-clip: padding-box;
-    border: 1px solid rgba(0, 0, 0, 0.1); /* Lighter border for a softer edge */
-    border-radius: 0.5rem; /* More rounded corners for a modern look */
-    box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.15); /* Softer shadow for depth */
-}
+    .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        left: auto;
+        z-index: 1050;
+        display: none;
+        min-width: 12rem;
+        /* Slightly increased width for more space */
+        padding: 0.75rem 0;
+        /* Increased padding for a roomier feel */
+        margin: 0.125rem 0 0;
+        font-size: 0.95rem;
+        /* Slightly reduced font size for a cleaner look */
+        color: #333;
+        /* Darker text color for better readability */
+        text-align: left;
+        list-style: none;
+        background-color: #f8f9fa;
+        /* Softer background color */
+        background-clip: padding-box;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        /* Lighter border for a softer edge */
+        border-radius: 0.5rem;
+        /* More rounded corners for a modern look */
+        box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.15);
+        /* Softer shadow for depth */
+    }
 
-/* Ensure dropdown is visible when open */
-.dropdown.open .dropdown-menu {
-    display: block;
-}
+    /* Ensure dropdown is visible when open */
+    .dropdown.open .dropdown-menu {
+        display: block;
+    }
 
-/* Modal Styles */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1051;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    width: 85%; /* Slightly increased width for more space */
-    max-width: 450px; /* Increased max-width for a larger modal */
-    overflow: auto;
-    background-color: #ffffff; /* Clean white background */
-    border-radius: 0.75rem; /* Softer, more rounded corners */
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2); /* Deeper shadow for emphasis */
-    padding: 25px; /* Increased padding for more content space */
-}
+    /* Modal Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1051;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        width: 85%;
+        /* Slightly increased width for more space */
+        max-width: 450px;
+        /* Increased max-width for a larger modal */
+        overflow: auto;
+        background-color: #ffffff;
+        /* Clean white background */
+        border-radius: 0.75rem;
+        /* Softer, more rounded corners */
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        /* Deeper shadow for emphasis */
+        padding: 25px;
+        /* Increased padding for more content space */
+    }
 
-/* Hide the backdrop */
-.modal-backdrop {
-    display: none !important;
-}
+    /* Hide the backdrop */
+    .modal-backdrop {
+        display: none !important;
+    }
 
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 24px; /* Slightly reduced size for balance */
-    font-weight: bold;
-}
+    .close {
+        color: #aaa;
+        float: right;
+        font-size: 24px;
+        /* Slightly reduced size for balance */
+        font-weight: bold;
+    }
 
-.close:hover,
-.close:focus {
-    color: #000; /* Darker color on hover for better visibility */
-    text-decoration: none;
-    cursor: pointer;
-}
+    .close:hover,
+    .close:focus {
+        color: #000;
+        /* Darker color on hover for better visibility */
+        text-decoration: none;
+        cursor: pointer;
+    }
 
-/* Add subtle transitions for better UX */
-.dropdown-menu,
-.modal-content {
-    transition: all 0.3s ease-in-out;
-}
+    /* Add subtle transitions for better UX */
+    .dropdown-menu,
+    .modal-content {
+        transition: all 0.3s ease-in-out;
+    }
 
-.close {
-    transition: color 0.2s ease-in-out;
-}
-#postImageContainer {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 250px;  /* Chiều cao của container */
-    background-color: #333;  /* Màu nền tối */
-    border: 2px dashed #ddd;  /* Viền dạng nét đứt */
-    position: relative;
-    cursor: pointer;
-}
+    .close {
+        transition: color 0.2s ease-in-out;
+    }
 
-#postImageContainer img {
-    max-width: 100%;
-    max-height: 100%;
-    display: none;  /* Ẩn ảnh cho đến khi có ảnh */
-    object-fit: cover;
-}
+    #postImageContainer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 250px;
+        /* Chiều cao của container */
+        background-color: #333;
+        /* Màu nền tối */
+        border: 2px dashed #ddd;
+        /* Viền dạng nét đứt */
+        position: relative;
+        cursor: pointer;
+    }
 
-#postImageContainer .icon-placeholder {
-    color: #fff;
-    text-align: center;
-    font-size: 16px;
-}
+    #postImageContainer img {
+        max-width: 100%;
+        max-height: 100%;
+        display: none;
+        /* Ẩn ảnh cho đến khi có ảnh */
+        object-fit: cover;
+    }
 
-#postImageContainer:hover {
-    border-color: #888;  /* Đổi màu viền khi hover */
-}
+    #postImageContainer .icon-placeholder {
+        color: #fff;
+        text-align: center;
+        font-size: 16px;
+    }
 
-#postImageContainer .close-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    color: #fff;
-    font-size: 24px;
-    cursor: pointer;
-    display: none;  /* Ẩn nút x cho đến khi có ảnh */
-}
+    #postImageContainer:hover {
+        border-color: #888;
+        /* Đổi màu viền khi hover */
+    }
 
-#postImageContainer img.displayed {
-    display: block;  /* Hiển thị hình ảnh khi có ảnh */
-}
+    #postImageContainer .close-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        color: #fff;
+        font-size: 24px;
+        cursor: pointer;
+        display: none;
+        /* Ẩn nút x cho đến khi có ảnh */
+    }
 
-#postImageContainer .close-btn.displayed {
-    display: block;  /* Hiển thị nút x khi có ảnh */
-}
+    #postImageContainer img.displayed {
+        display: block;
+        /* Hiển thị hình ảnh khi có ảnh */
+    }
 
-
-
+    #postImageContainer .close-btn.displayed {
+        display: block;
+        /* Hiển thị nút x khi có ảnh */
+    }
 </style>
 <nav id="navbar-main" class="navbar navbar-expand-lg shadow-sm sticky-top">
     <div class="w-100 justify-content-md-center">
@@ -160,7 +182,7 @@
         </ul>
         <ul class="navbar-nav mr-5 flex-row" id="main_menu">
             <a class="navbar-brand nav-item mr-lg-5" href="{%url 'home'%}">
-                <h1 style="font-family: cursive; font-size: 20px;">HealthCare</h1>
+                <h1 style="font-family: cursive !important; font-size: 20px;">HealthCare</h1>
             </a>
             <!-- Collect the nav links, forms, and other content for toggling -->
 
@@ -218,7 +240,7 @@
             <!-- Create. -->
             <li class="nav-item s-nav dropdown d-mobile">
                 <a class="nav-link nav-icon nav-links drop-w-tooltip" data-toggle="dropdown" data-placement="bottom"
-                   data-title="Create" role="button" aria-haspopup="true" aria-expanded="false">
+                    data-title="Create" role="button" aria-haspopup="true" aria-expanded="false">
                     <img src="{% static 'assets/images/icons/navbar/create.png' %}" alt="navbar icon">
                 </a>
                 <div class="dropdown-menu dropdown-menu-right nav-dropdown-menu">
@@ -233,115 +255,110 @@
                             </div>
                         </div>
                     </a>
-                    <a href="#" class="dropdown-item" aria-describedby="createEvent" data-toggle="modal" data-target="#createPostModal">
+                    <a href="#" class="dropdown-item" aria-describedby="createEvent" data-toggle="modal"
+                        data-target="#createPostModal">
                         <div class="row">
                             <div class="col-md-2">
                                 <i class='bx bx-calendar post-option-icon'></i>
                             </div>
                             <div class="col-md-10">
                                 <span class="fs-9">Event</span>
-                                <small id="createEvent" class="form-text text-muted">Bring people together with a public or private event</small>
+                                <small id="createEvent" class="form-text text-muted">Bring people together with a public
+                                    or private event</small>
                             </div>
                         </div>
                     </a>
                 </div>
             </li>
-            
+            <style>
+
+            </style>
             <!-- Modal for Creating a Post -->
-            <div id="createPostModal" class="modal container-fluid col-md-9">
-                <div class="modal-content">
-                    <span class="close">&times;</span>
-                    <form id="createPostForm" method="post" action="{% url 'post_create' %}" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        <div class="form-group">
-                            <label for="postTitle">Title</label>
-                            <input type="text" id="postTitle" name="title" placeholder="Enter the title" class="form-control" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="postContent">Content</label>
-                            <textarea id="postContent" name="content" rows="4" placeholder="Write your post content..." class="form-control" required></textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="postImage">Upload Image (optional)</label>
-                            <input type="file" id="postImage" name="image" class="form-control-file">
-                        </div>
-                        <button type="submit" class="btn btn-primary">Create Post</button>
-                    </form>
+            <div id="createPostModal" class="modal" style="height: 70%;">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <span class="close">&times;</span>
+                        <form id="createPostForm" method="post" action="{% url 'post_create' %}"
+                            enctype="multipart/form-data" style="padding: 10px;">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="postTitle">Title</label>
+                                <input type="text" id="postTitle" name="title" placeholder="Enter the title"
+                                    class="form-control" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="postContent">Content</label>
+                                <textarea id="postContent" name="content" rows="4"
+                                    placeholder="Write your post content..." class="form-control" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="postImage">Upload Image (optional)</label>
+                                <input type="file" id="postImage" name="image" class="form-control-file"
+                                    accept="image/*">
+                            </div>
+                            <div class="form-group">
+                                <label for="postVideo">Upload Video (optional)</label>
+                                <input type="file" id="postVideo" name="video" class="form-control-file"
+                                    accept="video/*">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Create Post</button>
+                        </form>
+                    </div>
                 </div>
             </div>
-            
+
             <script>
                 document.addEventListener("DOMContentLoaded", function () {
-                    // Modal functionality
                     const createPostModal = document.getElementById("createPostModal");
                     const closeBtn = createPostModal.querySelector(".close");
-            
+                    const createPostForm = document.getElementById("createPostForm");
+
                     // Close the modal when the close button is clicked
                     closeBtn.onclick = function () {
                         createPostModal.style.display = "none";
                     };
-            
+
                     // Close the modal when clicking outside of the modal content
                     window.onclick = function (event) {
                         if (event.target === createPostModal) {
                             createPostModal.style.display = "none";
                         }
                     };
+
+                    // Handle form submission via AJAX
+                    createPostForm.onsubmit = function (event) {
+                        event.preventDefault(); // Prevent the default form submission
+
+                        const formData = new FormData(createPostForm); // Create a FormData object with the form's data
+
+                        fetch(createPostForm.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest', // Mark this as an AJAX request
+                            },
+                        })
+                            .then(response => {
+                                if (response.ok) {
+                                    return response.json();
+                                } else {
+                                    throw new Error('Network response was not ok.');
+                                }
+                            })
+                            .then(data => {
+                                // Handle the successful post creation
+                                console.log('Post created successfully:', data);
+                                createPostModal.style.display = "none";
+                                location.reload(); // Or dynamically update the post list without reloading
+                            })
+                            .catch(error => {
+                                console.error('Error creating post:', error);
+                            });
+                    };
                 });
+
+
             </script>
-            <!-- Same HTML Structure as Above -->
-
-<!-- Add this JavaScript -->
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const createPostModal = document.getElementById("createPostModal");
-        const closeBtn = createPostModal.querySelector(".close");
-        const createPostForm = document.getElementById("createPostForm");
-
-        // Close the modal when the close button is clicked
-        closeBtn.onclick = function () {
-            createPostModal.style.display = "none";
-        };
-
-        // Close the modal when clicking outside of the modal content
-        window.onclick = function (event) {
-            if (event.target === createPostModal) {
-                createPostModal.style.display = "none";
-            }
-        };
-
-        // Handle form submission via AJAX
-        createPostForm.onsubmit = function (event) {
-            event.preventDefault(); // Prevent the default form submission
-
-            const formData = new FormData(createPostForm); // Create a FormData object with the form's data
-
-            fetch(createPostForm.action, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest', // Mark this as an AJAX request
-                },
-            })
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    throw new Error('Network response was not ok.');
-                }
-            })
-            .then(data => {
-                // Handle the successful post creation
-                console.log('Post created successfully:', data);
-                createPostModal.style.display = "none";
-                location.reload(); // Or dynamically update the post list without reloading
-            })
-            .catch(error => {
-                console.error('Error creating post:', error);
-            });
-        };
-    });
-</script>
 
 
 
@@ -415,82 +432,89 @@
                     data-placement="bottom" data-title="Notifications" role="button" aria-haspopup="true"
                     aria-expanded="false">
                     <img src="{% static 'assets/images/icons/navbar/notification.png' %}" class="notification-bell"
-                        alt="navbar icon"> <span class="badge badge-pill badge-primary">{{ combined_notifications|length }}</span>
+                        alt="navbar icon"> <span class="badge badge-pill badge-primary">{{ combined_notifications|length}}</span>
                 </a>
                 <ul class="dropdown-menu notify-drop dropdown-menu-right nav-drop shadow-sm">
                     <div class="notify-drop-title">
                         <div class="row">
                             <div class="col-md-6 col-sm-6 col-xs-6 fs-8">Notifications <span
-                                    class="badge badge-pill badge-primary ml-2">{{ combined_notifications|length }}</span></div>
+                                    class="badge badge-pill badge-primary ml-2">{{ combined_notifications|length}}</span></div>
                             <div class="col-md-6 col-sm-6 col-xs-6 text-right">
                                 <a href="#" class="notify-right-icon">Mark All as Read</a>
                             </div>
                         </div>
                     </div>
                     <!-- end notify title -->
-            
+
                     <!-- notify content -->
                     <div class="drop-content">
 
                         <ul>
                             {% for notification in notifications %}
-                                <li>{{ notification.message }} - {{ notification.created_at }}</li>
+                            <li>{{ notification.message }} - {{ notification.created_at }}</li>
                             {% empty %}
-                                <li>No new notifications</li>
+                            <li>No new notifications</li>
                             {% endfor %}
                         </ul>
                         {% for notification in combined_notifications %}
-                            {% if notification.event %}
-                                <li class="notification-item">
-                                    <div class="row">
-                                        <div class="col-md-2 col-sm-2 col-xs-2">
-                                            <div class="notify-img">
-                                                <img src="{{ notification.invitee.avatar.url }}" alt="notification user image" width="40px"
-                                                    height="40px">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-10 col-sm-10 col-xs-10">
-                                            <a href="{% url 'profile' notification.invitee.id %}"
-                                                class="notification-user" style="font-size: 15px;">{{ notification.event.host.name }}</a>
-                                            <span class="notification-type">invited you to participate in the event "{{ notification.event.title }}"</span>
-                                            <div class="action col-md-9">
-                                                <a href="{% url 'accept_invitation' notification.id %}" class="notification-for">
-                                                    <button class="btn btn-sm" style="background-color: #0866FF; color: #fff;">Accept</button>
-                                                </a>
-                                                <a href="{% url 'decline_invitation' notification.id %}" class="notification-for">
-                                                    <button class="btn btn-sm" style="background-color: #7A7D82; color: #fff;">Reject</button>
-                                                </a>
-                                            </div>
-                                        </div>
+                        {% if notification.event %}
+                        <li class="notification-item">
+                            <div class="row">
+                                <div class="col-md-2 col-sm-2 col-xs-2">
+                                    <div class="notify-img">
+                                        <img src="{{ notification.invitee.avatar.url }}" alt="notification user image"
+                                            width="40px" height="40px">
                                     </div>
-                                </li>
-                                <hr>
-                            {% else %}
-                                <li class="notification-item">
-                                    <div class="row">
-                                        <div class="col-md-2 col-sm-2 col-xs-2">
-                                            <div class="notify-img">
-                                                <img src="{{ notification.sender.avatar.url }}" alt="notification user image" width="40px"
-                                                    height="40px">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-10 col-sm-10 col-xs-10">
-                                            <a href="{% url 'profile' notification.sender.id %}"
-                                                class="notification-user" style="font-size: 15px;">{{ notification.sender.name }}</a>
-                                            <span class="notification-type">sent a friend request</span>
-                                            <div class="action col-md-9">
-                                                <a href="{% url 'accept' notification.sender.id %}" class="notification-for">
-                                                    <button class="btn btn-sm" style="background-color: #0866FF; color: #fff;">Accept</button>
-                                                </a>
-                                                <a href="{% url 'reject' notification.sender.id %}" class="notification-for">
-                                                    <button class="btn btn-sm" style="background-color: #7A7D82; color: #fff;">Reject</button>
-                                                </a>
-                                            </div>
-                                        </div>
+                                </div>
+                                <div class="col-md-10 col-sm-10 col-xs-10">
+                                    <a href="{% url 'profile' notification.invitee.id %}" class="notification-user"
+                                        style="font-size: 15px;">{{ notification.event.host.name }}</a>
+                                    <span class="notification-type">invited you to participate in the event "{{
+                                        notification.event.title }}"</span>
+                                    <div class="action col-md-9">
+                                        <a href="{% url 'accept_invitation' notification.id %}"
+                                            class="notification-for">
+                                            <button class="btn btn-sm"
+                                                style="background-color: #0866FF; color: #fff;">Accept</button>
+                                        </a>
+                                        <a href="{% url 'decline_invitation' notification.id %}"
+                                            class="notification-for">
+                                            <button class="btn btn-sm"
+                                                style="background-color: #7A7D82; color: #fff;">Reject</button>
+                                        </a>
                                     </div>
-                                </li>
-                                <hr>
-                            {% endif %}
+                                </div>
+                            </div>
+                        </li>
+                        <hr>
+                        {% else %}
+                        <li class="notification-item">
+                            <div class="row">
+                                <div class="col-md-2 col-sm-2 col-xs-2">
+                                    <div class="notify-img">
+                                        <img src="{{ notification.sender.avatar.url }}" alt="notification user image"
+                                            width="40px" height="40px">
+                                    </div>
+                                </div>
+                                <div class="col-md-10 col-sm-10 col-xs-10">
+                                    <a href="{% url 'profile' notification.sender.id %}" class="notification-user"
+                                        style="font-size: 15px;">{{ notification.sender.name }}</a>
+                                    <span class="notification-type">sent a friend request</span>
+                                    <div class="action col-md-9">
+                                        <a href="{% url 'accept' notification.sender.id %}" class="notification-for">
+                                            <button class="btn btn-sm"
+                                                style="background-color: #0866FF; color: #fff;">Accept</button>
+                                        </a>
+                                        <a href="{% url 'reject' notification.sender.id %}" class="notification-for">
+                                            <button class="btn btn-sm"
+                                                style="background-color: #7A7D82; color: #fff;">Reject</button>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <hr>
+                        {% endif %}
                         {% endfor %}
                     </div>
                     <div class="notify-drop-footer text-center">
@@ -526,7 +550,8 @@
 
             <li class="nav-item s-nav nav-icon dropdown">
                 <a href="" data-toggle="dropdown" data-placement="bottom" data-title="Settings"
-                    class="nav-link settings-link rm-drop-mobile drop-w-tooltip" id="settings-dropdown"><img src="{% static 'assets/images/icons/navbar/gear-1.png' %}" alt="Navbar icon"></a>
+                    class="nav-link settings-link rm-drop-mobile drop-w-tooltip" id="settings-dropdown"><img
+                        src="{% static 'assets/images/icons/navbar/gear-1.png' %}" alt="Navbar icon"></a>
                 <div class="dropdown-menu dropdown-menu-right settings-dropdown shadow-sm"
                     aria-labelledby="settings-dropdown">
 
@@ -540,7 +565,7 @@
                     </a>
                     <a class="dropdown-item" href="{%url 'update-user'%}">
                         <img src="{% static 'assets/images/icons/navbar/gear-1.png' %}" alt="Navbar icon"> Settings</a>
-                        {% if request.user.role != 'US' %}
+                    {% if request.user.role != 'US' %}
                     <a class="dropdown-item" href="{% url 'manage'%}">
                         <img src="{% static 'assets/images/icons/navbar/admin.png' %}" alt="Navbar icon"> Admin</a>
                     {%endif%}

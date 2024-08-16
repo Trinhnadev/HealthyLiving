@@ -66,16 +66,21 @@ class Room(models.Model):
         return seft.name
     
 class Message(models.Model):
-    user = models.ForeignKey(User,on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
-    image = models.ImageField(blank=True, null=True)
-    body = models.TextField()
+    image = models.ImageField(upload_to='chat_images/', blank=True, null=True)
+    video = models.FileField(upload_to='chat_videos/', blank=True, null=True)
+    body = models.TextField(blank=True)
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
+
     class Meta:
-        ordering = ['-updated','created']
-    def __str__(seft):
-        return seft.body[0:50]
+        ordering = ['created']
+
+    def __str__(self):
+        if self.body:
+            return self.body[:50]
+        return "Media message"
     
 
 class MessageReport(models.Model):
@@ -124,15 +129,17 @@ class ChatRoom(models.Model):
 
 #chat
 class Chat(models.Model):
-    roomchat = models.ForeignKey(ChatRoom, on_delete=models.CASCADE, related_name='messages',null =True)
+    roomchat = models.ForeignKey('ChatRoom', on_delete=models.CASCADE, related_name='messages', null=True)
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sender_messages')
     receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='receiver_messages')
     image = models.ImageField(blank=True, null=True)
-    content = models.TextField()
+    video = models.FileField(upload_to='videos/', blank=True, null=True)
+    content = models.TextField(blank=True, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     class Meta:
         ordering = ['-timestamp']
+
     def __str__(self):
         return f"{self.sender} to {self.receiver} at {self.timestamp}"
     
@@ -257,6 +264,7 @@ class Post(models.Model):
     content = models.TextField()
     likes = models.ManyToManyField(User, related_name='liked_posts', blank=True)
     image = models.ImageField(upload_to='post_images/', blank=True, null=True)
+    video = models.FileField(upload_to='post_videos/', blank=True, null=True, help_text="Upload a video file.")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -289,7 +297,25 @@ class Comment(models.Model):
 class Share(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='shares')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='shared_posts')
+    content = models.TextField(null=True, blank=True)  # Field to add content to the share
+    likes = models.ManyToManyField(User, related_name='liked_shares', blank=True)  # Likes for the share
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def like_count(self):
+        return self.likes.count()
 
     def __str__(self):
         return f'{self.user.username} shared {self.post.title}'
+
+class ShareComment(models.Model):
+    share = models.ForeignKey(Share, on_delete=models.CASCADE, related_name='comments')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f'Comment by {self.user.username} on shared post {self.share.post.title}'

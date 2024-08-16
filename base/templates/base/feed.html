@@ -86,9 +86,9 @@
           <a href="{% if content.title %}{% url 'profile' content.author.id %}{% elif content.post %}{% url 'profile' content.user.id %}{% else %}{% url 'profile' content.host.id %}{% endif %}"
             class="text-gray-dark post-user-name">
             {% if content.title %}
-            {{ content.author.username }}
+            {{ content.author.name }}
             {% elif content.post %}
-            {{ content.user.username }} (shared {{ content.post.author.username }}'s post)
+            {{ content.user.name }} (shared {{ content.post.author.name }}'s post)
             {% else %}
             {{ content.host.name }}
             {% endif %}
@@ -140,21 +140,18 @@
               <i class='bx bx-dots-horizontal-rounded'></i>
             </a>
             <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-left post-dropdown-menu">
-              <a href="#" class="dropdown-item delete-post-button" data-id="{{ content.id }}"
-                onclick="confirmDelete(event, {{ content.id }})">
+              <a href="#" class="dropdown-item delete-share-button" data-id="{{ content.id }}">
                 <div class="row">
-                  <div class="col-md-2">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                      class="bi bi-trash" viewBox="0 0 16 16">
-                      <path
-                        d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
-                      <path
-                        d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
-                    </svg>
-                    <span class="fs-9">Delete Share</span>
-                  </div>
+                    <div class="col-md-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                            <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+                        </svg>
+                        <span class="fs-9">Delete Share</span>
+                    </div>
                 </div>
-              </a>
+            </a>
+            
             </div>
           </div>
           {% elif content.host and content.host.id == request.user.id %}
@@ -223,19 +220,26 @@
       {% if content.image %}
       <img src="{{ content.image.url }}" alt="" class="img-fluid">
       {% endif %}
+      {% if content.video %}
+      <video controls class="img-fluid">
+        <source src="{{ content.video.url }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+      {% endif %}
+      
     </div>
 
     {% elif content.post %}
     <div class="mt-0 col-md-9">
       <div class="shared-post">
-        <p>Shared post by: {{ content.user.username }}</p>
+        <p>{{ content.content }}</p>
         <div class="post border p-3">
           <div class="media text-muted pt-3">
             <img src="{{ content.post.author.avatar.url }}" alt="Post user" class="mr-3 post-user-image" width="55px" height="55px">
             <div class="media-body pb-3 mb-0 small lh-125">
               <div class="d-flex justify-content-between align-items-center w-100">
                 <a href="{% url 'profile' content.post.author.id %}" class="text-gray-dark post-user-name">
-                  {{ content.post.author.username }}
+                  {{ content.post.author.name }}
                 </a>
                 {% if content.post.author.id == request.user.id %}
                 <div class="dropdown">
@@ -276,6 +280,12 @@
             <p>{{ content.post.content }}</p>
             {% if content.post.image %}
             <img src="{{ content.post.image.url }}" alt="Post image" class="img-fluid">
+            {% endif %}
+            {% if content.post.video %}
+            <video controls class="img-fluid">
+              <source src="{{ content.post.video.url }}" type="video/mp4">
+              Your browser does not support the video tag.
+          </video>
             {% endif %}
           </div>
           <div class="mb-3">
@@ -487,8 +497,8 @@
 </div>
 
 <!-- Update Post Modal -->
-<div id="updatePostModal" class="modal container-fluid col-md-9">
-  <div class="modal-content">
+<div id="updatePostModal" class="modal container-fluid col-md-9" style="height: 90%;">
+  <div class="modal-content" style="padding: 10px;">
     <span class="close">&times;</span>
 
     <input type="hidden" id="updatePostId" value="">
@@ -505,13 +515,17 @@
     </div>
 
     <div class="form-group">
-      <div id="imagePreviewContainer">
+      <div id="mediaPreviewContainer">
         <span class="icon-placeholder">
-          <i class="bi bi-plus"></i><br> Image
+          <i class="bi bi-plus"></i><br> Media
         </span>
-        <img id="imagePreview" src="#" alt="Image Preview">
-        <span class="close-btn" id="removeImage">&times;</span>
-        <input type="file" id="updatePostImage" class="form-control-file" style="display:none;">
+        <img id="imagePreview" src="#" alt="Image Preview" style="display: none;">
+        <video id="videoPreview" controls style="display: none;">
+          <source id="videoSource" src="#">
+          Your browser does not support the video tag.
+        </video>
+        <span class="close-btn" id="removeMedia">&times;</span>
+        <input type="file" id="updatePostMedia" class="form-control-file" accept="image/*,video/*" style="display:none;">
       </div>
     </div>
 
@@ -522,26 +536,35 @@
 
 
 
+
 <!-- Modal share/ -->
 
 
 <!-- Modal xác nhận chia sẻ -->
-<div id="sharePostModal" class="modal container-fluid col-md-9">
-  <div class="modal-content">
-      <span class="close">&times;</span>
-      <h5>Do you want to share this post?</h5>
-      <p>This will share the post to your followers.</p>
+<div id="sharePostModal" class="modal" style="height: 60%;">
+  <div class="modal-dialog">
+      <div class="modal-content" style="padding: 10px;">
+          <span class="close">&times;</span>
+          <h5>Do you want to share this post?</h5>
+          <p>This will share the post to your followers.</p>
 
-      <input type="hidden" id="sharePostId" value="">
+          <div class="form-group">
+              <label for="updatePostContent">Content</label>
+              <textarea id="shareContent" rows="4" placeholder="Write your post content..." class="form-control"
+                  required></textarea>
+          </div>
 
-      <button type="button" class="btn btn-primary" id="confirmShare">Confirm Share</button>
+          <input type="hidden" id="sharePostId" value="">
+
+          <button type="button" class="btn btn-primary" id="confirmShare">Confirm Share</button>
+      </div>
   </div>
 </div>
 <!-- end -->
 
 <!-- Update Post Script -->
 <script>
-  $(document).on('click', '.update-post-button', function (e) {
+ $(document).on('click', '.update-post-button', function (e) {
     e.preventDefault();
     var post_id = $(this).data('id');
     $.ajax({
@@ -551,58 +574,85 @@
         $('#updatePostId').val(data.id);
         $('#updatePostTitle').val(data.title);
         $('#updatePostContent').val(data.content);
+        
         if (data.image) {
-          $('#imagePreview').attr('src', data.image).addClass('displayed');
+          $('#imagePreview').attr('src', data.image).show();
+          $('#videoPreview').hide();
           $('.icon-placeholder').hide();
-          $('#removeImage').addClass('displayed');
+          $('#removeMedia').show();
+        } else if (data.video) {
+          $('#videoSource').attr('src', data.video);
+          $('#videoPreview').show();
+          $('#imagePreview').hide();
+          $('.icon-placeholder').hide();
+          $('#removeMedia').show();
         } else {
-          $('#imagePreview').removeClass('displayed').attr('src', '#');
+          $('#imagePreview').hide();
+          $('#videoPreview').hide();
           $('.icon-placeholder').show();
-          $('#removeImage').removeClass('displayed');
+          $('#removeMedia').hide();
         }
+        
         $('#updatePostModal').show();
       }
     });
-  });
+});
 
-  $('#imagePreviewContainer').on('click', function () {
-    $('#updatePostImage').click();
-  });
+$('#mediaPreviewContainer').on('click', function () {
+    $('#updatePostMedia').click();
+});
 
-  $('#updatePostImage').on('change', function () {
-    var reader = new FileReader();
-    reader.onload = function (e) {
-      $('#imagePreview').attr('src', e.target.result).addClass('displayed');
-      $('.icon-placeholder').hide();
-      $('#removeImage').addClass('displayed');
+$('#updatePostMedia').on('change', function () {
+    var file = this.files[0];
+    var fileType = file.type.split('/')[0];
+
+    if (fileType === 'image') {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            $('#imagePreview').attr('src', e.target.result).show();
+            $('#videoPreview').hide();
+            $('.icon-placeholder').hide();
+            $('#removeMedia').show();
+        };
+        reader.readAsDataURL(file);
+    } else if (fileType === 'video') {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            $('#videoSource').attr('src', e.target.result);
+            $('#videoPreview').show();
+            $('#imagePreview').hide();
+            $('.icon-placeholder').hide();
+            $('#removeMedia').show();
+        };
+        reader.readAsDataURL(file);
     }
-    reader.readAsDataURL(this.files[0]);
-  });
+});
 
-  $('#removeImage').on('click', function (e) {
+$('#removeMedia').on('click', function (e) {
     e.stopPropagation();
-    $('#imagePreview').removeClass('displayed').attr('src', '#');
+    $('#imagePreview').hide().attr('src', '#');
+    $('#videoPreview').hide().attr('src', '#');
     $('.icon-placeholder').show();
-    $('#removeImage').removeClass('displayed');
-    $('#updatePostImage').val('');
-  });
+    $('#removeMedia').hide();
+    $('#updatePostMedia').val('');
+});
 
-  $('.close').on('click', function () {
+$('.close').on('click', function () {
     $('#updatePostModal').hide();
-  });
+});
 
-  $('#savePostChanges').on('click', function () {
+$('#savePostChanges').on('click', function () {
     var postId = $('#updatePostId').val();
     var postTitle = $('#updatePostTitle').val();
     var postContent = $('#updatePostContent').val();
-    var postImage = $('#updatePostImage')[0].files[0];
+    var postMedia = $('#updatePostMedia')[0].files[0];
 
     var formData = new FormData();
     formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
     formData.append('title', postTitle);
     formData.append('content', postContent);
-    if (postImage) {
-      formData.append('image', postImage);
+    if (postMedia) {
+      formData.append('media', postMedia);
     }
 
     $.ajax({
@@ -617,7 +667,8 @@
         location.reload();
       }
     });
-  });
+});
+
 </script>
 
 <!-- Like Post Script -->
@@ -774,36 +825,81 @@
 
 
 <script>// Mở modal khi nhấn nút share
-  $(document).on('click', '.share-post-button', function (e) {
-      e.preventDefault();
-      var post_id = $(this).data('id');
-      $('#sharePostId').val(post_id);
-      $('#sharePostModal').show();
-  });
-  
-  // Đóng modal khi nhấn nút close
-  $('.close').on('click', function () {
-      $('#sharePostModal').hide();
-  });
-  
-  // Xác nhận chia sẻ bài post
-  $('#confirmShare').on('click', function () {
-      var postId = $('#sharePostId').val();
-  
-      $.ajax({
-          url: '/share-post/' + postId + '/',
-          type: 'POST',
-          data: {
-              'csrfmiddlewaretoken': '{{ csrf_token }}'
-          },
-          success: function (response) {
-              $('#sharePostModal').hide();
-              alert('Post shared successfully!');
-              location.reload();
-          }
-      });
-  });
+$(document).on('click', '.share-post-button', function (e) {
+    e.preventDefault();
+    var post_id = $(this).data('id');
+    $('#sharePostId').val(post_id);
+    $('#sharePostModal').show();
+});
+
+// Đóng modal khi nhấn nút close
+$(document).on('click', '.close', function () {
+    $('#sharePostModal').hide();
+});
+
+// Đóng modal khi nhấn ngoài modal-content
+$(window).on('click', function (e) {
+    if ($(e.target).is('#sharePostModal')) {
+        $('#sharePostModal').hide();
+    }
+});
+
+// Xác nhận chia sẻ bài post
+$('#confirmShare').on('click', function () {
+    var postId = $('#sharePostId').val();
+    
+    $.ajax({
+        url: '/share-post/' + postId + '/',
+        type: 'POST',
+        data: {
+            'csrfmiddlewaretoken': '{{ csrf_token }}',
+            'content': $('#shareContent').val(),
+        },
+        success: function (response) {
+            $('#sharePostModal').hide();
+            alert('Post shared successfully!');
+            location.reload();
+        }
+    });
+});
   </script>
 
 
 <!-- end Share -->
+
+
+
+
+<!-- Delete share  -->
+
+
+<script>
+  function confirmDeleteShare(event, shareId) {
+    event.preventDefault();
+    if (confirm("Are you sure you want to delete this share?")) {
+        var form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/delete-share/${shareId}/`;
+
+        var csrfToken = document.createElement('input');
+        csrfToken.type = 'hidden';
+        csrfToken.name = 'csrfmiddlewaretoken';
+        csrfToken.value = '{{ csrf_token }}';  // Use the CSRF token provided by Django
+
+        form.appendChild(csrfToken);
+        document.body.appendChild(form);
+
+        form.submit();  // Submit the form to delete the share
+    }
+}
+
+// Event listener for delete share buttons
+$(document).on('click', '.delete-share-button', function(e) {
+    var shareId = $(this).data('id');
+    confirmDeleteShare(e, shareId);  // Call the confirm delete function
+});
+</script>
+
+
+
+<!-- end Scripts -->

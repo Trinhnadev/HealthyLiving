@@ -172,12 +172,13 @@ urlpatterns = [
 
 
     path('post/create/', views.post_create, name='post_create'),
-    path('like-post/<int:post_id>/', views.like_post, name='like-post'),
+    path('like-post/<int:content_id>/', views.like_post, name='like-post'),
     path('get-post/<int:post_id>/', views.get_post, name='get-post'),
     path('update-post/<int:post_id>/', views.update_post, name='update-post'),
     path('delete-post/<int:post_id>/', views.delete_post, name='delete_post'),
     path('load-more-comments/', views.load_more_comments, name='load_more_comments'),
     path('add-comment/<int:content_id>/', views.add_comment, name='add-comment'),
     path('share-post/<int:post_id>/', views.share_post, name='share-post'),
+    path('delete-share/<int:share_id>/', views.delete_share, name='delete_share'),
 
 ]

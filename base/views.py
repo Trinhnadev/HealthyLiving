@@ -174,6 +174,68 @@ def userProfile(request, pk):
 
     return render(request, 'base/profile.html', context)
 
+@login_required
+def userProfile(request, pk):
+    # Fetch the user profile
+    user_profile = get_object_or_404(User, id=pk)
+    current_user = request.user
+
+    # Query for friendships and chat rooms
+    friendship = Friendship.objects.filter(
+        Q(sender=current_user, receiver=user_profile) | Q(sender=user_profile, receiver=current_user)
+    ).first()
+
+    accepted_friends = Friendship.objects.filter(
+        Q(sender=current_user, status='accepted') | 
+        Q(receiver=current_user, status='accepted')
+    )
+
+    chat_room = ChatRoom.objects.filter(members=current_user).filter(members=user_profile).first()
+    if not chat_room and friendship and friendship.status == 'accepted':
+        chat_room = ChatRoom.objects.create()
+        chat_room.members.add(current_user, user_profile)
+
+    # Query for topics
+    topic = Topic.objects.all()[:5]
+
+    # Query for rooms, posts, and shares associated with the user profile
+    rooms = Room.objects.filter(participants=user_profile)
+    posts = Post.objects.filter(author=user_profile)
+    # shares = Share.objects.filter(user=user_profile).select_related('post')
+
+    # Combine the rooms, posts, and shares into a single queryset, ordered by creation time
+    combined_content = sorted(
+        chain(rooms, posts),
+        key=attrgetter('created_at'),
+        reverse=True
+    )
+
+    # Query for recent messages and friendship requests
+    room_message = Message.objects.filter(room__participants=user_profile)[:5]
+    sent_requests = Friendship.objects.filter(receiver=current_user, status='pending')
+
+    # Query for users in the same rooms
+    users_in_same_rooms = User.objects.filter(room__participants=user_profile).exclude(id=user_profile.id)
+    user_counts = users_in_same_rooms.values('id').annotate(room_count=Count('room')).order_by('-room_count')
+    top_users = [entry['id'] for entry in user_counts]
+    user_friends = user_profile.friendship_sent.filter(status='accepted').values_list('receiver_id', flat=True)
+    random_users = User.objects.filter(id__in=top_users).exclude(id__in=user_friends)[:10]
+
+    context = {
+        'user': user_profile,
+        'combined_content': combined_content,
+        'rooms': rooms,
+        'room_message': room_message,
+        'topic': topic,
+        'random_users': random_users,
+        'users': accepted_friends,
+        'sent': sent_requests,
+        'friendship': friendship,
+        'chat_room': chat_room,
+    }
+
+    return render(request, 'base/profile.html', context)
+
 @login_required(login_url='login')
 def update_avatar(request):
     user = request.user
@@ -566,31 +628,19 @@ def open_chat(request, pk):
     chat_room = get_object_or_404(ChatRoom, id=pk)
     chat_rooms = ChatRoom.objects.filter(members=request.user)
     messages = Chat.objects.filter(roomchat=chat_room).order_by('timestamp')
-    
-    # Lấy người bạn duy nhất trong phòng chat này
+
     friend = chat_room.members.exclude(id=request.user.id).first()
 
-    accepted_friends = Friendship.objects.filter(Q(sender=request.user, status='accepted') | Q(receiver=request.user, status='accepted'))
-
-    if request.method == 'POST' and friend:
-        content = request.POST.get('body', '').strip()
-        image = request.FILES.get('image')
-        if content or image:
-            # Đảm bảo friend là một instance cụ thể của User
-            Chat.objects.create(
-                roomchat=chat_room,
-                sender=request.user,
-                receiver=friend,  # friend giờ là một instance của User
-                content=content,
-                image=image,
-            )
-        return redirect('open_chat', pk=pk)
+    accepted_friends = Friendship.objects.filter(
+        (Q(sender=request.user) | Q(receiver=request.user)),
+        status='accepted'
+    )
 
     return render(request, 'base/chat.html', {
         'chat_room': chat_room,
-        'chat_rooms':chat_rooms,
+        'chat_rooms': chat_rooms,
         'messages': messages,
-        'friend': friend,  # Chuyển friend dưới dạng một instance của User
+        'friend': friend,
         'accepted_friends': accepted_friends
     })
 
@@ -1842,40 +1892,40 @@ def post_create(request):
     if request.method == 'POST':
         title = request.POST.get('title')
         content = request.POST.get('content')
-        image = request.FILES.get('image')  # Handle file upload
+        image = request.FILES.get('image')
+        video = request.FILES.get('video')  # Handle video upload
 
-        # Create the post with or without an image
+        # Create the post with or without an image/video
         post = Post.objects.create(
-            author=request.user, 
-            title=title, 
+            author=request.user,
+            title=title,
             content=content,
-            image=image  # Save the image if uploaded
+            image=image,  # Save the image if uploaded
+            video=video  # Save the video if uploaded
         )
 
-        # If using AJAX, you could return JSON data here
         return JsonResponse({'status': 'success', 'post_id': post.id})
 
-        # If not using AJAX, redirect to the home page after creation
-        return redirect('home')
     return redirect('home')
 
 
 
 @login_required
-def like_post(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
+def like_post(request, content_id):
+    # Check if the content is a Post or a Share
+    content = get_object_or_404(Post, id=content_id) if Post.objects.filter(id=content_id).exists() else get_object_or_404(Share, id=content_id)
     user = request.user
 
-    if user in post.likes.all():
-        post.likes.remove(user)
+    if user in content.likes.all():
+        content.likes.remove(user)
         liked = False
     else:
-        post.likes.add(user)
+        content.likes.add(user)
         liked = True
 
     return JsonResponse({
         'liked': liked,
-        'like_count': post.like_count(),
+        'like_count': content.likes.count(),
     })
 
 
@@ -1898,13 +1948,21 @@ def update_post(request, post_id):
         post.title = request.POST.get('title')
         post.content = request.POST.get('content')
 
-        if 'image' in request.FILES:
-            post.image = request.FILES['image']
+        if 'media' in request.FILES:
+            media = request.FILES['media']
+            if media.content_type.startswith('image'):
+                post.image = media
+                post.video = None  # Clear video if a new image is uploaded
+            elif media.content_type.startswith('video'):
+                post.video = media
+                post.image = None  # Clear image if a new video is uploaded
 
         post.save()
-        return JsonResponse({'success': True})
 
-    return JsonResponse({'success': False}, status=400)
+        return JsonResponse({'status': 'success'})
+
+    return JsonResponse({'status': 'fail'}, status=400)
+
 
 
 def delete_post(request, post_id):
@@ -1942,19 +2000,36 @@ def load_more_comments(request):
 @login_required
 
 def add_comment(request, content_id):
-    post = get_object_or_404(Post, id=content_id)
+    # Check if the content is a Post or a Share
+    content = get_object_or_404(Post, id=content_id) if Post.objects.filter(id=content_id).exists() else get_object_or_404(Share, id=content_id)
+
     if request.method == 'POST':
-        content = request.POST.get('content')
-        if content:
-            comment = Comment.objects.create(post=post, user=request.user, content=content)
+        content_text = request.POST.get('content')
+        if content_text:
+            comment = Comment.objects.create(post=content, user=request.user, content=content_text)
             html = render_to_string('base/comment.html', {'comment': comment}, request=request)
             return JsonResponse({'html': html})
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
 
 
-
+@login_required
+@require_POST
 def share_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
-    Share.objects.create(post=post, user=request.user)
-    return redirect('home')  # hoặc trang mà bạn muốn chuyển hướng sau khi chia sẻ
+    content = request.POST.get('content', '')  # Get content from the share modal if available
+    Share.objects.create(post=post, user=request.user, content=content)
+    return JsonResponse({'status': 'success', 'message': 'Post shared successfully!'})
+
+
+@login_required
+
+def delete_share(request, share_id):
+    if request.method == 'POST':
+        share = get_object_or_404(Share, id=share_id)
+        if request.user == share.user:  # Assuming the share has a user field
+            share.delete()
+            messages.success(request, 'Share deleted successfully.')
+        else:
+            messages.error(request, 'You are not authorized to delete this share.')
+    return redirect('home')

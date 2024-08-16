@@ -2,199 +2,360 @@
 {% load static %}
 {% block content %}
 
-
-
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link rel="shortcut icon" type="image/x-icon"
+  href="//production-assets.codepen.io/assets/favicon/favicon-8ea04875e70c4b0bb41da869e81236e54394d63638a1ef12fa558a4a835f1164.ico" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,300' rel='stylesheet' type='text/css'>
+<link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css'>
+<link rel='stylesheet prefetch'
+  href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css'>
+<link rel="stylesheet" href="{% static 'assets/css/mess2.css' %}">
+<link href="https://fonts.googleapis.com/css?family=Major+Mono+Display" rel="stylesheet">
+<link href='https://cdn.jsdelivr.net/npm/boxicons@1.9.2/css/boxicons.min.css' rel='stylesheet'>
 <style>
-.message-receive {
-  position: relative;
-  padding-right: 40px; 
-  /* Đảm bảo có đủ khoảng trống cho nút ba chấm */
-}
+  * {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
+  }
 
-.menu-button {
-  display: none;
-  cursor: pointer;
-  position: absolute;
-  top: 50%;
-  right: 0;
-  transform: translateY(-50%);
-  font-size: 18px;
-}
+  .message-receive {
+    position: relative;
+    padding-right: 40px;
+  }
 
-.message-receive:hover .menu-button {
-  display: block;
-}
+  .menu {
+    display: none;
+    top: 50%;
+    right: 20px;
+    transform: translate(20%, 15%);
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+  }
 
-.menu {
-  display: none;
-  position: absolute;
-  top: 50%;
-  right: 20px;
-  transform: translateY(-50%);
-  background-color: #fff;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  z-index: 10;
-}
+  .menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
 
-.menu ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
+  .menu ul li {
+    padding: 10px 20px;
+    cursor: pointer;
+  }
 
-.menu ul li {
-  padding: 10px 20px;
-  
-  cursor: pointer;
-}
+  .menu ul li:hover {
+    background-color: #f0f0f0;
+  }
 
-.menu ul li:hover {
-  background-color: #f0f0f0;
-  
-}
+  .scrollable-container {
+    overflow-y: scroll;
+    height: 100vh;
+    scrollbar-width: none;
+  }
 
+  .scrollable-container::-webkit-scrollbar {
+    display: none;
+  }
+
+  .message-input {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 30px;
+    background-color: #f1f1f1;
+    width: 100%;
+  }
+
+  .message-input .wrap {
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+
+  .message-input input[type="text"] {
+    flex-grow: 1;
+    border: none;
+    background: none;
+    outline: none;
+    padding: 8px 15px;
+    border-radius: 30px;
+    font-size: 16px;
+  }
+
+  .message-input button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-left: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .message-input button svg {
+    font-size: 24px;
+  }
+
+
+
+  #preview-container {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .preview-item {
+    position: relative;
+    display: inline-block;
+  }
+
+  .preview-item img,
+  .preview-item video {
+    max-width: 80px;
+    max-height: 50px;
+    border-radius: 8px;
+    margin-top: 5px;
+    display: block;
+  }
+
+  .preview-item .remove-btn {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: #ff0000;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 12px;
+    padding: 0;
+    margin-left: 5px;
+    display: inline-block;
+    vertical-align: middle;
+    background: none !important;
+  }
+
+  .messages img.img-thumbnail,
+  .messages video {
+    max-width: 400px;
+    max-height: 300px;
+    border-radius: 8px;
+    margin-top: 5px;
+    display: block;
+  }
+
+  .messages .sent .media-content video {
+    max-width: 400px;
+    max-height: 300px;
+    border-radius: 8px;
+    margin-top: 5px;
+    display: block;
+    float: right;
+  }
+
+
+  .sent p,
+  .replies p {
+    margin-bottom: 5px;
+  }
+
+  .sent .media-content,
+  .replies .media-content {
+    display: block;
+    margin-top: 5px;
+  }
+
+  .sent {
+    text-align: right;
+  }
+
+  .sent .media-content {
+    margin-left: auto;
+  }
+
+  .remove-btn {
+    background: none;
+    border: none;
+    font-size: 14px;
+    /* Adjust size */
+    color: red;
+    /* Color of the "x" */
+    cursor: pointer;
+    padding: 0;
+    margin-left: 5px;
+    display: inline-block;
+    vertical-align: middle;
+  }
 </style>
-<div class="col-md-12 second-section" id="page-content-wrapper">
-  <div class="container-fluid newsfeed d-flex col-md-12" id="wrapper">
-    <div class="row newsfeed-size col-md-12">
-      <div class="col-md-12 message-right-side">
-        <div class="row message-right-side-content col-md-12">
-          <div class="col-md-12">
-            <div id="message-frame">
-              <div class="message-sidepanel">
-                <div class="message-profile">
+
+<div class="container-fluid newsfeed" id="wrapper">
+  <div class="row" style="padding-top: 10px;">
+    <div class="col-md-12 pr-0" style="height: 90vh;">
+      <div id="frame">
+        <div id="sidepanel">
+          <div id="profile">
+            <div class="wrap">
+              <img id="profile-img" src="{{ rooms.host.avatar.url }}" class="online" alt="{{ rooms.host.name }}"
+                style="height: 50px !important;" />
+              <p>{{ rooms.host.name }}</p>
+            </div>
+            <h6>Topic: {{ rooms.topic }}</h6>
+          </div>
+          <div id="search">
+            <label for=""><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                class="bi bi-search" viewBox="0 0 16 16">
+                <path
+                  d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
+              </svg></i></label>
+            <input type="text" placeholder="Search contacts..." />
+          </div>
+          <div id="contacts">
+            <ul>
+              {% for p in participants %}
+              <a href="{% url 'profile' p.id %}">
+                <li class="contact">
                   <div class="wrap">
-                    <img src="{{rooms.host.avatar.url }}" class="online conv-img" alt="Conversation user" />
-                    <p>{{rooms.host.name }}</p>
+                    <span class="contact-status online"></span>
+                    <img src="{{ p.avatar.url }}" alt="{{ p.name }}" />
+                    <div class="meta">
+                      <p class="name">{{ p.name }}</p>
+                      <p class="preview"></p>
+                    </div>
                   </div>
-                  <h6>Topic : {{rooms.topic}} </h6>
+                </li>
+              </a>
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+        <div class="content">
+          <div class="contact-profile">
+            <img src="{{ rooms.host.avatar.url }}" alt="{{ rooms.host.name }}" />
+            <p>{{ rooms.name }}</p>
+            <div class="social-media">
+              {% if request.user == rooms.host %}
+              <span class="dropdown">
+                <a href="#" role="button" id="message-options" data-toggle="dropdown" aria-haspopup="true"
+                  aria-expanded="false">
+                  <i class='bx bx-dots-vertical-rounded'></i>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right fs-9" aria-labelledby="message-options">
+                  <a href="{% url 'update-room' rooms.id %}" class="dropdown-item">Update</a>
+                  <div class="dropdown-divider"></div>
+                  <a href="{% url 'delete_room' rooms.id %}" class="dropdown-item">Delete</a>
                 </div>
-                <hr>
-
-                <div class="message-contacts">
-                  <ul class="conversations">
-                    {% for p in participants %}
-                    <li class="contact">
-                      <a href="{% url 'profile' p.id %}">
-                        <div class="wrap">
-                          <span class="contact-status online"></span>
-                          <img src="{{p.avatar.url}}" alt="Conversation user" />
-                          <div class="meta">
-                            <p class="name">{{p.name}}</p>
-                            <p class="preview"></p>
-                          </div>
-                        </div>
-                      </a>
-                    </li>
-                    {% endfor %}
-                  </ul>
-                </div>
-              </div>
-
-              <div class="content col-md-12">
-                <div class="row">
-                  <div class="col-md-12 messenger-top-section d-flex justify-content-between align-items-center">
-                    <div class="messenger-top-luser">
-                      <h6 class="message-profile-name">Room: {{rooms.name }}</h6>
-                    </div>
-                    {% if request.user == rooms.host %}
-                    <div class="social-media messenger-top-ricon">
-                      <span class="dropdown">
-                        <a href="#" role="button" id="message-options" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                          <i class='bx bx-dots-vertical-rounded'></i>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-right fs-9" aria-labelledby="message-options">
-                          <a href="{% url 'update-room' rooms.id %}" class="dropdown-item">
-                            <svg enable-background="new 0 0 24 24" height="16" viewBox="0 0 24 24" width="16" xmlns="http://www.w3.org/2000/svg">
-                              <title>edit</title>
-                              <g><path d="m23.5 22h-15c-.276 0-.5-.224-.5-.5s.224-.5.5-.5h15c.276 0 .5.224.5.5s-.224.5-.5.5z"/></g>
-                              <g><g><path d="m2.5 22c-.131 0-.259-.052-.354-.146-.123-.123-.173-.3-.133-.468l1.09-4.625c.021-.09.067-.173.133-.239l14.143-14.143c.565-.566 1.554-.566 2.121 0l2.121 2.121c.283.283.439.66.439 1.061s-.156.778-.439 1.061l-14.142 14.141c-.065.066-.148.112-.239.133l-4.625 1.09c-.038.01-.077.014-.115.014zm1.544-4.873-.872 3.7 3.7-.872 14.042-14.041c.095-.095.146-.22.146-.354 0-.133-.052-.259-.146-.354l-2.121-2.121c-.19-.189-.518-.189-.707 0zm3.081 3.283h.01z"/></g><g><path d="m17.889 10.146c-.128 0-.256-.049-.354-.146l-3.535-3.536c-.195-.195-.195-.512 0-.707s.512-.195.707 0l3.536 3.536c.195.195.195.512 0 .707-.098.098-.226.146-.354.146z"/></g></g>
-                            </svg>Update</a>
-                          <div class="dropdown-divider"></div>
-                          <a href="{% url 'delete-room' rooms.id %}" class="dropdown-item">
-                            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 32 32">
-                              <title>remove</title>
-                              <path d="M27.314 6.019l-1.333-1.333-9.98 9.981-9.981-9.981-1.333 1.333 9.981 9.981-9.981 9.98 1.333 1.333 9.981-9.98 9.98 9.98 1.333-1.333-9.98-9.98 9.98-9.981z"></path>
-                            </svg>
-                            Delete</a>
-                        </div>
-                      </span>
-                    </div>
-                    {% endif %}
-                  </div>
-
-                  <div class="col-md-12" style="height: 600px;">
-                    <div class="messages">
-                      <ul class="messages-content">
-                        {% for message in message %}
-                        {% if request.user == message.user %}
-                        <li class="message-reply">
-                          <p>{{message.body}}</p>
-                        </li>
-                        {% else %}
-                        <li class="message-receive">
-                          <a href="{% url 'profile' message.user.id %}">
-                            <img src="{{message.user.avatar.url}}" alt="Conversation user image" />
-                            {{message.user.name}}
-                          </a><br>
-                          <p>{{message.body}}</p>
-                          <div class="menu-button">⋮</div>
-                          <div class="menu">
-                            <ul >
-                              <li>
-                                <a href="#" class="report-message" data-message-id="{{ message.id }}" data-toggle="modal" data-target="#reportModal">
-                                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-triangle-fill" viewBox="0 0 16 16">
-                                    <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5m.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2"/>
-                                  </svg>Report
-                                </a>
-                              </li>
-                            </ul>
-                          </div>
-                        </li>
-                        {% endif %}
-                        {% endfor %}
-                      </ul>
-                    </div>
-                  </div>
-
-                  <div class="col-md-12">
-                    <div class="message-input ">
-                      <div class="wrap">
-                        <form id="message-form" class="d-inline form-inline" action="" method="POST" enctype="multipart/form-data">
-                          {% csrf_token %}
-                          <div class="d-flex align-items-center justify-content-between messenger-icons col-md-12">
-                            <div class="input-group messenger-input col-sm-12">
-                              <input name="body" id="message-input" type="text" class="form-control search-input" placeholder="Type a message..." aria-label="Type a message...">
-                              <div class="input-group-append">
-                                <button type="submit" class="btn search-button" id="message-submit">
-                                  <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-arrow-up-circle-fill" viewBox="0 0 16 16">
-                                    <path d="M16 8A8 8 0 1 0 0 8a8 8 0 0 0 16 0m-7.5 3.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707z"/>
-                                  </svg>
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        </form>
-                      </div>
-                    </div>
-                  </div>
-
-                </div>
-              </div>
-
+              </span>
+              {% endif %}
             </div>
           </div>
+          <div class="messages">
+            <div class="scrollable-container">
+              <ul>
+                {% for message in message %}
+                {% if request.user == message.user %}
+                <li class="sent">
+                  <p>
+                    {% if message.body %}
+                    {{ message.body }}
+                    {% endif %}
 
+                    <br>
+
+                    {% if message.image %}
+                    
+                    <img src="{{ message.image.url }}" alt="image" class="img-thumbnail"
+                      style="border-radius: 0 !important; height: 100% !important; width: 100% !important;" />
+
+                    {% endif %}
+                  
+                    {% if message.video %}
+                  <!-- <div class="media-content"> -->
+                    <video controls width="90%">
+                      <source src="{{ message.video.url }}" type="video/mp4">
+                      Your browser does not support the video tag.
+                    </video>
+                  <!-- </div> -->
+                  {% endif %}
+                </p>
+                  
+                </li>
+                {% else %}
+
+
+                <li class="replies message-receive">
+                  <img src="{{ message.user.avatar.url }}" alt="{{ message.user.name }}" />
+                  <p class="mess-replies">
+                    {% if message.body %}
+                    {{ message.body }}
+                    {% endif %}
+
+                    <br>
+                    {% if message.image %}
+
+                    <img src="{{ message.image.url }}" alt="image" class="img-thumbnail"
+                      style="border-radius: 0 !important; height: 100% !important; width: 100% !important;" />
+
+                    {% endif %}
+
+                    {% if message.video %}
+
+                    <video controls width="90%">
+                      <source src="{{ message.video.url }}" type="video/mp4">
+                      Your browser does not support the video tag.
+                    </video>
+
+                  {% endif %}
+                  </p>
+
+
+                  <div class="menu-button">⋮</div>
+                  <div class="menu">
+                    <ul>
+                      <li class="mess-replies-li" style="margin-bottom: 0px !important;">
+                        <a href="#" class="report-message" data-message-id="{{ message.id }}" data-toggle="modal"
+                          data-target="#reportModal">Report</a>
+                      </li>
+                    </ul>
+                  </div>
+                </li>
+                {% endif %}
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+          <div class="message-input">
+            <div class="wrap">
+              <form id="message-form" action="" method="POST" enctype="multipart/form-data"
+                style="display: flex; align-items: center; width: 100%;">
+                {% csrf_token %}
+                <div id="preview-container"></div>
+                <input type="text" name="body" placeholder="Write your message..." />
+                <input type="file" id="file-input" name="media" accept="image/*,video/*" style="display: none;">
+                <button type="button" id="file-btn"><i class='bx bx-paperclip'></i></button>
+                <button type="submit" class="submit">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-send"
+                    viewBox="0 0 16 16">
+                    <path
+                      d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576zm6.787-8.201L1.591 6.602l4.339 2.76z" />
+                  </svg>
+                </button>
+              </form>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
 
+<script src='https://code.jquery.com/jquery-2.2.4.min.js'></script>
 <!-- Report Modal -->
-<div id="reportModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="reportModalLabel" aria-hidden="true">
+<div id="reportModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="reportModalLabel"
+  aria-hidden="true">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -242,132 +403,174 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-  const menuButtons = document.querySelectorAll('.menu-button');
-  menuButtons.forEach(button => {
-    button.addEventListener('click', (e) => {
-      const menu = e.target.nextElementSibling;
-      menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-    });
-  });
-
-  window.addEventListener('click', (e) => {
-    if (!e.target.matches('.menu-button')) {
-      const menus = document.querySelectorAll('.menu');
-      menus.forEach(menu => {
-        if (menu.style.display === 'block') {
-          menu.style.display = 'none';
-        }
+  document.addEventListener('DOMContentLoaded', () => {
+    // Toggle menu visibility on click
+    const menuButtons = document.querySelectorAll('.menu-button');
+    menuButtons.forEach(button => {
+      button.addEventListener('click', (e) => {
+        const menu = e.target.nextElementSibling;
+        menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
       });
+    });
+
+    // Close menu when clicking outside
+    window.addEventListener('click', (e) => {
+      if (!e.target.matches('.menu-button')) {
+        const menus = document.querySelectorAll('.menu');
+        menus.forEach(menu => {
+          if (menu.style.display === 'block') {
+            menu.style.display = 'none';
+          }
+        });
+      }
+    });
+
+    // File input button
+    const fileBtn = document.getElementById('file-btn');
+    const fileInput = document.getElementById('file-input');
+    const previewContainer = document.getElementById('preview-container');
+
+    fileBtn.addEventListener('click', () => {
+      fileInput.click();
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      previewContainer.innerHTML = ''; // Clear existing previews
+
+      const files = Array.from(e.target.files);
+      files.forEach((file, index) => {
+        const previewItem = document.createElement('div');
+        previewItem.className = 'preview-item';
+
+        if (file.type.startsWith('image/')) {
+          const img = document.createElement('img');
+          img.src = URL.createObjectURL(file);
+          previewItem.appendChild(img);
+        } else if (file.type.startsWith('video/')) {
+          const video = document.createElement('video');
+          video.src = URL.createObjectURL(file);
+          video.controls = true;
+          previewItem.appendChild(video);
+        }
+
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'remove-btn';
+        removeBtn.innerText = 'x';
+        removeBtn.addEventListener('click', () => {
+          files.splice(index, 1);
+          fileInput.files = new FileList(files); // Update file input
+          previewItem.remove();
+        });
+
+        previewItem.appendChild(removeBtn);
+        previewContainer.appendChild(previewItem);
+      });
+    });
+
+    // Submit form on Enter key press
+    document.querySelector('.message-input input[name="body"]').addEventListener('keydown', function (event) {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        document.querySelector('.submit').click();
+      }
+    });
+
+    // Submit the form via WebSocket for real-time communication
+    document.querySelector('.submit').onclick = function (event) {
+      event.preventDefault();
+
+      const messageInputDom = document.querySelector('.message-input input[name="body"]');
+      const message = messageInputDom.value;
+      const files = fileInput.files;
+
+      if (message.trim() !== '' || files.length > 0) {
+        const file = files[0];
+
+        if (file) {
+          const reader = new FileReader();
+          reader.onloadend = () => {
+            MessagesSocket.send(JSON.stringify({
+              'message': message,
+              'username': userName,
+              'userAvatar': userAvatar,
+              'room': roomId,
+              'media': {
+                'name': file.name,
+                'data': reader.result,
+                'type': file.type,
+              }
+            }));
+          };
+          reader.readAsDataURL(file);
+        } else {
+          MessagesSocket.send(JSON.stringify({
+            'message': message,
+            'username': userName,
+            'userAvatar': userAvatar,
+            'room': roomId,
+          }));
+        }
+
+        messageInputDom.value = '';
+        fileInput.value = '';
+        previewContainer.innerHTML = ''; // Clear previews
+      }
+      return false;
+    };
+
+    function scrollToBottom() {
+      const objDiv = document.querySelector('.scrollable-container');
+      objDiv.scrollTop = objDiv.scrollHeight;
     }
-  });
 
-  const reportLinks = document.querySelectorAll('.report-message');
-  reportLinks.forEach(link => {
-    link.addEventListener('click', (e) => {
-      const messageId = e.target.getAttribute('data-message-id');
-      document.getElementById('reportedMessageId').value = messageId;
-    });
+    // Scroll to the bottom on page load
+    window.onload = scrollToBottom;
   });
-
-  const reportForm = document.getElementById('reportForm');
-  reportForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const formData = new FormData(reportForm);
-    const reasons = [];
-    document.querySelectorAll('input[name="reason"]:checked').forEach(checkbox => {
-      reasons.push(checkbox.value);
-    });
-    formData.append('reasons', reasons.join(','));
-
-    fetch('{% url "report_message" %}', {
-      method: 'POST',
-      body: formData,
-      headers: {
-        'X-CSRFToken': '{{ csrf_token }}'
-      }
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        alert('Report submitted successfully');
-        $('#reportModal').modal('hide'); 
-        // Hide the modal
-        window.location.reload();
-      } else {
-        alert('Error submitting report');
-      }
-    })
-    .catch(error => {
-      console.error('Error:', error);
-    });
-  });
-});
 </script>
 
-</div>
-
-</div>
-
-
-
-
-
-
-
-<!-- {%block scripts %}
+{% block scripts %}
 {{ rooms.id|json_script:"json-roomid" }}
-
 {{ request.user.username|json_script:"json_username"}}
 {{ request.user.id|json_script:"json_userID"}}
 {{ request.user.avatar.url|json_script:"json_userAvatar"}}
-{{ created_at|timesince|json_script:"json_createdAt" }} {# Include the created time in JSON script #}
-{{ message_id|json_script:"json_messageID" }}
-
-
-
-
-
 
 <script>
-
   // Variables from Django template
-  var room_id = JSON.parse(document.getElementById('json-roomid').textContent);
   const roomId = JSON.parse(document.getElementById('json-roomid').textContent);
   const userName = JSON.parse(document.getElementById('json_username').textContent);
   const userID = JSON.parse(document.getElementById('json_userID').textContent);
   const userAvatar = JSON.parse(document.getElementById('json_userAvatar').textContent);
-  const messageID = JSON.parse(document.getElementById('json_messageID').textContent);
-  const createdAtScript = document.getElementById('json_createdAt');
-  const createdAtData = JSON.parse(createdAtScript.textContent);
-
-  console.log('Message ID:', messageID);
-  console.log(createdAtData);
-  console.log('Room ID:', roomId);
-  console.log('Window Location Host:', window.location.host);
-  console.log(userName);
 
   // Connect to WebSocket
   const MessagesSocket = new WebSocket(
-    'ws://' + window.location.host + '/ws/room/' + room_id + '/'
+    'ws://' + window.location.host + '/ws/room/' + roomId + '/'
   );
 
   MessagesSocket.onmessage = function (e) {
     console.log('onmessage');
     const data = JSON.parse(e.data);
 
-    if (data.message) {
-      var messageContainer = document.querySelector('.messages-content');
-      var newMessage = document.createElement('li');
-      newMessage.className = data.username === userName ? 'message-reply' : 'message-receive';
-      newMessage.innerHTML = `
-        ${data.username !== userName ? `<a href="/profile/${data.userID}"><img src="${data.userAvatar}" alt="Conversation user image" /></a>` : ''}
-        <p>${data.message}</p>
-      `;
+    if (data.message || data.media) {
+      const messageContainer = document.querySelector('.messages ul');
+      const newMessage = document.createElement('li');
+      newMessage.className = data.username === userName ? 'sent' : 'replies';
+      let messageContent = `${data.username !== userName ? `<img src="${data.userAvatar}" alt="Conversation user image" />` : ''}`;
+
+      if (data.message) {
+        messageContent += `<p>${data.message}</p>`;
+      }
+      if (data.media && data.media.type.startsWith('image/')) {
+        messageContent += `<div class="media-content"><img src="${data.media.data}" alt="image" class="img-thumbnail" style="border-radius: 0 !important; height: 100% !important; width: 100% !important;" /></div>`;
+      }
+      if (data.media && data.media.type.startsWith('video/')) {
+        messageContent += `<video controls width ="90%"><source src="${data.media.data}" type="video/mp4">Your browser does not support the video tag.</video>`;
+      }
+
+      newMessage.innerHTML = messageContent;
       messageContainer.appendChild(newMessage);
-      messageContainer.scrollTop = messageContainer.scrollHeight;
-    } else {
-      alert('The message was empty');
+
+      // Scroll to the bottom after adding a new message
+      scrollToBottom();
     }
   };
 
@@ -375,56 +578,15 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('WebSocket connection closed:', event);
   };
 
-  // Submit form on Enter key press
-  document.querySelector('#message-input').addEventListener('keydown', function (event) {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      document.querySelector('#message-submit').click();
-    }
-  });
-
-  // Additional code for sending messages through the WebSocket
-  document.querySelector('#message-submit').onclick = function (event) {
-    event.preventDefault();
-
-    const messageInputDom = document.querySelector('#message-input');
-    const message = messageInputDom.value;
-
-    MessagesSocket.send(JSON.stringify({
-      'message': message,
-      'username': userName,
-      'room': roomId,
-    }));
-
-    messageInputDom.value = '';
-    window.location.reload();
-    return false;
-  };
-
   function scrollToBottom() {
-    const objdiv = document.querySelector('.messages');
-    objdiv.scrollTop = objdiv.scrollHeight;
+    const objDiv = document.querySelector('.scrollable-container');
+    objDiv.scrollTop = objDiv.scrollHeight;
   }
 
-  document.getElementById('image-upload').addEventListener('change', function (event) {
-    var imageContainer = document.getElementById('image-preview-container');
-    imageContainer.innerHTML = '';  // Clear any existing preview images
-
-    var file = event.target.files[0];  // Get the selected file
-    if (file) {
-      var reader = new FileReader();  // Create a FileReader
-      reader.onload = function (e) {
-        var img = new Image();  // Create an img element
-        img.src = e.target.result;  // Set the src of the img element to the file data
-        img.style.maxWidth = '100px';  // Set max dimensions for preview
-        img.style.maxHeight = '100px';
-        imageContainer.appendChild(img);  // Append the img to the container
-      };
-      reader.readAsDataURL(file);  // Read the file as a Data URL
-    }
-  });
+  // Scroll to the bottom on page load
+  window.onload = scrollToBottom;
 </script>
-  {% endblock %} -->
 
+{% endblock %}
 
 {% endblock content %}

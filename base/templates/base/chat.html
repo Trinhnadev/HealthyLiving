@@ -1,118 +1,259 @@
-<!-- chat/open_chat.html -->
 {% extends 'main.html' %}
-{%load static%}
+{% load static %}
 {% block content %}
-<div class="col-md-12 second-section" id="page-content-wrapper">
-    <div class="container-fluid newsfeed d-flex col-md-12" id="wrapper">
-      <div class="row newsfeed-size col-md-12">
-        <div class="col-md-12 message-right-side">
-          <div class="row message-right-side-content col-md-12">
-            <div class="col-md-12">
-              <div id="message-frame">
-                <div class="message-sidepanel">
-                  <div class="message-profile">
-                    <div class="wrap">
-                                  <img src="{{request.user.avatar.url}}" class="online conv-img" alt="Conversation user"/>
-                                  <p>{{request.user.name}}</p>
-                              </div>
-                              <hr>
-                          </div>
-                          {% include 'base/chat_list.html' %}
-                      </div>
 
-                      {% if request.path == '/chat/' %}
-                      <div class="content" >
-                          <div class="row" style="width:1100px"> 
-                              
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link rel="shortcut icon" type="image/x-icon"
+    href="//production-assets.codepen.io/assets/favicon/favicon-8ea04875e70c4b0bb41da869e81236e54394d63638a1ef12fa558a4a835f1164.ico" />
+<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,300' rel='stylesheet' type='text/css'>
+<link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css'>
+<link rel='stylesheet prefetch'
+    href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css'>
+<link rel="stylesheet" href="{% static 'assets/css/mess2.css' %}">
+<link href="https://fonts.googleapis.com/css?family=Major+Mono+Display" rel="stylesheet">
+<link href='https://cdn.jsdelivr.net/npm/boxicons@1.9.2/css/boxicons.min.css' rel='stylesheet'>
 
-                              <div class="col-md-12" style="height: 600px;">
-                                  <div class="messages">
-                                      Not Found
-                                  </div>
-                              </div>
+<style>
+  * {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
+      "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
+  }
 
-                              
-                              </div>
-                          </div>
-                      </div>
-                      {% else %}
-                      <div class="content col-md-12">
-                          <div class="row col-md-12">
-                              <div class="col-md-12 messenger-top-section">
-                                  <div class="contact-profile d-flex align-items-center justify-content-between">
-                                      <div class="messenger-top-luser df-aic">
-                                          <img src="{{friend.avatar.url}}" class="messenger-user" alt="Conversation user image" />
-                                          <a href="{% url 'profile' friend.id %}" class="message-profile-name">{{friend.name}}</a>
-                                      </div>
-                                      <div class="social-media messenger-top-ricon df-aic">
-                                          <span class="dropdown">
-                                              <a href="#" role="button" id="message-options" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                  <i class='bx bx-dots-vertical-rounded'></i>
-                                              </a>
-                                              <div class="dropdown-menu dropdown-menu-right fs-9" aria-labelledby="message-options">
-                                                  <a href="#" class="dropdown-item">Mute</a>
-                                                  <div class="dropdown-divider"></div>
-                                                  <a href="#" class="dropdown-item">Delete</a>
-                                                  <div class="dropdown-divider"></div>
-                                                  <a href="#" class="dropdown-item">Mark as Unread</a>
-                                                  <a href="#" class="dropdown-item">Something's wrong</a>
-                                                  <a href="#" class="dropdown-item">Ignore Messages</a>
-                                                  <a href="#" class="dropdown-item">Block Messages</a>
-                                              </div>
-                                          </span>
-                                      </div>
-                                  </div>
-                              </div>
+  .message-input {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 30px;
+    background-color: #f1f1f1;
+    width: 100%;
+  }
 
-                              <div class="col-md-12" style="height: 600px;">
-                                  <div class="messages">
-                                      <ul id="chat-container" class="messages-content">
-                                          {% for message in messages %}
-                                          {% if request.user == message.sender %}
-                                          <li class="message-reply">
-                                              <p>{{message.content}}</p>
-                                          </li>
-                                          {% else %}
-                                          <li class="message-receive">
-                                              <img src="{{message.sender.avatar.url}}" alt="Conversation user image" />
-                                              <p>{{message.content}}</p>
-                                          </li>
-                                          {% endif %}
-                                          {% endfor %}
-                                      </ul>
-                                  </div>
-                              </div>
+  .message-input .wrap {
+    align-items: center;
+    width: 100%;
+  }
 
-                              <div class="col-md-12">
-                                  <div class="message-input">
-                                      <div class="wrap">
-                                          <form id="chat-form" class="d-inline form-inline" action="" method="POST" enctype="multipart/form-data">
-                                            {% csrf_token %}
-                                              <div class="d-flex align-items-center justify-content-between messenger-icons col-md-12">
-                                                  <div class="input-group messenger-input col-sm-12">
-                                                      <input type="text" id="chat-input" class="form-control search-input" placeholder="Type a message..." aria-label="Type a message..." aria-describedby="button-addon2">
-                                                      <input type="file" id="image-upload" class="d-none">
-                                                      <div class="input-group-append">
-                                                          <button type="submit" class="btn search-button" id="send-message">
-                                                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-arrow-up-circle-fill" viewBox="0 0 16 16">
-                                                                <path d="M16 8A8 8 0 1 0 0 8a8 8 0 0 0 16 0m-7.5 3.5a.5.5 0 0 1-1 0V5.707L5.354 7.854a.5.5 0 1 1-.708-.708l3-3a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 5.707z"/>
-                                                              </svg>
-                                                          </button>
-                                                      </div>
-                                                  </div>
-                                              </div>
-                                          </form>
-                                          <div id="image-preview-container"></div>
-                                      </div>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                      {% endif %}
-                  </div>
-              </div>
+  .message-input input[type="text"] {
+    flex-grow: 1;
+    border: none;
+    background: none;
+    outline: none;
+    padding: 8px 15px;
+    border-radius: 30px;
+    font-size: 16px;
+  }
+
+  .message-input button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    margin-left: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .message-input button svg {
+    font-size: 24px;
+  }
+
+
+
+  #preview-container {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+
+  .preview-item {
+    position: relative;
+    display: inline-block;
+  }
+
+  .preview-item img,
+  .preview-item video {
+    max-width: 80px;
+    max-height: 50px;
+    border-radius: 8px;
+    margin-top: 5px;
+    display: block;
+  }
+
+  .preview-item .remove-btn {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: #ff0000;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 12px;
+    padding: 0;
+    margin-left: 5px;
+    display: inline-block;
+    vertical-align: middle;
+    background: none !important;
+  }
+
+  .messages img.img-thumbnail,
+  .messages video {
+    max-width: 400px;
+    max-height: 300px;
+    border-radius: 8px;
+    margin-top: 5px;
+    display: block;
+  }
+
+  .messages .sent .media-content video {
+    max-width: 400px;
+    max-height: 300px;
+    border-radius: 8px;
+    margin-top: 5px;
+    display: block;
+    float: right;
+  }
+
+
+  .sent p,
+  .replies p {
+    margin-bottom: 5px;
+  }
+
+  .sent .media-content,
+  .replies .media-content {
+    display: block;
+    margin-top: 5px;
+  }
+
+  .sent {
+    text-align: right;
+  }
+
+  .sent .media-content {
+    margin-left: auto;
+  }
+  
+  .scrollable-container {
+    overflow-y: scroll;
+    height: 100vh;
+    scrollbar-width: none;
+  }
+  .scrollable-container::-webkit-scrollbar {
+    display: none;
+  }
+</style>
+
+<div class="container-fluid newsfeed" id="wrapper">
+  <div class="row" style="padding-top:10px;">
+    <div class="col-md-12 pr-0" style="height: 90vh;">
+      <div id="frame">
+        <div id="sidepanel">
+          <div id="profile">
+            <div class="wrap">
+              <img id="profile-img" src="{{ request.user.avatar.url }}" class="online" style="height: 50px !important;"
+                alt="{{ request.user.name }}" />
+              <p>{{ request.user.name }}</p>
+            </div>
           </div>
+          <div id="contacts">
+            <ul class="conversations">
+              {% for room in chat_rooms %}
+              {% for f in room.members.all %}
+              {% if f != user %}
+              <a href="{% url 'open_chat' room.id %}">
+                <li class="contact messenger-user-active">
+                  <div class="wrap">
+                    <span class="contact-status busy"></span>
+                    <img src="{{ f.avatar.url }}" alt="{{ f.name }}" />
+                    <div class="meta">
+                      <p class="name">{{ f.name }}</p>
+                    </div>
+                  </div>
+                </li>
+              </a>
+              {% endif %}
+              {% endfor %}
+              {% endfor %}
+            </ul>
+          </div>
+        </div>
+
+        <div class="content">
+          <div class="contact-profile">
+            <img src="{{ friend.avatar.url }}" alt="{{ friend.name }}" />
+            <p>{{ friend.name }}</p>
+          </div>
+          <div class="messages">
+            <div class="scrollable-container">
+            <ul id="chat-container" class="messages-content">
+              {% for message in messages %}
+              {% if request.user == message.sender %}
+              <li class="sent">
+                <p>{{ message.content }}
+                  <br>
+                {% if message.image %}
+                <img src="{{ message.image.url }}" alt="Image" class="img-thumbnail" style="border-radius: 0 !important; height: 100% !important; width: 100% !important;" />
+                {% endif %}
+                {% if message.video %}
+                <video controls width="90%">
+                  <source src="{{ message.video.url }}" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+                {% endif %}
+              </p>
+              </li>
+              {% else %}
+              <li class="replies">
+                <img src="{{ message.sender.avatar.url }}" alt="{{ message.sender.name }}" />
+                <p>{{ message.content }}
+                  <br>
+                {% if message.image %}
+                <img src="{{ message.image.url }}" alt="Image" class="img-thumbnail" style="border-radius: 0 !important; height: 100% !important; width: 100% !important;" />
+                {% endif %}
+                {% if message.video %}
+                <video controls width="90%">
+                  <source src="{{ message.video.url }}" type="video/mp4">
+                  Your browser does not support the video tag.
+                </video>
+                {% endif %}
+              </p>
+              </li>
+              {% endif %}
+              {% endfor %}
+            </ul>
+          </div>
+          </div>
+          <div class="message-input">
+            <div class="wrap">
+              <form id="chat-form"  action="" method="POST" enctype="multipart/form-data" style="display: flex;">
+                {% csrf_token %}
+
+                    <input type="text" id="chat-input"  placeholder="Type a message..."
+                      aria-label="Type a message..." aria-describedby="button-addon2">
+
+                    <!-- Add file input and icon for media (image/video) -->
+                    <input type="file" id="media-upload" accept="image/*,video/*"  style="display: none;">
+                    <button type="button" id="media-upload-btn" class="btn btn-light">
+                      <i class="bx bx-paperclip" style="font-size: 24px;"></i>
+                    </button>
+                      <button type="submit" class="submit" id="send-message">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-send"
+                    viewBox="0 0 16 16">
+                    <path
+                      d="M15.854.146a.5.5 0 0 1 .11.54l-5.819 14.547a.75.75 0 0 1-1.329.124l-3.178-4.995L.643 7.184a.75.75 0 0 1 .124-1.33L15.314.037a.5.5 0 0 1 .54.11ZM6.636 10.07l2.761 4.338L14.13 2.576zm6.787-8.201L1.591 6.602l4.339 2.76z" />
+                  </svg>
+                      </button>
+
+              </form>
+              <div id="media-preview-container"></div>
+            </div>
+          </div>
+        </div>
       </div>
+    </div>
   </div>
 </div>
 
@@ -123,33 +264,44 @@
   const chat_id = JSON.parse(document.getElementById('json-roomid').textContent);
   const userName = JSON.parse(document.getElementById('json_username').textContent);
 
-  console.log(chat_id);
   const ChatSocket = new WebSocket(
-    'ws://'
-    + window.location.host
-    + '/ws/open_chat/'
-    + chat_id
-    + '/'
+    'ws://' + window.location.host + '/ws/open_chat/' + chat_id + '/'
   );
 
   ChatSocket.onmessage = function (e) {
-    console.log('onmessage');
     const data = JSON.parse(e.data);
 
-    if (data.message || data.image) {
-      console.log('Message received');
+    if (data.message || data.media) {
       const messageContainer = document.getElementById('chat-container');
       const newMessage = document.createElement('li');
-      newMessage.className = data.username === userName ? 'message-reply' : 'message-receive';
-      newMessage.innerHTML = `
-          ${data.username !== userName ? `<img src="${data.avatar_url}" alt="Conversation user image" />` : ''}
+
+      let mediaContent = '';
+      if (data.media && data.media_type === 'image') {
+        mediaContent = `<img src="${data.media}" alt="Image" class="img-thumbnail" />`;
+      } else if (data.media && data.media_type === 'video') {
+        mediaContent = `<video controls><source src="${data.media}" type="video/mp4">Your browser does not support the video tag.</video>`;
+      }
+
+      // Only show avatar for replies, not sent messages
+      if (data.username !== userName) {
+        newMessage.className = 'replies';
+        newMessage.innerHTML = `
+          <img src="${data.avatar_url}" alt="${data.username}"  />
           <p>${data.message}</p>
-          ${data.image ? `<img src="${data.image}" alt="Image" />` : ''}
-      `;
+          ${mediaContent}
+        `;
+      } else {
+        newMessage.className = 'sent';
+        newMessage.innerHTML = `
+          <p>${data.message}</p>
+          ${mediaContent}
+        `;
+      }
+
       messageContainer.appendChild(newMessage);
-      messageContainer.scrollTop = messageContainer.scrollHeight;
-    } else {
-      console.log('No message or image');
+
+      // Scroll to the bottom
+      messageContainer.parentElement.scrollTop = messageContainer.scrollHeight;
     }
   };
 
@@ -157,33 +309,76 @@
     console.log('WebSocket connection closed:', event);
   };
 
+  const mediaUploadBtn = document.getElementById('media-upload-btn');
+  const mediaInputDom = document.getElementById('media-upload');
+  const mediaPreviewContainer = document.getElementById('media-preview-container');
+
+  mediaUploadBtn.onclick = function () {
+    mediaInputDom.click();
+  };
+
+  mediaInputDom.addEventListener('change', function (event) {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+
+      reader.onload = function (e) {
+        mediaPreviewContainer.innerHTML = '';  // Clear previous preview
+
+        const fileType = file.type.split('/')[0];  // Get file type (image/video)
+        if (fileType === 'image') {
+          const img = new Image();
+          img.src = e.target.result;
+          img.style.maxWidth = '100px';
+          img.style.maxHeight = '100px';
+          mediaPreviewContainer.appendChild(img);
+        } else if (fileType === 'video') {
+          const video = document.createElement('video');
+          video.src = e.target.result;
+          video.controls = true;
+          video.style.maxWidth = '100px';
+          video.style.maxHeight = '100px';
+          mediaPreviewContainer.appendChild(video);
+        }
+      };
+
+      reader.readAsDataURL(file);
+      
+    }
+  });
+
   document.querySelector('#send-message').onclick = function (event) {
     event.preventDefault();
 
     const messageInputDom = document.querySelector('#chat-input');
-    const imageInputDom = document.querySelector('#image-upload');
     const message = messageInputDom.value;
 
-    function sendMessage(imageBase64 = null) {
+    function sendMessage(mediaBase64 = null, mediaType = null) {
       ChatSocket.send(JSON.stringify({
-        'image': imageBase64,
         'message': message,
         'username': userName,
         'chat_id': chat_id,
+        'media': mediaBase64,
+        'media_type': mediaType,
       }));
 
       messageInputDom.value = '';
-      imageInputDom.value = '';
-      document.getElementById('image-preview-container').innerHTML = '';
+      mediaInputDom.value = '';
+      mediaPreviewContainer.innerHTML = '';  // Clear preview after sending
+
+      // Scroll to the bottom after sending the message
+      const messageContainer = document.getElementById('chat-container');
+      messageContainer.parentElement.scrollTop = messageContainer.scrollHeight;
     }
 
-    if (imageInputDom.files.length > 0) {
-      const file = imageInputDom.files[0];
+    if (mediaInputDom.files.length > 0) {
+      const file = mediaInputDom.files[0];
       const reader = new FileReader();
 
       reader.onloadend = function () {
-        const base64Image = reader.result;
-        sendMessage(base64Image);
+        const base64Media = reader.result;
+        const mediaType = file.type.split('/')[0];  // Get media type (image/video)
+        sendMessage(base64Media, mediaType);
       };
 
       reader.readAsDataURL(file);
@@ -192,22 +387,11 @@
     }
   };
 
-  document.getElementById('image-upload').addEventListener('change', function (event) {
-    const imageContainer = document.getElementById('image-preview-container');
-    imageContainer.innerHTML = '';
-
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        const img = new Image();
-        img.src = e.target.result;
-        img.style.maxWidth = '100px';
-        img.style.maxHeight = '100px';
-        imageContainer.appendChild(img);
-      };
-      reader.readAsDataURL(file);
-    }
-  });
+  // Scroll to the bottom on page load
+  window.onload = function () {
+    const messageContainer = document.getElementById('chat-container');
+    messageContainer.parentElement.scrollTop = messageContainer.scrollHeight;
+  };
 </script>
+
 {% endblock content %}
