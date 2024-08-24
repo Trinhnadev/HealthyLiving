@@ -23,7 +23,127 @@
       </div>
   </div>
 
+  {% if friend_suggestions %}
+    <div class="card shadow-sm" style="margin-right:-15px">
+        <div class="card-body">
+            {% for suggestion in friend_suggestions %}
+            <div class="friend-suggestion">
+                <div class="friend-info">
+                    <img src="{{ suggestion.user.avatar.url }}" alt="Profile Picture" class="profile-picture">
+                    <div class="friend-details">
+                        <span class="friend-name">{{ suggestion.user.name }}</span>
+                        <span class="mutual-friends">{{ suggestion.mutual_friends }} bạn chung</span>
+                    </div>
+                </div>
+                <div class="friend-actions">
+                    <button class="add-friend-button">Thêm bạn bè</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+
+</div>
+
+
+<div class="col-md-3 third-section" >
+    <div class="card shadow-sm" style="margin-right:-15px">
+        <div class="card-body">
+
+            <div class="friend-suggestion">
+                <div class="friend-info">
+                  <img src="path_to_profile_image.jpg" alt="Profile Picture" class="profile-picture">
+                  <div class="friend-details">
+                    <span class="friend-name">Kimm Ngân</span>
+                    <span class="mutual-friends">1 bạn chung</span>
+                  </div>
+                </div>
+                <div class="friend-actions">
+                  <button class="add-friend-button">Thêm bạn bè</button>
+                  <button class="remove-button">Gỡ</button>
+                </div>
+              </div>
+        </div>
+    </div>
+  </div>
+<style>
+    .friend-suggestion {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #fff; /* Dark background */
+  border-radius: 8px;
+  margin-bottom: 10px;
+  max-width: 350px;
+  color:black;
+}
+
+.friend-info {
+  display: flex;
+  align-items: center;
+}
+
+.profile-picture {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 10px;
+  object-fit: cover;
+}
+
+.friend-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.friend-name {
+  color: black; /* White text for name */
+  font-weight: bold;
+}
+
+.mutual-friends {
+  color: #888; /* Lighter text for mutual friends */
+  font-size: 0.85rem;
+}
+
+.friend-actions {
+  display: flex;
+  align-items: center;
+}
+
+.add-friend-button {
+  background-color: #1877f2; /* Facebook-like blue */
+  color: white;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.add-friend-button:hover {
+  background-color: #165ecf; /* Darker blue on hover */
+}
+
+.remove-button {
+  background-color: #3a3b3c; /* Grey for remove button */
+  color: #ccc; /* Lighter grey for text */
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  margin-left: 10px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.remove-button:hover {
+  background-color: #555;
+}
+
+</style>
 
   
-</div>
 

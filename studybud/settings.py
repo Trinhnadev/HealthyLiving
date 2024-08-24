@@ -85,7 +85,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
     "corsheaders.middleware.CorsMiddleware",
-
+    'base.middleware.InvalidUrlMiddleware',
 
 
 ]
@@ -185,3 +185,7 @@ EMAIL_HOST_PASSWORD = 'azmsffbcrfwvwysl'  # Thay thế bằng mật khẩu của
 
 # settings.py
 OPENWEATHERMAP_API_KEY = '37fe5cc824c2bc1fce3c2dbdee155b5d'
+
+
+# DEBUG = False
+# ALLOWED_HOSTS = ['*']

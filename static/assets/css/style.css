@@ -4,6 +4,7 @@
  * Licensed under MIT (https://github.com/ArtMin96/argon-social/blob/master/LICENSE.md)
  */
 
+ 
 *,
 *::after,
 *::before {
@@ -22,11 +23,7 @@ body {
     padding: 0;
     overflow-x: hidden;
 }
-body.dark-mode {
-    background-color: #121212;
-    color: white;
-    
-}
+
 
 .js body {
     display: none;

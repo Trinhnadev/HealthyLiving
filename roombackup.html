@@ -1,435 +1,97 @@
-{% extends 'main.html' %}
-{% load static %}
-{% block content %}
-
-
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<script src='//production-assets.codepen.io/assets/editor/live/console_runner-079c09a0e3b9ff743e39ee2d5637b9216b3545af0de366d4b9aad9dc87e26bfd.js'></script>
-<script src='//production-assets.codepen.io/assets/editor/live/events_runner-73716630c22bbc8cff4bd0f07b135f00a0bdc5d14629260c3ec49e5606f98fdd.js'></script>
-<script src='//production-assets.codepen.io/assets/editor/live/css_live_reload_init-2c0dc5167d60a5af3ee189d570b1835129687ea2a61bee3513dee3a50c115a77.js'></script>
-<meta charset='UTF-8'>
-<meta name="robots" content="noindex">
-<link rel="shortcut icon" type="image/x-icon"
-    href="//production-assets.codepen.io/assets/favicon/favicon-8ea04875e70c4b0bb41da869e81236e54394d63638a1ef12fa558a4a835f1164.ico" />
-<link rel="mask-icon" type=""
-    href="//production-assets.codepen.io/assets/favicon/logo-pin-f2d2b6d2c61838f7e76325261b7195c27224080bc099486ddd6dccb469b8e8e6.svg"
-    color="#111" />
-<link rel="canonical" href="https://codepen.io/emilcarlsson/pen/ZOQZaV?limit=all&page=74&q=contact+" />
-<link href='https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,300' rel='stylesheet'
-    type='text/css'>
-
-<script src="https://use.typekit.net/hoy3lrg.js"></script>
-<script>try { Typekit.load({ async: true }); } catch (e) { }</script>
-<link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css'>
-<link rel='stylesheet prefetch'
-    href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.2/css/font-awesome.min.css'>
-<link rel="stylesheet" href="{% static 'assets/css/mess2.css' %}">
-
-<link href="https://fonts.googleapis.com/css?family=Major+Mono+Display" rel="stylesheet">
-<link href='https://cdn.jsdelivr.net/npm/boxicons@1.9.2/css/boxicons.min.css' rel='stylesheet'>
-<style>
-  *{
-    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji" !important;
-  }
-.message-receive {
-  position: relative;
-  padding-right: 40px; 
-}
-.menu {
-  display: none;
-  /* position: absolute; */
-  top: 50%;
-  right: 20px;
-  transform: translate(20%,15%);
-  background-color: #fff;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  z-index: 10;
-}
-
-.menu ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.menu ul li {
-  padding: 10px 20px;
-  cursor: pointer;
-}
-
-.menu ul li:hover {
-  background-color: #f0f0f0;
-}
-
-.scrollable-container {
-    overflow-y: scroll;
-    height: 100vh;
-    scrollbar-width: none;
-  }
-
-  .scrollable-container::-webkit-scrollbar {
-    display: none;
-  }
-
-/* .menu-button {
-  display: none;
-  cursor: pointer;
-  position: absolute;
-  top: 50%;
-  right: 0;
-  transform: translateY(-50%);
-  font-size: 18px;
-}
-
-.message-receive:hover .menu-button,
-.replies:hover .menu-button {
-  display: block;
-}
-
-.menu {
-  display: none;
-  position: absolute;
-  top: 50%;
-  right: 20px;
-  transform: translateY(-50%);
-  background-color: #fff;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-  z-index: 10;
-}
-
-.menu ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.menu ul li {
-  padding: 10px 20px;
-  cursor: pointer;
-}
-
-.menu ul li:hover {
-  background-color: #f0f0f0;
-} */
-</style>
-
-<div class="container-fluid newsfeed" id="wrapper">
-  <div class="row" style="padding-top: 10px;">
-    <div class="col-md-12 pr-0" style="height: 90vh;">
-      <div id="frame">
-        <div id="sidepanel">
-          <div id="profile">
-            <div class="wrap">
-              <img id="profile-img" src="{{ rooms.host.avatar.url }}" class="online" alt="{{ rooms.host.name }}" />
-              <p>{{ rooms.host.name }}</p>
-            </div>
-            <h6>Topic: {{ rooms.topic }}</h6>
-          </div>
-          <div id="search">
-            <label for=""><i class="fa fa-search" aria-hidden="true"></i></label>
-            <input type="text" placeholder="Search contacts..." />
-          </div>
-          <div id="contacts">
-            <ul>
-              {% for p in participants %}
-              <a href="{%url 'profile' p.id%}">
-                <li class="contact">
-                  <div class="wrap">
-                    <span class="contact-status online"></span>
-                    <img src="{{ p.avatar.url }}" alt="{{ p.name }}" />
-                    <div class="meta">
-                      <p class="name">{{ p.name }}</p>
-                      <p class="preview"></p>
-                    </div>
-                  </div>
-                </li>
-              </a>
-              {% endfor %}
-            </ul>
-          </div>
-        </div>
-        <div class="content">
-          <div class="contact-profile">
-            <img src="{{ rooms.host.avatar.url }}" alt="{{ rooms.host.name }}" />
-            <p>{{ rooms.name }}</p>
-            <div class="social-media">
-              {% if request.user == rooms.host %}
-              <span class="dropdown">
-                <a href="#" role="button" id="message-options" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <i class='bx bx-dots-vertical-rounded'></i>
-                </a>
-                <div class="dropdown-menu dropdown-menu-right fs-9" aria-labelledby="message-options">
-                  <a href="{% url 'update-room' rooms.id %}" class="dropdown-item">Update</a>
-                  <div class="dropdown-divider"></div>
-                  <a href="{% url 'delete_room' rooms.id %}" class="dropdown-item">Delete</a>
-                </div>
-              </span>
-              {% endif %}
-            </div>
-          </div>
-          <div class="messages">
-            <div class="scrollable-container">
-
-            <ul>
-              {% for message in message %}
-              {% if request.user == message.user %}
-              <li class="sent">
-                
-                <p>{{ message.body }}</p>
-              </li>
-              {% else %}
-              <li class="replies message-receive">
-                <img src="{{ message.user.avatar.url }}" alt="{{ message.user.name }}" />
-                <p class="mess-replies">{{ message.body }}</p>
-                <div class="menu-button">⋮</div>
-                <div class="menu">
-                  <ul>
-                    
-                    <li class ="mess-replies-li" style="margin-bottom: 0px !important;">
-                      <a href="#" class="report-message" data-message-id="{{ message.id }}" data-toggle="modal" data-target="#reportModal">Report</a>
-                    </li>
-                  </ul>
-                </div>
-              </li>
-              {% endif %}
-              {% endfor %}
-              
-            </ul>
-          </div>
-          </div>
-          <div class="message-input">
-            <div class="wrap">
-              <form id="message-form" action="" method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
-                <input type="text" name="body" placeholder="Write your message..." />
-                <button type="submit" class="submit"><i class="fa fa-paper-plane" aria-hidden="true"></i></button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script src='https://code.jquery.com/jquery-2.2.4.min.js'></script>
-<!-- Report Modal -->
-<div id="reportModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="reportModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="reportModalLabel">Report Message</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <form id="reportForm" method="POST">
-          {% csrf_token %}
-          <input type="hidden" name="reported_message_id" id="reportedMessageId">
-          <div class="form-group">
-            <label>Reason</label>
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" name="reason" value="SP" id="reasonSpam">
-              <label class="form-check-label" for="reasonSpam">Spam or misleading</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" name="reason" value="HR" id="reasonHarassment">
-              <label class="form-check-label" for="reasonHarassment">Harassment or bullying</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" name="reason" value="IC" id="reasonInappropriateContent">
-              <label class="form-check-label" for="reasonInappropriateContent">Inappropriate content</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" name="reason" value="CR" id="reasonCopyright">
-              <label class="form-check-label" for="reasonCopyright">Copyright violation</label>
-            </div>
-            <div class="form-check">
-              <input class="form-check-input" type="checkbox" name="reason" value="OT" id="reasonOther">
-              <label class="form-check-label" for="reasonOther">Other</label>
-            </div>
-          </div>
-          <div class="form-group">
-            <label for="reportDetail">Details (optional)</label>
-            <textarea class="form-control" id="reportDetail" name="detail" rows="3"></textarea>
-          </div>
-          <button type="submit" class="btn btn-primary">Submit Report</button>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  // Toggle menu visibility on click
-  const menuButtons = document.querySelectorAll('.menu-button');
-  menuButtons.forEach(button => {
-    button.addEventListener('click', (e) => {
-      const menu = e.target.nextElementSibling;
-      menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-    });
-  });
-
-  // Close menu when clicking outside
-  window.addEventListener('click', (e) => {
-    if (!e.target.matches('.menu-button')) {
-      const menus = document.querySelectorAll('.menu');
-      menus.forEach(menu => {
-        if (menu.style.display === 'block') {
-          menu.style.display = 'none';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alert Message Boxes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
         }
-      });
-    }
-  });
+        
+        .alert {
+            padding: 20px;
+            color: white;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.3s ease;
+        }
+        
+        .alert .icon {
+            display: flex;
+            align-items: center;
+            margin-right: 10px;
+            font-size: 24px;
+        }
 
-  // Set reported message ID in modal
-  const reportLinks = document.querySelectorAll('.report-message');
-  reportLinks.forEach(link => {
-    link.addEventListener('click', (e) => {
-      const messageId = e.target.getAttribute('data-message-id');
-      document.getElementById('reportedMessageId').value = messageId;
-    });
-  });
+        .alert .close-btn {
+            cursor: pointer;
+            font-size: 24px;
+        }
+        
+        .alert.warning {
+            background-color: #f39c12;
+        }
 
-  // Submit report form
-  const reportForm = document.getElementById('reportForm');
-  reportForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const formData = new FormData(reportForm);
-    const reasons = [];
-    document.querySelectorAll('input[name="reason"]:checked').forEach(checkbox => {
-      reasons.push(checkbox.value);
-    });
-    formData.append('reasons', reasons.join(','));
+        .alert.success {
+            background-color: #27ae60;
+        }
 
-    fetch('{% url "report_message" %}', {
-      method: 'POST',
-      body: formData,
-      headers: {
-        'X-CSRFToken': '{{ csrf_token }}'
-      }
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        alert('Report submitted successfully');
-        $('#reportModal').modal('hide'); 
-        // Hide the modal
-        window.location.reload();
-      } else {
-        alert('Error submitting report');
-      }
-    })
-    .catch(error => {
-      console.error('Error:', error);
-    });
-  });
-});
-</script>
+        .alert.error {
+            background-color: #e74c3c;
+        }
 
-{% block scripts %}
-{{ rooms.id|json_script:"json-roomid" }}
-{{ request.user.username|json_script:"json_username"}}
-{{ request.user.id|json_script:"json_userID"}}
-{{ request.user.avatar.url|json_script:"json_userAvatar"}}
-{{ created_at|timesince|json_script:"json_createdAt" }} 
-{{ message_id|json_script:"json_messageID" }}
+        .alert.other {
+            background-color: #2d3436;
+        }
 
-<script>
-  // Variables from Django template
-  const roomId = JSON.parse(document.getElementById('json-roomid').textContent);
-  const userName = JSON.parse(document.getElementById('json_username').textContent);
-  const userID = JSON.parse(document.getElementById('json_userID').textContent);
-  const userAvatar = JSON.parse(document.getElementById('json_userAvatar').textContent);
-  const messageID = JSON.parse(document.getElementById('json_messageID').textContent);
-  const createdAtScript = document.getElementById('json_createdAt');
-  const createdAtData = JSON.parse(createdAtScript.textContent);
+        .alert .message-content {
+            flex-grow: 1;
+        }
+    </style>
+</head>
+<body>
 
-  console.log('Message ID:', messageID);
-  console.log('Created At:', createdAtData);
-  console.log('Room ID:', roomId);
-  console.log('Window Location Host:', window.location.host);
-  console.log('User Name:', userName);
+    <div class="alert warning">
+        <div class="icon">⚠️</div>
+        <div class="message-content">
+            <strong>Warning Message</strong><br>
+            This is a warning message.
+        </div>
+        <div class="close-btn" onclick="this.parentElement.style.display='none';">×</div>
+    </div>
 
-  // Connect to WebSocket
-  const MessagesSocket = new WebSocket(
-    'ws://' + window.location.host + '/ws/room/' + roomId + '/'
-  );
+    <div class="alert success">
+        <div class="icon">✔️</div>
+        <div class="message-content">
+            <strong>Success Message</strong><br>
+            This is a success message.
+        </div>
+        <div class="close-btn" onclick="this.parentElement.style.display='none';">×</div>
+    </div>
 
-  MessagesSocket.onmessage = function(e) {
-    console.log('onmessage');
-    const data = JSON.parse(e.data);
+    <div class="alert error">
+        <div class="icon">❌</div>
+        <div class="message-content">
+            <strong>Error Message</strong><br>
+            This is an error message.
+        </div>
+        <div class="close-btn" onclick="this.parentElement.style.display='none';">×</div>
+    </div>
 
-    if (data.message) {
-      var messageContainer = document.querySelector('.messages ul');
-      var newMessage = document.createElement('li');
-      newMessage.className = data.username === userName ? 'sent' : 'replies';
-      newMessage.innerHTML = `
-        ${data.username !== userName ? `<img src="${data.userAvatar}" alt="Conversation user image" />` : ''}
-        <p>${data.message}</p>
-      `;
-      messageContainer.appendChild(newMessage);
+    <div class="alert other">
+        <div class="icon">⏳</div>
+        <div class="message-content">
+            <strong>Other Message</strong><br>
+            This is another message.
+        </div>
+        <div class="close-btn" onclick="this.parentElement.style.display='none';">×</div>
+    </div>
 
-      // Scroll to the bottom after adding a new message
-      scrollToBottom();
-    } else {
-      alert('The message was empty');
-    }
-  };
-
-  MessagesSocket.onclose = function(event) {
-    console.log('WebSocket connection closed:', event);
-  };
-
-  // Submit form on Enter key press
-  document.querySelector('.message-input input[name="body"]').addEventListener('keydown', function(event) {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      document.querySelector('.submit').click();
-    }
-  });
-
-  // Additional code for sending messages through the WebSocket
-  document.querySelector('.submit').onclick = function(event) {
-    event.preventDefault();
-
-    const messageInputDom = document.querySelector('.message-input input[name="body"]');
-    const message = messageInputDom.value;
-
-    if (message.trim() !== '') {
-      MessagesSocket.send(JSON.stringify({
-        'message': message,
-        'username': userName,
-        'userAvatar': userAvatar,  // Include userAvatar when sending the message
-        'room': roomId,
-      }));
-
-      messageInputDom.value = '';
-
-      // Scroll to the bottom after sending a message
-      scrollToBottom();
-    }
-    return false;
-  };
-
-  function scrollToBottom() {
-    const objDiv = document.querySelector('.scrollable-container');
-    objDiv.scrollTop = objDiv.scrollHeight;
-  }
-
-  // Scroll to the bottom on page load
-  window.onload = scrollToBottom;
-</script>
-
-
-
-{% endblock %}
-
-{% endblock content %}
+</body>
+</html>

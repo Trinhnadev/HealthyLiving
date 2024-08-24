@@ -179,6 +179,49 @@ class OrderDetail {
     + subtotal: Decimal
 }
 
+class Post {
+    + id: Integer
+    + author: ForeignKey
+    + title: String
+    + content: Text
+    + likes: ManyToManyField
+    + image: String
+    + video: String
+    + created_at: DateTime
+    + updated_at: DateTime
+    + __str__(): String
+}
+
+class Comment {
+    + id: Integer
+    + post: ForeignKey
+    + user: ForeignKey
+    + content: Text
+    + created_at: DateTime
+    + updated_at: DateTime
+    + __str__(): String
+}
+
+class Share {
+    + id: Integer
+    + post: ForeignKey
+    + user: ForeignKey
+    + content: Text
+    + likes: ManyToManyField
+    + created_at: DateTime
+    + __str__(): String
+}
+
+class ShareComment {
+    + id: Integer
+    + share: ForeignKey
+    + user: ForeignKey
+    + content: Text
+    + created_at: DateTime
+    + updated_at: DateTime
+    + __str__(): String
+}
+
 User "1" -- "n" Room : hosts
 Topic "1" -- "n" Room : topics
 User "1" -- "n" Message : sends
@@ -205,5 +248,10 @@ User "1" -- "n" Order : places
 Store "1" -- "n" Order : receives
 Order "1" -- "n" OrderDetail : contains
 Product "1" -- "n" OrderDetail : in
+Post "1" -- "n" Comment : contains
+Post "1" -- "n" Share : is shared
+User "1" -- "n" Share : shares
+Share "1" -- "n" ShareComment : contains
+User "1" -- "n" ShareComment : comments
 
 @enduml

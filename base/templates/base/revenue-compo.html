@@ -1,3 +1,6 @@
+
+{%load static%}
+
 <style>
     body {
         background-color: #f0f0f5;
@@ -99,7 +102,7 @@
     <div class="stats-container">
       <div class="stat">
         <div class="icon">
-          <img src="store_icon.png" alt="Store Icon">
+          <img src="{{ store.img.url }}" alt="Store Icon">
         </div>
         <div class="info">
           <p class="number">{{ store.name }}</p>
@@ -108,29 +111,29 @@
       </div>
       <div class="stat">
         <div class="icon">
-          <img src="order_icon.png" alt="Order Icon">
+          <img src="{% static 'assets/images/icons/theme/order.png' %}" alt="Order Icon">
         </div>
         <div class="info">
           <p class="number" id="orderCount">{{ total_orders }}</p>
-          <p class="label">ĐƠN HÀNG</p>
+          <p class="label">ORDER</p>
         </div>
       </div>
       <div class="stat">
         <div class="icon">
-          <img src="order_icon.png" alt="Return Icon">
+          <img src="{% static 'assets/images/icons/theme/back.jpg' %}" alt="Return Icon">
         </div>
         <div class="info">
           <p class="number" id="returnCount">0</p>
-          <p class="label">Đơn Hoàn Trả</p>
+          <p class="label">REFUND FORM</p>
         </div>
       </div>
       <div class="stat">
         <div class="icon">
-          <img src="revenue_icon.png" alt="Revenue Icon">
+          <img src="{% static 'assets/images/icons/theme/renenue.png' %}" alt="Revenue Icon">
         </div>
         <div class="info">
           <p class="number" id="revenue">$ {{ total_revenue|floatformat:2 }}</p>
-          <p class="label">DOANH THU</p>
+          <p class="label">REVENUE</p>
         </div>
       </div>
     </div>

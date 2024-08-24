@@ -1,7 +1,7 @@
 # from django.contrib import admin
 from django.urls import path
+from django.conf.urls import handler404
 from . import views
-
 
 urlpatterns = [
 
@@ -150,7 +150,6 @@ urlpatterns = [
     path('manage_event/', views.ManageEvent, name='manage_event'),
     path('manage_stores/', views.manageStore, name='manage_stores'),
     path('manage_products/', views.manageProduct, name='manage_products'),
-    path('top-products/', views.top_products_by_month, name='top_products_by_month'),
 
 
 
@@ -165,7 +164,7 @@ urlpatterns = [
     path('event/<int:event_id>/message/<int:message_id>/delete/', views.delete_event_message, name='delete_event_message'),
 
 
-    path('top-stores/', views.top_stores_by_revenue, name='top_stores_by_revenue'),
+
     path('unauthorized/', views.unauthorized, name='unauthorized'),
 
 
@@ -176,9 +175,11 @@ urlpatterns = [
     path('get-post/<int:post_id>/', views.get_post, name='get-post'),
     path('update-post/<int:post_id>/', views.update_post, name='update-post'),
     path('delete-post/<int:post_id>/', views.delete_post, name='delete_post'),
+    
     path('load-more-comments/', views.load_more_comments, name='load_more_comments'),
     path('add-comment/<int:content_id>/', views.add_comment, name='add-comment'),
     path('share-post/<int:post_id>/', views.share_post, name='share-post'),
     path('delete-share/<int:share_id>/', views.delete_share, name='delete_share'),
+    
 
 ]

@@ -71,6 +71,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         user = User.objects.get(username=username)
         room = Room.objects.get(id=self.room_id)
         msg = Message.objects.create(user=user, room=room, body=message)
+        room.participants.add(user)
 
         if media:
             if media['type'].startswith('image/'):

@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Healthy</title>
+    <title>HealthMinds</title>
 
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Major+Mono+Display" rel="stylesheet">
@@ -59,42 +59,7 @@
     
    
 </head>
-<style>
-    .alert {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        width: 300px;
-        padding: 15px 20px;
-        border-radius: 25px;
-        margin: 20px auto;
-        color: #fff;
-        font-size: 18px;
-    }
 
-    .alert-success {
-        background-color: #4CAF50;
-    }
-
-    .alert-error {
-        background-color: #f44336;
-    }
-
-    .alert-icon {
-        margin-right: 10px;
-        font-size: 24px;
-    }
-
-    .alert-message {
-        flex-grow: 1;
-    }
-
-    .alert-close {
-        cursor: pointer;
-        font-size: 24px;
-        margin-left: 10px;
-    }
-</style>
 
 <body class=" newfeed {% if request.COOKIES.dark_mode == 'enabled' %}dark-mode{% endif %}">
     <div class="container-fluid" id="wrapper">

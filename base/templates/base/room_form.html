@@ -4,284 +4,269 @@
 
 <style>
   /* General styles */
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f6f8;
-    margin: 0;
-    padding: 0;
-}
+  body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f6f8;
+      margin: 0;
+      padding: 0;
+  }
 
-.scrollable-container {
-    overflow-y: auto;
-    height: 90vh;
-    scrollbar-width: thin;
-    scrollbar-color: #ccc #f4f6f8;
-}
+  .scrollable-container {
+      overflow-y: auto;
+      height: 90vh;
+      scrollbar-width: thin;
+      scrollbar-color: #ccc #f4f6f8;
+  }
 
-.scrollable-container::-webkit-scrollbar {
-    width: 8px;
-}
+  .scrollable-container::-webkit-scrollbar {
+      width: 8px;
+  }
 
-.scrollable-container::-webkit-scrollbar-track {
-    background: #f4f6f8;
-}
+  .scrollable-container::-webkit-scrollbar-track {
+      background: #f4f6f8;
+  }
 
-.scrollable-container::-webkit-scrollbar-thumb {
-    background-color: #ccc;
-    border-radius: 10px;
-    border: 3px solid #f4f6f8;
-}
+  .scrollable-container::-webkit-scrollbar-thumb {
+      background-color: #ccc;
+      border-radius: 10px;
+      border: 3px solid #f4f6f8;
+  }
 
-.create-room.layout {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-}
+  .create-room.layout {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+  }
 
-.container {
-    width: 1250px;
-    margin: 1px auto;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-}
+  .container {
+      width: 1250px;
+      margin: 1px auto;
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+  }
 
-.layout__box {
-    padding: 20px;
-}
+  .layout__box {
+      padding: 20px;
+  }
 
-.layout__boxHeader {
-    display: flex;
-    align-items: center;
-    border-bottom: 1px solid #e0e0e0;
-    padding-bottom: 10px;
-    margin-bottom: 20px;
-}
+  .layout__boxHeader {
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid #e0e0e0;
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+  }
 
-.layout__boxTitle {
-    display: flex;
-    align-items: center;
-}
+  .layout__boxTitle {
+      display: flex;
+      align-items: center;
+  }
 
-.layout__boxTitle a {
-    margin-right: 10px;
-    color: #007bff;
-    text-decoration: none;
-    transition: color 0.3s;
-}
+  .layout__boxTitle a {
+      margin-right: 10px;
+      color: #007bff;
+      text-decoration: none;
+      transition: color 0.3s;
+  }
 
-.layout__boxTitle a:hover {
-    color: #0056b3;
-}
+  .layout__boxTitle a:hover {
+      color: #0056b3;
+  }
 
-.layout__boxTitle h3 {
-    margin: 0;
-    font-size: 20px;
-    color: #333;
-}
+  .layout__boxTitle h3 {
+      margin: 0;
+      font-size: 20px;
+      color: #333;
+  }
 
-.layout__body {
-    display: flex;
-    flex-direction: column;
-}
+  .layout__body {
+      display: flex;
+      flex-direction: column;
+  }
 
-.form {
-    width: 100%;
-}
+  .form {
+      width: 100%;
+  }
 
-.form__group {
-    margin-bottom: 15px;
-}
+  .form__group {
+      margin-bottom: 15px;
+  }
 
-.form__group label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: #555;
-}
+  .form__group label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+      color: #555;
+  }
 
-.form__group input,
-.form__group textarea,
-.form__group select {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 14px;
-    color: #333;
-    background-color: #f9f9f9;
-    transition: border-color 0.3s;
-}
+  .form__group input,
+  .form__group textarea,
+  .form__group select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 14px;
+      color: #333;
+      background-color: #f9f9f9;
+      transition: border-color 0.3s;
+  }
 
-.form__group input:focus,
-.form__group textarea:focus,
-.form__group select:focus {
-    border-color: #007bff;
-    outline: none;
-}
+  .form__group input:focus,
+  .form__group textarea:focus,
+  .form__group select:focus {
+      border-color: #007bff;
+      outline: none;
+  }
 
-.form__group img {
-    display: block;
-    margin: 10px 0;
-    max-width: 100%;
-    height: auto;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-}
+  .form__action {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+  }
 
-.form__action {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-}
+  .btn-btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background-color 0.3s;
+  }
 
-.btn-btn {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.3s;
-}
+  .btn--dark {
+      background-color: #333;
+      color: #fff;
+  }
 
-.btn--dark {
-    background-color: #333;
-    color: #fff;
-}
+  .btn--dark:hover {
+      background-color: #555;
+  }
 
-.btn--dark:hover {
-    background-color: #555;
-}
+  .btn--main {
+      background-color: #007bff;
+      color: #fff;
+  }
 
-.btn--main {
-    background-color: #007bff;
-    color: #fff;
-}
+  .btn--main:hover {
+      background-color: #0056b3;
+  }
 
-.btn--main:hover {
-    background-color: #0056b3;
-}
+  /* Responsive styles */
+  @media (max-width: 768px) {
+      .container {
+          width: 100%;
+          margin: 1px 10px;
+      }
 
-/* Responsive styles */
-@media (max-width: 768px) {
-    .container {
-        width: 100%;
-        margin: 1px 10px;
-    }
+      .layout__box {
+          padding: 15px;
+      }
 
-    .layout__box {
-        padding: 15px;
-    }
+      .layout__boxHeader h3 {
+          font-size: 18px;
+      }
 
-    .layout__boxHeader h3 {
-        font-size: 18px;
-    }
+      .form__group {
+          margin-bottom: 15px;
+      }
 
-    .form__group {
-        margin-bottom: 15px;
-    }
+      .form__action {
+          flex-direction: column;
+          align-items: stretch;
+      }
 
-    .form__action {
-        flex-direction: column;
-        align-items: stretch;
-    }
-
-    .form__action .btn {
-        width: 100%;
-        margin-bottom: 10px;
-    }
-}
+      .form__action .btn {
+          width: 100%;
+          margin-bottom: 10px;
+      }
+  }
 
 </style>
 
-
-  <div class="container-fluid col-md-12 " style="margin-right: 0;">
-    <div class="layout__box">
-      <div class="layout__boxHeader">
-        <div class="layout__boxTitle">
-          <a href="{{request.META.HTTP_REFERER}}">
-            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-              <title>arrow-left</title>
-              <path
-                d="M13.723 2.286l-13.723 13.714 13.719 13.714 1.616-1.611-10.96-10.96h27.625v-2.286h-27.625l10.965-10.965-1.616-1.607z">
-              </path>
-            </svg>
-          </a>
-          <h3>Create/Update Study Room</h3>
-        </div>
-      </div>
-      <div class="layout__body">
-        <form class="form" action="" method="POST">
-          {% csrf_token %}
-
-          <div class="form__group">
-            <label for="room_topic">Room Topic</label>
-            <input required type="text" value="{{room.topic}}" name="topic" list="topic-list" />
-            <datalist id="topic-list">
-              <select id="room_topic">
-                {% for t in topic %}
-                <option value="{{t.name}}">{{t.name}}</option>
-                {% endfor %}
-              </select>
-          </div>
-          <div class="form__group">
-            <label for="room_name">Room Name</label>
-            {{form.name}}
-          </div>
-
-          <div class="form__group">
-            <label for="room_description">Room Description</label>
-            {{form.description}}
-          </div>
-          <div class="form__group">
-            <label for="room_description">Room Status</label>
-
-            <select id="room_status" name="is_private" onchange="toggleQuestionAnswer();">
-              <option value="False">Public 
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-globe-asia-australia" viewBox="0 0 16 16">
-                <path d="m10.495 6.92 1.278-.619a.483.483 0 0 0 .126-.782c-.252-.244-.682-.139-.932.107-.23.226-.513.373-.816.53l-.102.054c-.338.178-.264.626.1.736a.48.48 0 0 0 .346-.027ZM7.741 9.808V9.78a.413.413 0 1 1 .783.183l-.22.443a.6.6 0 0 1-.12.167l-.193.185a.36.36 0 1 1-.5-.516l.112-.108a.45.45 0 0 0 .138-.326M5.672 12.5l.482.233A.386.386 0 1 0 6.32 12h-.416a.7.7 0 0 1-.419-.139l-.277-.206a.302.302 0 1 0-.298.52z"/>
-                <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0M1.612 10.867l.756-1.288a1 1 0 0 1 1.545-.225l1.074 1.005a.986.986 0 0 0 1.36-.011l.038-.037a.88.88 0 0 0 .26-.755c-.075-.548.37-1.033.92-1.099.728-.086 1.587-.324 1.728-.957.086-.386-.114-.83-.361-1.2-.207-.312 0-.8.374-.8.123 0 .24-.055.318-.15l.393-.474c.196-.237.491-.368.797-.403.554-.064 1.407-.277 1.583-.973.098-.391-.192-.634-.484-.88-.254-.212-.51-.426-.515-.741a7 7 0 0 1 3.425 7.692 1 1 0 0 0-.087-.063l-.316-.204a1 1 0 0 0-.977-.06l-.169.082a1 1 0 0 1-.741.051l-1.021-.329A1 1 0 0 0 11.205 9h-.165a1 1 0 0 0-.945.674l-.172.499a1 1 0 0 1-.404.514l-.802.518a1 1 0 0 0-.458.84v.455a1 1 0 0 0 1 1h.257a1 1 0 0 1 .542.16l.762.49a1 1 0 0 0 .283.126 7 7 0 0 1-9.49-3.409Z"/>
-              </svg>
-            </option>
-              <option value="True">Priavte 
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-fill-lock" viewBox="0 0 16 16">
-                  <path d="M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0m-9 8c0 1 1 1 1 1h5v-1a2 2 0 0 1 .01-.2 4.49 4.49 0 0 1 1.534-3.693Q8.844 9.002 8 9c-5 0-6 3-6 4m7 0a1 1 0 0 1 1-1v-1a2 2 0 1 1 4 0v1a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1h-4a1 1 0 0 1-1-1zm3-3a1 1 0 0 0-1 1v1h2v-1a1 1 0 0 0-1-1"/>
-                </svg>
-              </option>
-            </select>
-          </div>
-          <div class="form__group question-answer"">
-            <label for="room_question">Room Question</label>
-            {{form.question}}
-
-          </div>
-          <div class="form__group question-answer"">
-            <label for="room_anwser">Room Keyword</label>
-            {{form.answer}}
-
-          </div>
-          <div class="form__action">
-            <a class="btn-btn btn--dark" href="{{request.META.HTTP_REFERER}}">Cancel</a>
-            <button class="btn-btn btn--main" type="submit">Submit</button>
-          </div>
-        </form>
+<div class="container-fluid col-md-12 " style="margin-right: 0;">
+  <div class="layout__box">
+    <div class="layout__boxHeader">
+      <div class="layout__boxTitle">
+        <a href="{{ request.META.HTTP_REFERER }}">
+          <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+            <title>arrow-left</title>
+            <path d="M13.723 2.286l-13.723 13.714 13.719 13.714 1.616-1.611-10.96-10.96h27.625v-2.286h-27.625l10.965-10.965-1.616-1.607z"></path>
+          </svg>
+        </a>
+        <h3>Create/Update Study Room</h3>
       </div>
     </div>
-  </div>
-  <script>
-    function toggleQuestionAnswer() {
-     var status = document.getElementById('room_status').value;
-     var displayStyle = status === 'True' ? 'block' : 'none'; // Show if Private is selected
-     document.querySelectorAll('.question-answer').forEach(function(element) {
-       element.style.display = displayStyle;
-     });
-   }
-   // Run on initial load in case of form errors and re-rendering
-   window.onload = toggleQuestionAnswer;
- </script>
+    <div class="layout__body">
+      <form class="form" action="" method="POST">
+        {% csrf_token %}
 
+        <div class="form__group">
+          <label for="room_topic">Room Topic</label>
+          <input required type="text" value="{{ room.topic }}" name="topic" list="topic-list" />
+          <datalist id="topic-list">
+            <select id="room_topic">
+              {% for t in topic %}
+              <option value="{{ t.name }}">{{ t.name }}</option>
+              {% endfor %}
+            </select>
+          </datalist>
+        </div>
+
+        <div class="form__group">
+          <label for="room_name">Room Name</label>
+          {{ form.name }}
+        </div>
+
+        <div class="form__group">
+          <label for="room_description">Room Description</label>
+          {{ form.description }}
+        </div>
+
+        <div class="form__group">
+          <label for="room_status">Room Status</label>
+          <select id="room_status" name="is_private" onchange="toggleQuestionAnswer();">
+            <option value="False" {% if room.is_private == False %}selected{% endif %}>Public</option>
+            <option value="True" {% if room.is_private == True %}selected{% endif %}>Private</option>
+          </select>
+        </div>
+
+        <div class="form__group question-answer" style="display: none;">
+          <label for="room_question">Room Question</label>
+          <input type="text" name="question" value="{{ room.question }}">
+        </div>
+
+        <div class="form__group question-answer" style="display: none;">
+          <label for="room_answer">Room Keyword</label>
+          <input type="text" name="answer" value="{{ room.answer }}">
+        </div>
+
+        <div class="form__action">
+          <a class="btn-btn btn--dark" href="{{ request.META.HTTP_REFERER }}">Cancel</a>
+          <button class="btn-btn btn--main" type="submit">Submit</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggleQuestionAnswer() {
+    var status = document.getElementById('room_status').value;
+    var displayStyle = status === 'True' ? 'block' : 'none'; // Show fields if Private is selected
+    document.querySelectorAll('.question-answer').forEach(function(element) {
+      element.style.display = displayStyle;
+    });
+  }
+
+  // Initial loading of form when page loads
+  window.onload = function() {
+    toggleQuestionAnswer(); // Ensure the correct fields are shown based on the current room status
+  };
+</script>
 
 {% endblock content %}

@@ -5,145 +5,192 @@
 
 <style>
     .scrollable-container {
-    overflow-y: scroll;
-    height: 100vh;
-    scrollbar-width: none;
-    /* For Firefox */
-  }
+        overflow-y: scroll;
+        height: 100vh;
+        scrollbar-width: none;
+        /* For Firefox */
+    }
 
-  .scrollable-container::-webkit-scrollbar {
-    display: none;
-    /* For Chrome, Safari, and Opera */
-  }
+    .scrollable-container::-webkit-scrollbar {
+        display: none;
+        /* For Chrome, Safari, and Opera */
+    }
 </style>
 
 
 
 <div class="row profile-right-side-content">
-  <div class="user-profile">
-    <div class="profile-header-background">
-        <a href="#" class="profile-cover">
-            <img src="{{ user.coveravatar.url }}" alt="Profile Header Background">
-            {% if request.user == user %}
-            <div class="cover-overlay">
-                <label for="updateCoverPicInput" class="btn btn-update-cover"><i class='bx bxs-camera'></i> Update Cover Photo</label>
-                <input type="file" id="updateCoverPicInput" class="text-center upload" style="display:none;">
-            </div>
-            {% endif %}
-        </a>
-    </div>
-    
-    {% if request.user == user %}
-    <form id="updateCoverPicForm" method="post" enctype="multipart/form-data" style="display:none;">
-        {% csrf_token %}
-    </form>
-    {% endif %}
-    
-    <div class="row profile-rows">
-        <div class="col-md-3">
-            <div class="profile-info-left">
-                <div class="text-center">
-                    <div class="profile-img w-shadow">
-                        <div class="profile-img-overlay"></div>
-                        <img src="{{ user.avatar.url }}" alt="Avatar" class="avatar img-circle" width="128px" height="145px">
-                        {% if request.user == user %}
-                        <div class="profile-img-caption">
-                            <label for="updateProfilePicInput" class="upload">
-                                <i class='bx bxs-camera'></i> Update
-                                <input type="file" id="updateProfilePicInput" class="text-center upload">
-                            </label>
-                        </div>
-                        {% endif %}
-                    </div>
-                
-                    {% if request.user == user %}
-                    <form id="updateProfilePicForm" method="post" enctype="multipart/form-data" style="display:none;">
-                        {% csrf_token %}
-                        {{ form.as_p }}
-                    </form>
-                    {% endif %}
-                    <p class="profile-fullname mt-3">{{ user.name }}</p>
-                    <p class="profile-username mb-3 text-muted">@{{ user.username }}</p>
+    <div class="user-profile">
+        <div class="profile-header-background">
+            <a href="#" class="profile-cover">
+                <img src="{{ user.coveravatar.url }}" alt="Profile Header Background">
+                {% if request.user == user %}
+                <div class="cover-overlay">
+                    <label for="updateCoverPicInput" class="btn btn-update-cover"><i class='bx bxs-camera'></i> Update
+                        Cover Photo</label>
+                    <input type="file" id="updateCoverPicInput" class="text-center upload" style="display:none;">
                 </div>
-                  <div class="intro mt-4">
-                      <div class="d-flex">
+                {% endif %}
+            </a>
+        </div>
+
+        {% if request.user == user %}
+        <form id="updateCoverPicForm" method="post" enctype="multipart/form-data" style="display:none;">
+            {% csrf_token %}
+        </form>
+        {% endif %}
+
+        <div class="row profile-rows">
+            <div class="col-md-3">
+                <div class="profile-info-left">
+                    <div class="text-center">
+                        <div class="profile-img w-shadow">
+                            <div class="profile-img-overlay"></div>
+                            <img src="{{ user.avatar.url }}" alt="Avatar" class="avatar img-circle" width="128px"
+                                height="145px">
+                            {% if request.user == user %}
+                            <div class="profile-img-caption">
+                                <label for="updateProfilePicInput" class="upload">
+                                    <i class='bx bxs-camera'></i> Update
+                                    <input type="file" id="updateProfilePicInput" class="text-center upload">
+                                </label>
+                            </div>
+                            {% endif %}
+                        </div>
+
                         {% if request.user == user %}
-                        {% elif friendship %}
-                        {% if friendship.status == 'pending' %}
-                        {% if friendship.sender == request.user %}
-                        <a href="{%url 'reject' user.id%}" class="btn btn-follow mr-3"> Cancel Request</a>
-                        {% else %}
-                        <a href="{%url 'accept' user.id%}" class="btn btn-follow mr-3"><i class='bx bx-plus'></i> Accept</a>
-                        <a href="{%url 'reject' user.id%}" class="btn btn-follow mr-3"><i class='bx bx-plus'></i> Reject</a>
+                        <form id="updateProfilePicForm" method="post" enctype="multipart/form-data"
+                            style="display:none;">
+                            {% csrf_token %}
+                            {{ form.as_p }}
+                        </form>
                         {% endif %}
-                        {% elif friendship.status == 'accepted' %}
-                        <a href="{% url 'open_chat' chat_room.id %}" class="btn btn-follow mr-3"><i class='bx bxs-message-rounded'></i> Chat</a>
-                        <a type="{%url 'reject' user.id%}" class="btn btn-follow mr-3"><i class='bx bx-plus'></i> Remove</a>
-                        {% elif friendship.status == 'rejected' %}
-                        <a href="{%url 'addFriend' user.id%}" class="btn btn-follow mr-9"><i class='bx bx-plus'></i> Add Friend</a>
-                        {% endif %}
-                        {% else %}
-                        <a href="{%url 'addFriend' user.id%}" class="btn btn-follow mr-9"><i class='bx bx-plus'></i> Add Friend</a>
-                        {% endif %}
-                          
-                      </div>
-                  </div>
-                  <div class="intro mt-5 mv-hidden">
-                      <div class="intro-item d-flex justify-content-between align-items-center">
-                          <h3 class="intro-about">Intro</h3>
-                      </div>
-                      <div class="intro-item d-flex justify-content-between align-items-center">
-                          <p class="intro-title text-muted"><i class='bx bx-briefcase text-primary'></i> Web Developer at <a href="#">Company Name</a></p>
-                      </div>
-                      <div class="intro-item d-flex justify-content-between align-items-center">
-                          <p class="intro-title text-muted"><i class='bx bx-map text-primary'></i> Lives in <a href="#">City, Country</a></p>
-                      </div>
-                      <div class="intro-item d-flex justify-content-between align-items-center">
-                          <p class="intro-title text-muted"><i class='bx bx-time text-primary'></i> Last Login <a href="#">Online <span class="ml-1 online-status bg-success"></span></a></p>
-                      </div>
-                      {%if user == request.user%}
-                      <div class="intro-item d-flex justify-content-between align-items-center">
-                          <a href="{%url 'update-user'%}" class="btn btn-quick-link join-group-btn border w-100">Edit Details</a>
-                      </div>
-                      {%endif%}
-                  </div>
-                  
-                  
-              </div>
-          </div>
-          <div class="col-md-9 p-0">
-              <div class="profile-info-right">
+                        <p class="profile-fullname mt-3">{{ user.name }}</p>
+                        <p class="profile-username mb-3 text-muted">@{{ user.username }}</p>
+                    </div>
+                    <div class="intro mt-4">
+                        <div class="d-flex">
+                            {% if request.user == user %}
+                            {% elif friendship %}
+                            {% if friendship.status == 'pending' %}
+                            {% if friendship.sender == request.user %}
+                            <a href="{%url 'reject' user.id%}" class="btn btn-follow mr-3"> Cancel Request</a>
+                            {% else %}
+                            <a href="{%url 'accept' user.id%}" class="btn btn-follow mr-3"><svg
+                                    xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                    class="bi bi-person-fill-add" viewBox="0 0 16 16">
+                                    <path
+                                        d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0m-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                                    <path
+                                        d="M2 13c0 1 1 1 1 1h5.256A4.5 4.5 0 0 1 8 12.5a4.5 4.5 0 0 1 1.544-3.393Q8.844 9.002 8 9c-5 0-6 3-6 4" />
+                                </svg>Accept
+                            </a>
 
-                  <!-- Posts section -->
-                  <div class="row">
-                      <div class="col-md-9 profile-center">
-                          <ul class="list-inline profile-links d-flex justify-content-between w-shadow rounded">
-                              
-                              <li class="list-inline-item">
-                                  <a href="{%url 'profile' user.id%}">About</a></li>
-                                  {%if request.user.id == user.id%}
-                              <li class="list-inline-item">
-                                  <a href="{%url 'friend'%}">Friends</a>
-                              </li>
-                              {%endif%}
-                             
-                              
-                          </ul>
+                            <a href="{%url 'reject' user.id%}" class="btn btn-follow mr-3"><svg
+                                    xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                    class="bi bi-person-fill-dash" viewBox="0 0 16 16">
+                                    <path
+                                        d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7M11 12h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1 0-1m0-7a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                                    <path
+                                        d="M2 13c0 1 1 1 1 1h5.256A4.5 4.5 0 0 1 8 12.5a4.5 4.5 0 0 1 1.544-3.393Q8.844 9.002 8 9c-5 0-6 3-6 4" />
+                                </svg> Reject
+                            </a>
+                            {% endif %}
+                            {% elif friendship.status == 'accepted' %}
+                            <a href="{% url 'open_chat' chat_room.id %}" class="btn btn-follow mr-3"><i
+                                    class='bx bxs-message-rounded'></i> Chat</a>
+                            <a type="{%url 'reject' user.id%}" class="btn btn-follow mr-3"><svg
+                                    xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                    class="bi bi-person-fill-dash" viewBox="0 0 16 16">
+                                    <path
+                                        d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7M11 12h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1 0-1m0-7a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                                    <path
+                                        d="M2 13c0 1 1 1 1 1h5.256A4.5 4.5 0 0 1 8 12.5a4.5 4.5 0 0 1 1.544-3.393Q8.844 9.002 8 9c-5 0-6 3-6 4" />
+                                </svg></i> Remove</a>
+                            {% elif friendship.status == 'rejected' %}
+                            <a href="{%url 'addFriend' user.id%}" class="btn btn-follow mr-9"><svg
+                                    xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                    class="bi bi-person-fill-add" viewBox="0 0 16 16">
+                                    <path
+                                        d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0m-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                                    <path
+                                        d="M2 13c0 1 1 1 1 1h5.256A4.5 4.5 0 0 1 8 12.5a4.5 4.5 0 0 1 1.544-3.393Q8.844 9.002 8 9c-5 0-6 3-6 4" />
+                                </svg> Add Friend</a>
+                            {% endif %}
+                            {% else %}
+                            <a href="{%url 'addFriend' user.id%}" class="btn btn-follow mr-9"><svg
+                                    xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                    class="bi bi-person-fill-add" viewBox="0 0 16 16">
+                                    <path
+                                        d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m.5-5v1h1a.5.5 0 0 1 0 1h-1v1a.5.5 0 0 1-1 0v-1h-1a.5.5 0 0 1 0-1h1v-1a.5.5 0 0 1 1 0m-2-6a3 3 0 1 1-6 0 3 3 0 0 1 6 0" />
+                                    <path
+                                        d="M2 13c0 1 1 1 1 1h5.256A4.5 4.5 0 0 1 8 12.5a4.5 4.5 0 0 1 1.544-3.393Q8.844 9.002 8 9c-5 0-6 3-6 4" />
+                                </svg> Add Friend</a>
+                            {% endif %}
 
-                          {% include 'base/feed.html' %}
+                        </div>
+                    </div>
+                    <div class="intro mt-5 mv-hidden">
+                        <div class="intro-item d-flex justify-content-between align-items-center">
+                            <h3 class="intro-about">Intro</h3>
+                        </div>
+                        <div class="intro-item d-flex justify-content-between align-items-center">
+                            <p class="intro-title text-muted"><i class='bx bx-briefcase text-primary'></i> Web Developer
+                                at <a href="#">Company Name</a></p>
+                        </div>
+                        <div class="intro-item d-flex justify-content-between align-items-center">
+                            <p class="intro-title text-muted"><i class='bx bx-map text-primary'></i> Lives in <a
+                                    href="#">City, Country</a></p>
+                        </div>
+                        <div class="intro-item d-flex justify-content-between align-items-center">
+                            <p class="intro-title text-muted"><i class='bx bx-time text-primary'></i> Last Login <a
+                                    href="#">Online <span class="ml-1 online-status bg-success"></span></a></p>
+                        </div>
+                        {%if user == request.user%}
+                        <div class="intro-item d-flex justify-content-between align-items-center">
+                            <a href="{%url 'update-user'%}" class="btn btn-quick-link join-group-btn border w-100">Edit
+                                Details</a>
+                        </div>
+                        {%endif%}
+                    </div>
 
-                      </div>
-                      
-                  </div>
-              </div>
-          </div>
-      </div>
-  </div>
+
+                </div>
+            </div>
+            <div class="col-md-9 p-0">
+                <div class="profile-info-right">
+
+                    <!-- Posts section -->
+                    <div class="row">
+                        <div class="col-md-9 profile-center">
+                            <ul class="list-inline profile-links d-flex justify-content-between w-shadow rounded">
+                                {%if request.user.id == user.id%}
+
+                                <li class="list-inline-item">
+                                    <a href="{%url 'profile' user.id%}">About</a>
+                                </li>
+                                <li class="list-inline-item">
+                                    <a href="{%url 'friend'%}">Friends</a>
+                                </li>
+                                {%endif%}
+
+
+                            </ul>
+
+                            {% include 'base/feed.html' %}
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
-    $(document).ready(function() {
-        $('#updateProfilePicInput').change(function() {
+    $(document).ready(function () {
+        $('#updateProfilePicInput').change(function () {
             var form = $('#updateProfilePicForm')[0];
             var formData = new FormData(form);
             formData.append('avatar', $(this)[0].files[0]);
@@ -154,7 +201,7 @@
                 data: formData,
                 processData: false,
                 contentType: false,
-                success: function(response) {
+                success: function (response) {
                     if (response.status === 'success') {
                         alert(response.message);
                         location.reload();  // Reload the page to show the updated avatar
@@ -162,7 +209,7 @@
                         alert(response.message);
                     }
                 },
-                error: function() {
+                error: function () {
                     alert('An error occurred while updating the avatar.');
                 }
             });
@@ -171,8 +218,8 @@
 
 
 
-    $(document).ready(function() {
-        $('#updateCoverPicInput').change(function() {
+    $(document).ready(function () {
+        $('#updateCoverPicInput').change(function () {
             var form = $('#updateCoverPicForm')[0];
             var formData = new FormData(form);
             formData.append('coveravatar', $(this)[0].files[0]);
@@ -183,7 +230,7 @@
                 data: formData,
                 processData: false,
                 contentType: false,
-                success: function(response) {
+                success: function (response) {
                     if (response.status === 'success') {
                         alert(response.message);
                         location.reload();  // Reload the page to show the updated cover photo
@@ -191,7 +238,7 @@
                         alert(response.message);
                     }
                 },
-                error: function() {
+                error: function () {
                     alert('An error occurred while updating the cover photo.');
                 }
             });

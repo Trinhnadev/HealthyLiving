@@ -205,13 +205,9 @@
             </div>
             <h6>Topic: {{ rooms.topic }}</h6>
           </div>
-          <div id="search">
-            <label for=""><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                class="bi bi-search" viewBox="0 0 16 16">
-                <path
-                  d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
-              </svg></i></label>
-            <input type="text" placeholder="Search contacts..." />
+          <div id="search" style="padding: 10px;">
+                  <p class="name" style="text-align: center;">PARTICIPANTS</p>
+
           </div>
           <div id="contacts">
             <ul>
@@ -234,8 +230,7 @@
         </div>
         <div class="content">
           <div class="contact-profile">
-            <img src="{{ rooms.host.avatar.url }}" alt="{{ rooms.host.name }}" />
-            <p>{{ rooms.name }}</p>
+            <p style="padding-left: 10px; font-size: 20px;">{{ rooms.name }}</p>
             <div class="social-media">
               {% if request.user == rooms.host %}
               <span class="dropdown">
@@ -266,22 +261,31 @@
                     <br>
 
                     {% if message.image %}
-                    
+
                     <img src="{{ message.image.url }}" alt="image" class="img-thumbnail"
                       style="border-radius: 0 !important; height: 100% !important; width: 100% !important;" />
 
                     {% endif %}
-                  
+
                     {% if message.video %}
-                  <!-- <div class="media-content"> -->
+                    <!-- <div class="media-content"> -->
                     <video controls width="90%">
                       <source src="{{ message.video.url }}" type="video/mp4">
                       Your browser does not support the video tag.
                     </video>
-                  <!-- </div> -->
-                  {% endif %}
-                </p>
-                  
+                    <!-- </div> -->
+                    {% endif %}
+                  </p>
+
+                  <div class="menu-button">⋮</div>
+                  <div class="menu">
+                    <ul>
+                      <li class="mess-replies-li" style="margin-bottom: 0px !important;">
+                        <a href="#" class="report-message" data-message-id="{{ message.id }}">Delete Message</a>
+                      </li>
+                    </ul>
+                  </div>
+
                 </li>
                 {% else %}
 
@@ -308,7 +312,7 @@
                       Your browser does not support the video tag.
                     </video>
 
-                  {% endif %}
+                    {% endif %}
                   </p>
 
 
@@ -401,6 +405,43 @@
     </div>
   </div>
 </div>
+
+
+<script>
+  function confirmDeleteMessage(event, messageId) {
+    event.preventDefault(); // Prevent the default action (e.g., link click)
+
+    // Show a confirmation dialog
+    if (confirm("Are you sure you want to delete this message?")) {
+      // Create a form to submit the delete request
+      var form = document.createElement('form');
+      form.method = 'POST';
+      form.action = `/delete-message/${messageId}/`;  // Set the form action to the correct delete URL
+
+      // Create a hidden input field for the CSRF token
+      var csrfToken = document.createElement('input');
+      csrfToken.type = 'hidden';
+      csrfToken.name = 'csrfmiddlewaretoken';
+      csrfToken.value = '{{ csrf_token }}';  // Use the CSRF token provided by Django
+
+      // Append the CSRF token to the form
+      form.appendChild(csrfToken);
+
+      // Append the form to the document and submit it
+      document.body.appendChild(form);
+      form.submit();  // Submit the form to delete the message
+    }
+  }
+
+  // Event listener for delete message buttons
+  document.querySelectorAll('.delete-message-button').forEach(button => {
+    button.addEventListener('click', function (e) {
+      var messageId = this.getAttribute('data-id');  // Get the message ID from the data attribute
+      confirmDeleteMessage(e, messageId);  // Call the confirm delete function
+    });
+  });
+</script>
+
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {

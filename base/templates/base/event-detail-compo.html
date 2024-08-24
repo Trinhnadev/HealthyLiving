@@ -186,7 +186,6 @@
 
 .form {
       max-width: 1000px;
-      background-color:  #8b9dc3;
       border-radius: 25px;
       border: 1px solid #dddddd;
       padding: 10px 10px;
@@ -260,9 +259,10 @@
     }
     /* Định dạng cho danh sách gợi ý */
 </style>
-<div class="event-card">
+<div class="container col-md-9">
+<div class="event-card col-md-12">
   <div class="event-img">
-    <img src="{{event.img.url}}" alt="" style="height: 250px;">
+    <img src="{{event.img.url}}" alt="" style="height: 250px; width: 100%;">
   </div>
   <div class="event-header">
     <div class="date-badge">17</div>
@@ -284,7 +284,7 @@
       </svg></p>
       <div class="dropdown">
         <div class="dropdown-toggle" id="dropdownMenuButton">
-          <span>⋮</span>
+          <!-- <span>⋮</span> -->
         </div>
         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
           {% if request.user == event.host %}
@@ -400,7 +400,7 @@
 
 
     <div class="room__message">
-      <form class="form" action="" method="POST" enctype="multipart/form-data">
+      <form class="form col-md-12" action="" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         <label for="image-upload" class="image-upload-label">
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-card-image"
@@ -413,13 +413,14 @@
         </label>
         <input type="file" name="image" id="image-upload" hidden>
         <div class="image-preview-container" id="image-preview-container"></div>
-        <input name="body" id="message-input" placeholder="Write your message here..." />
+        <input name="body" id="message-input" class ="col-lg-11" placeholder="Write your message here..." style="border: none;"/>
         <div id="user-suggestions" style="display: none;"></div>
         <button type="submit" id="message-submit" hidden>submib
         </button>
       </form>
     </div>
   </div>
+</div>
 </div>
 </div>
 </div>

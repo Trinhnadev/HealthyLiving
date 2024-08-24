@@ -254,11 +254,11 @@
             </div>
             <div class="form__group">
               <label for="room_anwser">Start date</label>
-              {{form.start_time}}
+              <input type="datetime-local" id="id_start_time" name="start_time" value="{{ form.start_time.value }}">
             </div>
             <div class="form__group">
               <label for="room_anwser">End date</label>
-              {{form.end_time}}
+              <input type="datetime-local" id="id_end_time" name="end_time" value="{{ form.end_time.value }}">
             </div>
             <div class="form__action">
               <a class="btn-btn btn--dark" href="{{request.META.HTTP_REFERER}}">Cancel</a>
@@ -302,6 +302,39 @@
       window.onload = toggleQuestionAnswer;
   </script>
 
-  
+<script>
+  // Helper function to format date to 'YYYY-MM-DDTHH:MM' for input[type="datetime-local"]
+  function formatDateToInput(date) {
+      const pad = num => num.toString().padStart(2, '0');
+      return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+  }
+
+  function setMinDateTime() {
+      // Get current date and time minus 1 hour
+      const currentDate = new Date();
+      currentDate.setHours(currentDate.getHours() + 1);
+
+      // Format the date-time to match input requirements
+      const minDateTime = formatDateToInput(currentDate);
+
+      // Set the min attribute for the start_time and end_time inputs
+      const startTimeInput = document.getElementById('id_start_time');  // Ensure these IDs match your form field IDs
+      const endTimeInput = document.getElementById('id_end_time');
+
+      if (startTimeInput) {
+          startTimeInput.setAttribute('min', minDateTime);
+      }
+
+      if (endTimeInput) {
+          // Optionally, you can set the minimum value of the end time to be the same as the start time
+          endTimeInput.setAttribute('min', minDateTime);
+      }
+  }
+
+  // Call the function to set the minimum datetime when the page loads
+  window.onload = function() {
+      setMinDateTime();
+  };
+</script>
 
 {% endblock content %}

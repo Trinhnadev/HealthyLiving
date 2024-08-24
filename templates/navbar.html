@@ -65,7 +65,9 @@
         padding: 25px;
         /* Increased padding for more content space */
     }
-
+    .modal-open {
+    overflow: hidden; /* Ngăn chặn cuộn trang khi modal mở */
+    }
     /* Hide the backdrop */
     .modal-backdrop {
         display: none !important;
@@ -151,6 +153,26 @@
         display: block;
         /* Hiển thị nút x khi có ảnh */
     }
+
+    @media (max-width: 576px) {
+    .modal-dialog {
+        max-width: 100%;
+        margin: 0;
+    }
+    
+
+}
+
+@media (min-width: 576px) {
+    .modal-dialog {
+        max-width: 500px;
+    }
+}
+
+/* Button Styles for Dark Mode Toggle */
+
+
+
 </style>
 <nav id="navbar-main" class="navbar navbar-expand-lg shadow-sm sticky-top">
     <div class="w-100 justify-content-md-center">
@@ -182,7 +204,7 @@
         </ul>
         <ul class="navbar-nav mr-5 flex-row" id="main_menu">
             <a class="navbar-brand nav-item mr-lg-5" href="{%url 'home'%}">
-                <h1 style="font-family: cursive !important; font-size: 20px;">HealthCare</h1>
+                <h1 style="font-family: cursive !important; font-size: 20px;">HealthMinds</h1>
             </a>
             <!-- Collect the nav links, forms, and other content for toggling -->
 
@@ -274,88 +296,99 @@
 
             </style>
             <!-- Modal for Creating a Post -->
-            <div id="createPostModal" class="modal" style="height: 70%;">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <span class="close">&times;</span>
-                        <form id="createPostForm" method="post" action="{% url 'post_create' %}"
-                            enctype="multipart/form-data" style="padding: 10px;">
+            <div id="createPostModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="createPostModalLabel" aria-hidden="true" style="height: 70%; ">
+                <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                    <div class="modal-content" >
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="createPostModalLabel">Create Post</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form id="createPostForm" method="post" action="{% url 'post_create' %}" enctype="multipart/form-data">
                             {% csrf_token %}
-                            <div class="form-group">
-                                <label for="postTitle">Title</label>
-                                <input type="text" id="postTitle" name="title" placeholder="Enter the title"
-                                    class="form-control" required>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label for="postTitle">Title</label>
+                                    <input type="text" id="postTitle" name="title" placeholder="Enter the title" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="postContent">Content</label>
+                                    <textarea id="postContent" name="content" rows="4" placeholder="Write your post content..." class="form-control" required></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="postImage">Upload Image (optional)</label>
+                                    <input type="file" id="postImage" name="image" class="form-control-file" accept="image/*">
+                                </div>
+                                <div class="form-group">
+                                    <label for="postVideo">Upload Video (optional)</label>
+                                    <input type="file" id="postVideo" name="video" class="form-control-file" accept="video/*">
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="postContent">Content</label>
-                                <textarea id="postContent" name="content" rows="4"
-                                    placeholder="Write your post content..." class="form-control" required></textarea>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Create Post</button>
                             </div>
-                            <div class="form-group">
-                                <label for="postImage">Upload Image (optional)</label>
-                                <input type="file" id="postImage" name="image" class="form-control-file"
-                                    accept="image/*">
-                            </div>
-                            <div class="form-group">
-                                <label for="postVideo">Upload Video (optional)</label>
-                                <input type="file" id="postVideo" name="video" class="form-control-file"
-                                    accept="video/*">
-                            </div>
-                            <button type="submit" class="btn btn-primary">Create Post</button>
                         </form>
                     </div>
                 </div>
             </div>
+            
 
             <script>
                 document.addEventListener("DOMContentLoaded", function () {
-                    const createPostModal = document.getElementById("createPostModal");
-                    const closeBtn = createPostModal.querySelector(".close");
-                    const createPostForm = document.getElementById("createPostForm");
+    const createPostModal = document.getElementById("createPostModal");
+    const closeBtn = createPostModal.querySelector(".close");
+    const createPostForm = document.getElementById("createPostForm");
 
-                    // Close the modal when the close button is clicked
-                    closeBtn.onclick = function () {
-                        createPostModal.style.display = "none";
-                    };
+    // Close the modal when the close button is clicked
+    closeBtn.onclick = function () {
+        createPostModal.style.display = "none";
+        // Remove the "modal-open" class from the body to re-enable scrolling and interaction
+        document.body.classList.remove("modal-open");
+    };
 
-                    // Close the modal when clicking outside of the modal content
-                    window.onclick = function (event) {
-                        if (event.target === createPostModal) {
-                            createPostModal.style.display = "none";
-                        }
-                    };
+    // Close the modal when clicking outside of the modal content
+    window.onclick = function (event) {
+        if (event.target === createPostModal) {
+            createPostModal.style.display = "none";
+            document.body.classList.remove("modal-open");
+        }
+    };
 
-                    // Handle form submission via AJAX
-                    createPostForm.onsubmit = function (event) {
-                        event.preventDefault(); // Prevent the default form submission
+    // Handle form submission via AJAX
+    createPostForm.onsubmit = function (event) {
+        event.preventDefault(); // Prevent the default form submission
 
-                        const formData = new FormData(createPostForm); // Create a FormData object with the form's data
+        const formData = new FormData(createPostForm); // Create a FormData object with the form's data
 
-                        fetch(createPostForm.action, {
-                            method: 'POST',
-                            body: formData,
-                            headers: {
-                                'X-Requested-With': 'XMLHttpRequest', // Mark this as an AJAX request
-                            },
-                        })
-                            .then(response => {
-                                if (response.ok) {
-                                    return response.json();
-                                } else {
-                                    throw new Error('Network response was not ok.');
-                                }
-                            })
-                            .then(data => {
-                                // Handle the successful post creation
-                                console.log('Post created successfully:', data);
-                                createPostModal.style.display = "none";
-                                location.reload(); // Or dynamically update the post list without reloading
-                            })
-                            .catch(error => {
-                                console.error('Error creating post:', error);
-                            });
-                    };
-                });
+        fetch(createPostForm.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest', // Mark this as an AJAX request
+            },
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Network response was not ok.');
+                }
+            })
+            .then(data => {
+                // Handle the successful post creation
+                console.log('Post created successfully:', data);
+                createPostModal.style.display = "none";
+                document.body.classList.remove("modal-open");
+                location.reload(); // Or dynamically update the post list without reloading
+            })
+            .catch(error => {
+                console.error('Error creating post:', error);
+            });
+    };
+});
+
 
 
             </script>
@@ -364,65 +397,11 @@
 
 
             <li class="nav-item s-nav dropdown message-drop-li">
-                <a href="#" class="nav-link nav-links message-drop drop-w-tooltip" data-toggle="dropdown"
-                    data-placement="bottom" data-title="Messages" role="button" aria-haspopup="true"
-                    aria-expanded="false">
+                <a href="{% url 'chat'%}" class="nav-link nav-links " >
                     <img src="{% static 'assets/images/icons/navbar/message.png' %}" class="message-dropdown"
-                        alt="navbar icon"> <span class="badge badge-pill badge-primary">1</span>
+                        alt="navbar icon">
                 </a>
-                <ul class="dropdown-menu notify-drop dropdown-menu-right nav-drop shadow-sm">
-                    <div class="notify-drop-title">
-                        <div class="row">
-                            <div class="col-md-6 col-sm-6 col-xs-6 fs-8">Messages | <a href="#">Requests</a></div>
-                            <div class="col-md-6 col-sm-6 col-xs-6 text-right">
-                                <a href="#" class="notify-right-icon">
-                                    Mark All as Read
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- end notify title -->
-                    <!-- notify content -->
-                    <div class="drop-content">
-                        <li>
-                            <div class="col-md-2 col-sm-2 col-xs-2">
-                                <div class="notify-img">
-                                    <img src="{% static 'assets/images/users/user-6.png' %}"
-                                        alt="notification user image">
-                                </div>
-                            </div>
-                            <div class="col-md-10 col-sm-10 col-xs-10">
-                                <a href="#" class="notification-user">Susan P. Jarvis</a>
-                                <a href="#" class="notify-right-icon">
-                                    <i class='bx bx-radio-circle-marked'></i>
-                                </a>
-                                <p class="time">
-                                    <i class='bx bx-check'></i> This party is going to have a DJ, food, and drinks.
-                                </p>
-                            </div>
-                        </li>
-                        <li>
-                            <div class="col-md-2 col-sm-2 col-xs-2">
-                                <div class="notify-img">
-                                    <img src="{% static 'assets/images/users/user-10.png' %}"
-                                        alt="notification user image">
-                                </div>
-                            </div>
-                            <div class="col-md-10 col-sm-10 col-xs-10">
-                                <a href="#" class="notification-user">Sean S. Smith</a>
-                                <a href="#" class="notify-right-icon">
-                                    <i class='bx bx-radio-circle-marked'></i>
-                                </a>
-                                <p class="time">
-                                    Which of those two is best?
-                                </p>
-                            </div>
-                        </li>
-                    </div>
-                    <div class="notify-drop-footer text-center">
-                        <a href="#">See More</a>
-                    </div>
-                </ul>
+                
             </li>
 
 
@@ -555,14 +534,40 @@
                 <div class="dropdown-menu dropdown-menu-right settings-dropdown shadow-sm"
                     aria-labelledby="settings-dropdown">
 
+
                     <a class="dropdown-item d-flex align-items-center dark-mode" onClick="event.stopPropagation();"
-                        href="#">
-                        <img src="{% static 'assets/images/icons/navbar/moon.png' %}" alt="Navbar icon"> Dark Mode
-                        <button type="button" class="btn btn-lg btn-toggle ml-auto" id="darkModeToggle"
-                            aria-pressed="false" autocomplete="off">
-                            <div class="handle"></div>
-                        </button>
-                    </a>
+                    href="#">
+                    <img src="{% static 'assets/images/icons/navbar/moon.png' %}" alt="Navbar icon"> Dark Mode
+                    <button type="button" class="btn btn-lg btn-toggle ml-auto" id="darkModeToggle"
+                        aria-pressed="false" autocomplete="off">
+                        <div class="handle"></div>
+                    </button>
+                </a>
+                <script>
+                    document.addEventListener("DOMContentLoaded", function () {
+    const toggleButton = document.getElementById('darkModeToggle');
+
+    // Kiểm tra xem dark mode có được lưu trong localStorage hay không
+    if (localStorage.getItem('darkMode') === 'enabled') {
+        document.body.classList.add('dark-mode');
+        toggleButton.classList.add('active');  // Set trạng thái nút toggle sang active
+    }
+
+    toggleButton.addEventListener('click', function () {
+        document.body.classList.toggle('dark-mode');
+        toggleButton.classList.toggle('active');  // Toggle trạng thái nút
+
+        // Lưu trạng thái vào localStorage
+        if (document.body.classList.contains('dark-mode')) {
+            localStorage.setItem('darkMode', 'enabled');
+        } else {
+            localStorage.removeItem('darkMode');
+        }
+    });
+});
+
+                </script>
+                
                     <a class="dropdown-item" href="{%url 'update-user'%}">
                         <img src="{% static 'assets/images/icons/navbar/gear-1.png' %}" alt="Navbar icon"> Settings</a>
                     {% if request.user.role != 'US' %}

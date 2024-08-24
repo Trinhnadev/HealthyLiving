@@ -45,16 +45,17 @@ VIETNAM_TZ = pytz_timezone('Asia/Ho_Chi_Minh')
 from itertools import chain
 from operator import attrgetter
 
-@login_required
+@login_required(login_url='login')
+
 def home(request):
-    q = request.GET.get('q') if request.GET.get('q') != None else ''
+    q = request.GET.get('q') if request.GET.get('q') is not None else ''
     user = request.user
 
     # Query for topics, chat rooms, and friendship requests
-    topic = Topic.objects.all()[0:5]
+    topic = Topic.objects.all()[:5]
     chat_rooms = ChatRoom.objects.filter(members=user)
     sent = Friendship.objects.filter(receiver=request.user, status='pending')
-    
+
     # Query for rooms, posts, and shares based on the search query
     rooms = Room.objects.filter(
         Q(topic__name__icontains=q) |
@@ -78,7 +79,7 @@ def home(request):
 
     room_message = Message.objects.filter(
         Q(room__topic__name__icontains=q)
-    )[0:5]
+    )[:5]
 
     invitations = Invitation.objects.filter(invitee=request.user, accepted=False)
     accepted_friends = Friendship.objects.filter(
@@ -98,6 +99,10 @@ def home(request):
         reverse=True
     )
 
+    # Call the friend suggestion function
+    friend_suggestions = suggest_friends(user)
+
+    # Include friend suggestions in the context
     context = {
         'combined_content': combined_content,
         'topic': topic,
@@ -106,13 +111,61 @@ def home(request):
         'random_users': random_users,
         'users': accepted_friends,
         'combined_notifications': combined_notifications,
+        'friend_suggestions': friend_suggestions,  # Adding friend suggestions to context
     }
 
     return render(request, 'base/home.html', context)
 
 
+# Suggest Friend
+def suggest_friends(user):
+    # Step 1: Get the list of all users except the current user and their friends
+    all_users = User.objects.exclude(id=user.id)
+    user_friends_sent = user.friendship_sent.filter(status='accepted').values_list('receiver_id', flat=True)
+    user_friends_received = user.friendship_received.filter(status='accepted').values_list('sender_id', flat=True)
+    user_friends = user_friends_sent.union(user_friends_received)
+    all_users = all_users.exclude(id__in=user_friends)
 
-@login_required
+    # Step 2: Calculate weights for each user and also count mutual friends
+    suggestions = defaultdict(lambda: {'score': 0, 'mutual_friends': 0})
+
+    for potential_friend in all_users:
+        mutual_connections = User.objects.filter(
+            id__in=user_friends
+        ).filter(
+            id__in=potential_friend.friendship_sent.filter(status='accepted').values_list('receiver_id', flat=True)
+        ).count()
+
+        suggestions[potential_friend]['mutual_friends'] = mutual_connections
+        suggestions[potential_friend]['score'] += mutual_connections * 1.5  # MCW weight
+
+        # Step 3: Calculate Shared Interests Weight (SIW)
+        shared_rooms = Room.objects.filter(participants=user).filter(participants=potential_friend).count()
+        suggestions[potential_friend]['score'] += shared_rooms * 1.2  # SIW weight
+        
+        # Step 4: Calculate Interaction History Weight (IHW)
+        interaction_count = Message.objects.filter(
+            (Q(sender=user, receiver=potential_friend) | Q(sender=potential_friend, receiver=user))
+        ).count()
+        suggestions[potential_friend]['score'] += interaction_count * 1.8  # IHW weight
+
+        # Step 5: Calculate Reciprocity Weight (RW)
+        if Friendship.objects.filter(sender=user, receiver=potential_friend, status='pending').exists():
+            suggestions[potential_friend]['score'] += 2  # RW weight
+
+        # Step 6: Optionally calculate Activity Similarity Weight (ASW)
+        activity_similarity = (Post.objects.filter(author=user).count() - Post.objects.filter(author=potential_friend).count()) ** 2
+        suggestions[potential_friend]['score'] += 1 / (activity_similarity + 1) * 0.5  # ASW weight
+
+    # Step 7: Sort by the highest scoring users
+    sorted_suggestions = sorted(suggestions.items(), key=lambda x: x[1]['score'], reverse=True)
+
+    # Step 8: Return the top N suggestions (e.g., top 10)
+    top_suggestions = [{'user': user, 'mutual_friends': data['mutual_friends']} for user, data in sorted_suggestions[:10]]
+
+    return top_suggestions
+
+@login_required(login_url='login')
 def userProfile(request, pk):
     # Fetch the user profile
     user_profile = get_object_or_404(User, id=pk)
@@ -174,7 +227,8 @@ def userProfile(request, pk):
 
     return render(request, 'base/profile.html', context)
 
-@login_required
+@login_required(login_url='login')
+
 def userProfile(request, pk):
     # Fetch the user profile
     user_profile = get_object_or_404(User, id=pk)
@@ -251,7 +305,8 @@ def update_avatar(request):
         context = {'form': form}
         return render(request, 'base/upload_profile_image.html', context)
 
-@login_required
+@login_required(login_url='login')
+
 @csrf_exempt
 def update_coveravatar(request):
     if request.method == 'POST' and request.FILES.get('coveravatar'):
@@ -283,7 +338,7 @@ def loginPage(request):
                 login_result = 'success'
                 return redirect('home')
         else:
-            login_result = 'error'
+            login_result = 'The information is incorrect, please check the information again'
 
     context = {'page': page, 'login_result': login_result}
     return render(request, 'base/login_sign.html', context)
@@ -341,7 +396,8 @@ def updateUser(request):
 #End profile
 
 #Room Function
-@login_required
+@login_required(login_url='login')
+
 def room(request,pk):
     room = Room.objects.get(id=pk)
     pa = room.participants.all()
@@ -385,52 +441,75 @@ def room(request,pk):
 @login_required(login_url='login')
 def createRoom(request):
     form = RoomForm()
-    topic = Topic.objects.all()
+    topics = Topic.objects.all()
     sent = Friendship.objects.filter(receiver=request.user, status='pending')
 
     answer_keywords = request.POST.get('answer', '').strip()
     answer_keywords = ','.join([keyword.strip() for keyword in answer_keywords.split(',')])
 
-
-    #kiem tra phuong thuc
     if request.method == 'POST':
         topic_name = request.POST.get('topic')
-        topic, created = Topic.objects.get_or_create(name = topic_name)
-        Room.objects.create(
-            host =request.user,
-            topic = topic,
-            name = request.POST.get('name'),
-            description = request.POST.get('description'),
-            is_private = request.POST.get('is_private'),
-            question = request.POST.get('question'),
-            answer = answer_keywords,
+        topic, created = Topic.objects.get_or_create(name=topic_name)
+        
+        # Create the room
+        room = Room.objects.create(
+            host=request.user,
+            topic=topic,
+            name=request.POST.get('name'),
+            description=request.POST.get('description'),
+            is_private=request.POST.get('is_private'),
+            question=request.POST.get('question'),
+            answer=answer_keywords,
         )
+        
+        # Add the creator to the participants
+        room.participants.add(request.user)
+        
         return redirect('home')
-    context = {'form':form,"topic":topic,"sent":sent}
-    return render(request,'base/room_form.html',context)
+
+    context = {'form': form, "topics": topics, "sent": sent}
+    return render(request, 'base/room_form.html', context)
     
 
+
 @login_required(login_url='login')
-def updateRoom(request,pk):
+def updateRoom(request, pk):
     sent = Friendship.objects.filter(receiver=request.user, status='pending')
-    room = Room.objects.get(id= pk)
+    room = Room.objects.get(id=pk)
     form = RoomForm(instance=room)
     topic = Topic.objects.all()
+    
     if request.user != room.host:
         return HttpResponse('')
+
     if request.method == 'POST':
         topic_name = request.POST.get('topic')
-        topic, created = Topic.objects.get_or_create(name = topic_name)
+        topic, created = Topic.objects.get_or_create(name=topic_name)
+        
         room.name = request.POST.get('name')
         room.topic = topic
         room.description = request.POST.get('description')
         room.password = request.POST.get('password')
+
+        # Cập nhật trạng thái riêng tư (public/private)
+        room.is_private = request.POST.get('is_private') == 'True'
+
+        # Cập nhật câu hỏi và câu trả lời chỉ khi phòng là private
+        if room.is_private:
+            room.question = request.POST.get('question')
+            room.answer = request.POST.get('answer')
+        else:
+            room.question = ''
+            room.answer = ''
+
         room.save()
 
         return redirect('home')
 
-    context = {'form':form,'topic':topic,'room':room,"sent":sent}
-    return render(request,'base/room_form.html',context)
+    context = {'form': form, 'topic': topic, 'room': room, "sent": sent}
+    return render(request, 'base/room_form.html', context)
+
+
 
 @login_required(login_url='login')
 def delete_room(request, room_id):
@@ -455,7 +534,7 @@ def deleteMessage(request,pk):
         if request.method == 'POST':
             message.delete()
             return redirect('room',pk=message.room.id)
-    return render(request,'base/delete.html',{'obj':message})
+
 
 
 
@@ -465,7 +544,8 @@ def topicsPage(request):
     return render(request,'base/topics.html',{'topics':topics})
 
 #FriendShip Function
-@login_required
+@login_required(login_url='login')
+
 def friendPages(request):
     q = request.GET.get('q', '')
     current_user = request.user
@@ -486,7 +566,8 @@ def friendPages(request):
     })
 
 
-@login_required
+@login_required(login_url='login')
+
 def AllFriend(request):
     q = request.GET.get('q', '')
     current_user = request.user
@@ -513,7 +594,8 @@ def AllFriend(request):
         'chat_rooms':chat_rooms,
     })
 
-@login_required
+@login_required(login_url='login')
+
 def myFriends(request):
     q = request.GET.get('q', '')  # Use an empty string as default if 'q' is not present
     current_user = request.user
@@ -532,7 +614,8 @@ def activityPages(request):
 
 
 
-@login_required
+@login_required(login_url='login')
+
 #add friend
 def sentRequest(request,pk):
     receiver = get_object_or_404(User, pk=pk)
@@ -550,7 +633,8 @@ def sentRequest(request,pk):
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
-@login_required
+@login_required(login_url='login')
+
 def acceptRequest(request,pk):
     sender = User.objects.get(pk=pk)
 
@@ -574,7 +658,8 @@ def acceptRequest(request,pk):
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
-@login_required
+@login_required(login_url='login')
+
 def reject(request, pk):
     sender = get_object_or_404(User, pk=pk)
 
@@ -601,7 +686,8 @@ def reject(request, pk):
 
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
-@login_required
+@login_required(login_url='login')
+
 #Chat with Friend function
 def chat(request):
     user = request.user
@@ -623,7 +709,8 @@ def chat(request):
 
     return render(request,'base/chat.html',context)
 
-@login_required
+@login_required(login_url='login')
+
 def open_chat(request, pk):
     chat_room = get_object_or_404(ChatRoom, id=pk)
     chat_rooms = ChatRoom.objects.filter(members=request.user)
@@ -684,7 +771,8 @@ def shopping (request):
     return render(request, 'base/store.html', context)
 
 #done
-@login_required
+@login_required(login_url='login')
+
 def create_store(request):
     if request.method == 'POST':
         # Thêm request.FILES để xử lý các tệp được tải lên
@@ -703,7 +791,8 @@ def create_store(request):
 
 
 
-@login_required
+@login_required(login_url='login')
+
 def update_store(request, pk):
     sent = Friendship.objects.filter(receiver=request.user, status='pending')
     store = get_object_or_404(Store, pk=pk, owner=request.user)
@@ -720,7 +809,8 @@ def update_store(request, pk):
 
 
 
-@login_required
+@login_required(login_url='login')
+
 def delete_store(request, pk):
     store = get_object_or_404(Store, pk=pk, owner=request.user)
 
@@ -760,7 +850,8 @@ def store_products(request, store_id):
 
 
 
-@login_required
+@login_required(login_url='login')
+
 def product_create(request, store_id):
     sent = Friendship.objects.filter(receiver=request.user, status='pending')
     store = get_object_or_404(Store, id=store_id, owner=request.user)
@@ -776,7 +867,8 @@ def product_create(request, store_id):
         form = ProductForm()
     return render(request, 'base/product_form.html', {'form': form, 'store': store,'stores': stores,"sent":sent})
 
-@login_required
+@login_required(login_url='login')
+
 def product_update(request, store_id, product_id):
     sent = Friendship.objects.filter(receiver=request.user, status='pending')
     store = get_object_or_404(Store, id=store_id, owner=request.user)
@@ -794,7 +886,8 @@ def product_update(request, store_id, product_id):
 
 
 
-@login_required
+@login_required(login_url='login')
+
 @require_POST
 def update_product_quantity(request):
     product_id = request.POST.get('product_id')
@@ -808,7 +901,8 @@ def update_product_quantity(request):
 
     return redirect('store_products', store_id=product.store.id)
 
-@login_required
+@login_required(login_url='login')
+
 def product_delete(request, store_id, product_id):
     store = get_object_or_404(Store, id=store_id, owner=request.user)
     product = get_object_or_404(Product, id=product_id, store=store)
@@ -841,7 +935,8 @@ def product_detail(request, store_id, product_id):
 
 
 
-@login_required
+@login_required(login_url='login')
+
 def add_to_cart(request, product_id):
     product = get_object_or_404(Product, id=product_id)
     user = request.user
@@ -889,7 +984,8 @@ def cart_detail(request):
     }
     return render(request, 'base/cart_detail.html', context)
 
-@login_required
+@login_required(login_url='login')
+
 def remove_from_cart(request, item_id):
     cart_item = get_object_or_404(CartItem, id=item_id, cart__user=request.user)
     cart_item.delete()
@@ -897,7 +993,8 @@ def remove_from_cart(request, item_id):
     return redirect('cart_detail')
 
 #cbi cxoas
-@login_required
+@login_required(login_url='login')
+
 
 def checkout(request):
     cart = request.user.cart
@@ -960,7 +1057,8 @@ def checkout(request):
 
 
 #dơn hang cua shop
-@login_required
+@login_required(login_url='login')
+
 def store_order_history(request, store_id):
     sent = Friendship.objects.filter(receiver=request.user, status='pending')
     stores = Store.objects.filter(owner = request.user,status='approved')
@@ -987,7 +1085,8 @@ def store_order_history(request, store_id):
     })
 
 
-@login_required
+@login_required(login_url='login')
+
 def store_order_detail(request, store_id, order_id):
     sent = Friendship.objects.filter(receiver=request.user, status='pending')
     store = get_object_or_404(Store, id=store_id, owner=request.user)
@@ -1007,7 +1106,8 @@ def store_order_detail(request, store_id, order_id):
         'sent':sent
     })
 
-@login_required
+@login_required(login_url='login')
+
 def revenue(request, store_id):
     sent = Friendship.objects.filter(receiver=request.user, status='pending')
     stores = Store.objects.filter(owner=request.user, status='approved')
@@ -1017,29 +1117,29 @@ def revenue(request, store_id):
         messages.error(request, "Store not found.")
         return redirect('store_order_history')
 
-    # Lấy tất cả đơn hàng có chứa ít nhất một sản phẩm từ cửa hàng này
+    # Get all orders containing at least one product from this store
     orders = Order.objects.filter(orderdetail__product__store=store).distinct().order_by('-order_date').prefetch_related('orderdetail_set__product__store')
 
-    # Tổ chức dữ liệu đơn hàng và chi tiết đơn hàng theo cửa hàng
+    # Organize order data and order details by store
     store_orders = defaultdict(lambda: {'orders': [], 'total': 0, 'details': defaultdict(list)})
 
     for order in orders:
-        # Khởi tạo tổng giá và chi tiết cho từng cửa hàng trong đơn hàng
+        # Create total price and details for each store in the order
         for detail in order.orderdetail_set.all():
             product_store = detail.product.store
-            if product_store.id == store_id:  # Chỉ xử lý sản phẩm thuộc cửa hàng được chỉ định
+            if product_store.id == store_id:  # Only handle products belonging to the designated store
                 store_orders[product_store]['orders'].append(order)
                 store_orders[product_store]['details'][order].append(detail)
                 store_orders[product_store]['total'] += float(detail.subtotal)
 
-    # Chuyển kết quả từ defaultdict sang dict để tránh lỗi khi truyền vào template
+    # Convert results from defaultdict to dict to avoid errors when passing into the template
     store_orders = dict((store, {'orders': data['orders'], 'total': data['total'], 'details': dict(data['details'])}) for store, data in store_orders.items())
     monthly_revenue = orders.annotate(month=ExtractMonth('order_date'))\
                         .values('month')\
                         .annotate(total_revenue=Sum('orderdetail__subtotal'), total_orders=Count('id'))\
                         .order_by('month')
 
-    # Chuẩn bị dữ liệu cho biểu đồ (Giả sử doanh thu cho những tháng không có đơn hàng là 0)
+    # Prepare data for the chart 
     revenue_per_month = [0] * 12
     orders_per_month = [0] * 12
     for revenue in monthly_revenue:
@@ -1048,11 +1148,11 @@ def revenue(request, store_id):
 
     revenue_per_month_float = [float(revenue) for revenue in revenue_per_month]
 
-    # Tổng số lượng đơn hàng và tổng doanh thu
+    # Total number of orders and total revenue
     total_orders = orders.count()
     total_revenue = sum(revenue_per_month_float)
 
-    # Render kết quả ra template, ví dụ 'store_order_history.html'
+
     return render(request, 'base/revenue.html', {
         'store': store,
         'orders': orders,
@@ -1067,7 +1167,8 @@ def revenue(request, store_id):
     })
 
 
-@login_required
+@login_required(login_url='login')
+
 def dashboard(request, store_id):
     sent = Friendship.objects.filter(receiver=request.user, status='pending')
     stores = Store.objects.filter(owner=request.user, status="approved")
@@ -1142,7 +1243,8 @@ def history(request):
     order = Order.objects.filter(user=request.user).order_by('-order_date')
     return render(request, 'base/history.html', {'order': order})
 #cac dơn hang cua khach
-@login_required
+@login_required(login_url='login')
+
 def order_history(request):
     sent = Friendship.objects.filter(receiver=request.user, status='pending')
     stores = Store.objects.filter(owner=request.user,status='approved')
@@ -1172,7 +1274,8 @@ def order_detail(request, order_id):
 
 
 
-@login_required
+@login_required(login_url='login')
+
 def toggle_like(request, store_id):
     store = get_object_or_404(Store, id=store_id)
     if request.user in store.liker.all():
@@ -1182,7 +1285,8 @@ def toggle_like(request, store_id):
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
-@login_required
+@login_required(login_url='login')
+
 def liked_stores(request):
     # Lấy tất cả cửa hàng mà người dùng hiện tại thích
     store = Store.objects.filter(liker=request.user).order_by('name')
@@ -1301,7 +1405,8 @@ def createEvent(request):
 
 
 #Update một event
-@login_required
+@login_required(login_url='login')
+
 def update_event(request, pk):
     event = get_object_or_404(Event, id=pk, host=request.user)  # Đảm bảo chỉ host mới có thể cập nhật
     if request.method == 'POST':
@@ -1385,7 +1490,8 @@ def send_invitation(request, event_id, user_id):
     return redirect('events', event_id=event.id)
 
 #Xem thông báo mời vào event
-@login_required
+@login_required(login_url='login')
+
 def view_invitations(request):
     # Fetch invitations for the logged-in user
     invitations = Invitation.objects.filter(invitee=request.user, accepted=False)
@@ -1395,7 +1501,8 @@ def view_invitations(request):
     })
 
 #đồng ý vào event
-@login_required
+@login_required(login_url='login')
+
 def accept_invitation(request, invitation_id):
     invitation = get_object_or_404(Invitation, pk=invitation_id, invitee=request.user)
     invitation.accepted = True
@@ -1404,13 +1511,15 @@ def accept_invitation(request, invitation_id):
     invitation.event.par.add(request.user)
     return redirect('event_detail', pk=invitation.event.id)
 
-@login_required
+@login_required(login_url='login')
+
 def liked_events(request):
     liked_events = Event.objects.filter(like=request.user)
     return render(request, 'base/liked_events.html', {'liked_events': liked_events})
 
 #thích event 
-@login_required
+@login_required(login_url='login')
+
 def like_event(request, event_id):
     event = get_object_or_404(Event, id=event_id)
     if request.user in event.like.all():
@@ -1419,7 +1528,8 @@ def like_event(request, event_id):
         event.like.add(request.user)
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
-@login_required
+@login_required(login_url='login')
+
 def dislike_event(request, event_id):
     event = get_object_or_404(Event, id=event_id)
     if request.user in event.like.all():
@@ -1427,7 +1537,8 @@ def dislike_event(request, event_id):
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
 
-@login_required
+@login_required(login_url='login')
+
 @require_POST
 @csrf_exempt
 def dislike_selected_events(request):
@@ -1443,7 +1554,8 @@ def dislike_selected_events(request):
     return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
 
 #từ chối vào event
-@login_required
+@login_required(login_url='login')
+
 def decline_invitation(request, invitation_id):
     invitation = get_object_or_404(Invitation, pk=invitation_id, invitee=request.user)
     invitation.delete()
@@ -1528,7 +1640,8 @@ def reset_password(request):
 
 
 
-@login_required
+@login_required(login_url='login')
+
 def change_password(request):
     if request.method == 'POST':
         old_password = request.POST['old_password']
@@ -1561,7 +1674,8 @@ def change_password(request):
 
 
 
-@login_required
+@login_required(login_url='login')
+
 def report_mess(request):
     if request.method == 'POST':
         reported_message_id = request.POST.get('reported_message_id')
@@ -1598,7 +1712,8 @@ def manageUser(request):
 
 
 
-@login_required
+@login_required(login_url='login')
+
 def ban_user(request, user_id):
     user = get_object_or_404(User, pk=user_id)
     user.is_banned = True
@@ -1606,7 +1721,8 @@ def ban_user(request, user_id):
     Message.objects.filter(user=user).delete()
     return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
-@login_required
+@login_required(login_url='login')
+
 def unban_user(request, user_id):
     user = get_object_or_404(User, pk=user_id)
     user.is_banned = False
@@ -1794,89 +1910,10 @@ def delete_event_message(request, event_id, message_id):
 
 
 
-@role_required(allowed_roles=['AD','MO'])
-#analys 
-def top_stores_by_revenue(request):
-    current_month = datetime.now().month
-    current_year = datetime.now().year
-    selected_month = int(request.GET.get('month', current_month))
-    selected_year = int(request.GET.get('year', current_year))
-
-    # Filter orders by the selected month and year
-    orders = Order.objects.filter(order_date__year=selected_year, order_date__month=selected_month)
-    
-    # Annotate and aggregate revenue per store
-    store_revenues = orders.values('orderdetail__product__store__name') \
-        .annotate(total_revenue=Sum('orderdetail__subtotal')) \
-        .order_by('-total_revenue')[:5]
-
-    # Prepare data for the dropdowns
-    months = range(1, 13)
-    years = Order.objects.dates('order_date', 'year', order='DESC').distinct()
-
-    # Convert Decimal to float for JSON serialization
-    labels = [store['orderdetail__product__store__name'] for store in store_revenues]
-    data = [float(store['total_revenue']) for store in store_revenues]
-
-    context = {
-        'labels': json.dumps(labels),
-        'data': json.dumps(data),
-        'selected_month': selected_month,
-        'selected_year': selected_year,
-        'months': months,
-        'years': years,
-    }
-
-    return render(request, 'base/top_store_revenue.html', context)
 
 
-@role_required(allowed_roles=['AD','MO'])
-def top_products_by_month(request):
-    current_month = datetime.now().month
-    current_year = datetime.now().year
 
-    # Validate and get month and year from request, default to current month and year if invalid
-    try:
-        selected_month = int(request.GET.get('month', current_month))
-        if not 1 <= selected_month <= 12:
-            selected_month = current_month
-    except (ValueError, TypeError):
-        selected_month = current_month
-
-    try:
-        selected_year = int(request.GET.get('year', current_year))
-    except (ValueError, TypeError):
-        selected_year = current_year
-
-    # Filter orders by the selected month and year
-    order_details = OrderDetail.objects.filter(order__order_date__year=selected_year, order__order_date__month=selected_month)
-    
-    # Annotate and aggregate quantity per product
-    product_sales = order_details.values('product__name') \
-        .annotate(total_quantity=Sum('quantity')) \
-        .order_by('-total_quantity')[:10]
-
-    # Prepare data for the dropdowns
-    months = [(i, calendar.month_name[i]) for i in range(1, 13)]
-    years = OrderDetail.objects.dates('order__order_date', 'year', order='DESC').distinct()
-
-    # Prepare data for the chart
-    labels = [item['product__name'] for item in product_sales]
-    data = [item['total_quantity'] for item in product_sales]
-
-    context = {
-        'labels': json.dumps(labels),
-        'data': json.dumps(data),
-        'selected_month': selected_month,
-        'selected_year': selected_year,
-        'months': months,
-        'years': years,
-    }
-
-    return render(request, 'base/top_products_by_month.html', context)
-
-
-def unauthorized(request):
+def unauthorized(request,exception=None):
     return render(request, 'base/unauthorized.html')
 
 
@@ -1887,7 +1924,8 @@ def unauthorized(request):
 
 
 # POst
-@login_required
+@login_required(login_url='login')
+
 def post_create(request):
     if request.method == 'POST':
         title = request.POST.get('title')
@@ -1910,7 +1948,8 @@ def post_create(request):
 
 
 
-@login_required
+@login_required(login_url='login')
+
 def like_post(request, content_id):
     # Check if the content is a Post or a Share
     content = get_object_or_404(Post, id=content_id) if Post.objects.filter(id=content_id).exists() else get_object_or_404(Share, id=content_id)
@@ -1997,12 +2036,12 @@ def load_more_comments(request):
     return JsonResponse({'comments': comments_data})
 
 
-@login_required
+@login_required(login_url='login')
+
 
 def add_comment(request, content_id):
     # Check if the content is a Post or a Share
     content = get_object_or_404(Post, id=content_id) if Post.objects.filter(id=content_id).exists() else get_object_or_404(Share, id=content_id)
-
     if request.method == 'POST':
         content_text = request.POST.get('content')
         if content_text:
@@ -2013,7 +2052,8 @@ def add_comment(request, content_id):
 
 
 
-@login_required
+@login_required(login_url='login')
+
 @require_POST
 def share_post(request, post_id):
     post = get_object_or_404(Post, id=post_id)
@@ -2022,7 +2062,8 @@ def share_post(request, post_id):
     return JsonResponse({'status': 'success', 'message': 'Post shared successfully!'})
 
 
-@login_required
+@login_required(login_url='login')
+
 
 def delete_share(request, share_id):
     if request.method == 'POST':
