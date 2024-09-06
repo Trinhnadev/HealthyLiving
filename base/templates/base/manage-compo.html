@@ -105,14 +105,14 @@
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
     z-index: 1; /* Sit on top */
-    left: 0;
-    top: 0;
+    /* top: 10px; */
     width: 100%; /* Full width */
-    height: 100%; /* Full height */
+    height: 90vh; /* Full height */
     overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0, 0, 0); /* Fallback color */
-    background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+    /* background-color: rgb(0, 0, 0); Fallback color */
+    /* background-color: rgba(0, 0, 0, 0.4); Black w/ opacity */
     padding-top: 60px;
+
 }
 
 .modal-content {
@@ -120,7 +120,7 @@
     margin: 5% auto; /* 5% from the top and centered */
     padding: 20px;
     border: 1px solid #888;
-    width: 80%; /* Could be more or less, depending on screen size */
+    width: 100%; /* Could be more or less, depending on screen size */
     max-width: 600px; /* Maximum width */
     border-radius: 8px; /* Rounded corners */
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); /* Box shadow */
@@ -212,9 +212,19 @@
     font-size: 16px;
 }
 
+.scrollable-container {
+    overflow-y: scroll;
+    height: 50vh;
+    scrollbar-width: none;
+  }
+
+  .scrollable-container::-webkit-scrollbar {
+    display: none;
+  }
+
 </style>
 </head>
-<body>
+
     <div class="container-fluid col-md-9" style="margin-right: 0;">
         <div class="row justify-content-center col-lg-12">
           <div class="col-lg-12">
@@ -279,9 +289,10 @@
       </div>
       
 
-<div id="create-account-modal" class="modal">
+<div id="create-account-modal" class="modal" style="background-color: transparent !important; box-shadow: none !important;">
     <div class="modal-content">
         <span class="close-btn">&times;</span>
+        <div class="scrollable-container">
         <div class="container">
             <div class="layout__box">
                 <div class="layout__boxHeader">
@@ -322,6 +333,7 @@
                 </div>
             </div>
         </div>
+    </div>
     </div>
 </div>
 

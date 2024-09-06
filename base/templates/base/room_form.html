@@ -207,15 +207,16 @@
 
         <div class="form__group">
           <label for="room_topic">Room Topic</label>
-          <input required type="text" value="{{ room.topic }}" name="topic" list="topic-list" />
+          <input required type="text" name="topic" id="room_topic" list="topic-list"
+                 {% if room.topic %} value="{{ room.topic.name }}" {% endif %} />
           <datalist id="topic-list">
-            <select id="room_topic">
-              {% for t in topic %}
-              <option value="{{ t.name }}">{{ t.name }}</option>
-              {% endfor %}
-            </select>
+            {% for t in topics %}
+            <option value="{{ t.name }}">
+            {% endfor %}
           </datalist>
         </div>
+        
+        
 
         <div class="form__group">
           <label for="room_name">Room Name</label>

@@ -4,6 +4,7 @@ import os
 import random
 import threading
 import time
+from django.forms import FloatField
 from django.shortcuts import render,redirect
 from django.contrib import messages
 from django.http import HttpResponse
@@ -39,6 +40,7 @@ from .decorators import role_required
 from django.core.management import call_command
 from django.template.loader import render_to_string
 from pytz import timezone as pytz_timezone
+from django.utils.html import escape
 # Múi giờ Việt Nam
 VIETNAM_TZ = pytz_timezone('Asia/Ho_Chi_Minh')
 
@@ -121,47 +123,56 @@ def home(request):
 def suggest_friends(user):
     # Step 1: Get the list of all users except the current user and their friends
     all_users = User.objects.exclude(id=user.id)
+    
+    # Get all accepted friends
     user_friends_sent = user.friendship_sent.filter(status='accepted').values_list('receiver_id', flat=True)
     user_friends_received = user.friendship_received.filter(status='accepted').values_list('sender_id', flat=True)
-    user_friends = user_friends_sent.union(user_friends_received)
+    user_friends = set(user_friends_sent) | set(user_friends_received)
+    
+    # Exclude friends from the list of potential friends
     all_users = all_users.exclude(id__in=user_friends)
+    
+    # Exclude users who have a pending friendship request
+    pending_requests = user.friendship_sent.filter(status='pending').values_list('receiver_id', flat=True)
+    pending_requests_received = user.friendship_received.filter(status='pending').values_list('sender_id', flat=True)
+    all_users = all_users.exclude(id__in=pending_requests).exclude(id__in=pending_requests_received)
 
     # Step 2: Calculate weights for each user and also count mutual friends
-    suggestions = defaultdict(lambda: {'score': 0, 'mutual_friends': 0})
+    suggestions = defaultdict(lambda: {'score': 0, 'mutual_friends': 0, 'shared_groups': 0, 'interaction_score': 0})
 
     for potential_friend in all_users:
+        # Count mutual friends
         mutual_connections = User.objects.filter(
             id__in=user_friends
         ).filter(
-            id__in=potential_friend.friendship_sent.filter(status='accepted').values_list('receiver_id', flat=True)
+            id__in=Friendship.objects.filter(receiver=potential_friend, status='accepted').values_list('sender_id', flat=True)
         ).count()
 
         suggestions[potential_friend]['mutual_friends'] = mutual_connections
-        suggestions[potential_friend]['score'] += mutual_connections * 1.5  # MCW weight
+        suggestions[potential_friend]['score'] += mutual_connections * 2  # Increased weight for mutual friends
 
-        # Step 3: Calculate Shared Interests Weight (SIW)
-        shared_rooms = Room.objects.filter(participants=user).filter(participants=potential_friend).count()
-        suggestions[potential_friend]['score'] += shared_rooms * 1.2  # SIW weight
-        
-        # Step 4: Calculate Interaction History Weight (IHW)
-        interaction_count = Message.objects.filter(
-            (Q(sender=user, receiver=potential_friend) | Q(sender=potential_friend, receiver=user))
+        # Calculate Shared Groups Weight (SGW)
+        shared_groups = Room.objects.filter(participants=user).filter(participants=potential_friend).count()
+        suggestions[potential_friend]['shared_groups'] = shared_groups
+        suggestions[potential_friend]['score'] += shared_groups * 1.5  # Weight for shared groups
+
+        # Calculate Interaction History Weight (IHW)
+        interaction_count = Comment.objects.filter(
+            Q(post__author=user, user=potential_friend) |
+            Q(post__author=potential_friend, user=user)
         ).count()
-        suggestions[potential_friend]['score'] += interaction_count * 1.8  # IHW weight
+        suggestions[potential_friend]['interaction_score'] = interaction_count
+        suggestions[potential_friend]['score'] += interaction_count * 1.8  # Weight for interactions
 
-        # Step 5: Calculate Reciprocity Weight (RW)
-        if Friendship.objects.filter(sender=user, receiver=potential_friend, status='pending').exists():
-            suggestions[potential_friend]['score'] += 2  # RW weight
-
-        # Step 6: Optionally calculate Activity Similarity Weight (ASW)
-        activity_similarity = (Post.objects.filter(author=user).count() - Post.objects.filter(author=potential_friend).count()) ** 2
-        suggestions[potential_friend]['score'] += 1 / (activity_similarity + 1) * 0.5  # ASW weight
-
-    # Step 7: Sort by the highest scoring users
+    # Step 4: Sort by the highest scoring users
     sorted_suggestions = sorted(suggestions.items(), key=lambda x: x[1]['score'], reverse=True)
 
-    # Step 8: Return the top N suggestions (e.g., top 10)
-    top_suggestions = [{'user': user, 'mutual_friends': data['mutual_friends']} for user, data in sorted_suggestions[:10]]
+    # Step 5: Return the top N suggestions (e.g., top 10)
+    top_suggestions = [{'user': user,
+                        'mutual_friends': data['mutual_friends'],
+                        'shared_groups': data['shared_groups'], 
+                        'interaction_score': data['interaction_score']}
+                       for user, data in sorted_suggestions[:10]]
 
     return top_suggestions
 
@@ -170,7 +181,7 @@ def userProfile(request, pk):
     # Fetch the user profile
     user_profile = get_object_or_404(User, id=pk)
     current_user = request.user
-
+    
     # Query for friendships and chat rooms
     friendship = Friendship.objects.filter(
         Q(sender=current_user, receiver=user_profile) | Q(sender=user_profile, receiver=current_user)
@@ -190,9 +201,10 @@ def userProfile(request, pk):
     topic = Topic.objects.all()[:5]
 
     # Query for rooms, posts, and shares associated with the user profile
-    rooms = Room.objects.filter(participants=user_profile)
+    rooms = Room.objects.filter(host=user_profile)
     posts = Post.objects.filter(author=user_profile)
     shares = Share.objects.filter(user=user_profile).select_related('post')
+    print(shares)
 
     # Combine the rooms, posts, and shares into a single queryset, ordered by creation time
     combined_content = sorted(
@@ -226,6 +238,28 @@ def userProfile(request, pk):
     }
 
     return render(request, 'base/profile.html', context)
+
+
+
+@csrf_exempt
+def comment(request, post_id):
+        if request.method == 'POST':
+            data = json.loads(request.body)
+            comment = data.get('comment_text')
+            post = Post.objects.get(id=post_id)
+            try:
+                newcomment = Comment.objects.create(post=post,user=request.user,content=comment)
+                post.save()
+                print(newcomment.serialize())
+                return JsonResponse([newcomment.serialize()], safe=False, status=201)
+            except Exception as e:
+                return HttpResponse(e)
+    
+        post = Post.objects.get(id=post_id)
+        print(post_id)
+        comments = Comment.objects.filter(post=post)
+        comments = comments.order_by('-created_at').all()  
+        return JsonResponse([comment.serialize() for comment in comments], safe=False)
 
 @login_required(login_url='login')
 
@@ -317,7 +351,6 @@ def update_coveravatar(request):
     return JsonResponse({'status': 'error', 'message': 'Failed to update cover photo.'})
 
 
-
 def loginPage(request):
     page = 'login'
     login_result = ''
@@ -331,34 +364,31 @@ def loginPage(request):
         if user is not None:
             # Thêm bước kiểm tra để xem người dùng có bị cấm không
             if user.is_banned:
-                messages.error(request, 'Your account has been banned. Please contact the administrator for more information.')
-                login_result = 'banned'
+                login_result = 'Your account has been banned. Please contact support.'
             else:
                 login(request, user)
-                login_result = 'success'
                 return redirect('home')
         else:
-            login_result = 'The information is incorrect, please check the information again'
+            login_result = 'Incorrect credentials. Please try again.'
 
     context = {'page': page, 'login_result': login_result}
     return render(request, 'base/login_sign.html', context)
 
 
-def logoutUser(request):
-    logout(request)
-    return redirect('login')
+
 
 
 def sign(request):
     page = 'sign'
     form = MyUserCreationForm()
-
+    login_result = ''
+    
     if request.method == 'POST':
         form = MyUserCreationForm(request.POST)
         if form.is_valid():
             email = form.cleaned_data.get('email')
             if User.objects.filter(email=email).exists():
-                messages.error(request, "Email này đã được đăng ký.")
+                login_result = 'This email is already registered.'
             else:
                 user = form.save(commit=False)
                 user.username = user.username.lower()
@@ -366,12 +396,15 @@ def sign(request):
                 login(request, user)
                 return redirect('home')
         else:
-            print(form.errors)  # In ra lỗi của form để kiểm tra
-            messages.error(request, "Đăng ký không thành công. Vui lòng kiểm tra lại thông tin.")
+            login_result = 'Registration failed. Please check the information.'
 
-    context = {'form': form}
+    context = {'form': form, 'page': page, 'login_result': login_result}
     return render(request, 'base/login_sign.html', context)
 
+
+def logoutUser(request):
+    logout(request)
+    return redirect('login')
 
 def updateUser(request):
     user = request.user
@@ -398,12 +431,13 @@ def updateUser(request):
 #Room Function
 @login_required(login_url='login')
 
-def room(request,pk):
+def room(request, pk):
     room = Room.objects.get(id=pk)
     pa = room.participants.all()
     messages = room.message_set.all()
     sent = Friendship.objects.filter(receiver=request.user, status='pending')
-    if request.user == room.host or room.is_private==False or request.user in pa:
+    
+    if request.user == room.host or room.is_private == False or request.user in pa:
         if request.method == 'POST' and 'body' in request.POST:
             message = Message.objects.create(
                 user=request.user,
@@ -417,7 +451,7 @@ def room(request,pk):
             'rooms': room,
             'message': messages,
             'participants': pa,
-            'created_at': datetime.now(),  # Dummy value, replace it with the actual creation time
+            'created_at': now(),  # Replace it with the actual creation time if needed
             'message_id': None
         }
         return render(request, 'base/room.html', context)
@@ -430,7 +464,9 @@ def room(request,pk):
                 room.participants.add(request.user)
                 return redirect('room', pk=room.id)
             else:
-                return redirect('home')
+                # Thông báo lỗi khi câu trả lời không phù hợp
+                error_message = 'The answer is not suitable, please re-enter.'
+                return render(request, 'base/room_question.html', {'room': room, 'sent': sent, 'error': error_message})
         return render(request, 'base/room_question.html', {'room': room, 'sent': sent})
 
     
@@ -467,8 +503,13 @@ def createRoom(request):
         
         return redirect('home')
 
-    context = {'form': form, "topics": topics, "sent": sent}
+    context = {
+        'form': form,
+        'topics': topics,  # Pass the topics to the template
+        'sent': sent
+    }
     return render(request, 'base/room_form.html', context)
+
     
 
 
@@ -1603,14 +1644,17 @@ def enter_reset_code(request):
         if current_time - sent_at > 60:  # 60 giây
             del request.session['password_reset_code']
             del request.session['user_email']
-            return render(request, 'base/enter_reset_code.html', {'error': 'Mã xác nhận đã hết hạn.'})
+            return render(request, 'base/enter_reset_code.html', {'error': 'Verification code has expired.'})
+        
         if code == request.session.get('password_reset_code'):
             # Nếu mã chính xác, cho phép đặt lại mật khẩu
             return redirect('reset_password')
         else:
-            # Nếu mã không chính xác, thông báo lỗi
-            return render(request, 'base/enter_reset_code.html', {'error': 'Mã không chính xác.'})
-    return render(request, 'base/enter_reset_code.html',{'sent_at': request.session.get('password_reset_sent_at')})
+            # Nếu mã không chính xác, hiển thị lỗi nhưng giữ nguyên bộ đếm
+            return render(request, 'base/enter_reset_code.html', {'error': 'Code is incorrect.', 'sent_at': sent_at})
+    
+    return render(request, 'base/enter_reset_code.html', {'sent_at': request.session.get('password_reset_sent_at')})
+
 
 
 
@@ -1932,6 +1976,7 @@ def post_create(request):
         content = request.POST.get('content')
         image = request.FILES.get('image')
         video = request.FILES.get('video')  # Handle video upload
+        content = escape(content).replace('\n', '<br>')
 
         # Create the post with or without an image/video
         post = Post.objects.create(
@@ -2074,3 +2119,49 @@ def delete_share(request, share_id):
         else:
             messages.error(request, 'You are not authorized to delete this share.')
     return redirect('home')
+
+
+
+
+
+
+
+def top_stores_by_revenue(request):
+    # Calculate total revenue for each store
+    top_stores = Store.objects.annotate(
+        total_revenue=Sum('orders__orderdetail__subtotal')
+    ).order_by('-total_revenue')[:10]  # Get the top 10 stores by revenue
+
+    # Prepare data for the chart
+    store_names = [store.name for store in top_stores]
+    revenues = [store.total_revenue or 0 for store in top_stores]
+
+    context = {
+        'top_stores': top_stores,
+        'store_names': store_names,
+        'revenues': revenues,
+        'selected_month': 0,  # Default to all months
+    }
+
+    return render(request, 'base/top_store_revenue.html', context)
+
+
+def topic_distribution(request):
+    # Aggregate the number of participants in each topic
+    topics = Topic.objects.annotate(participant_count=Count('room__participants')).order_by('-participant_count')
+
+    # Calculate total participants across all topics
+    total_participants = sum(topic.participant_count for topic in topics)
+
+    # Prepare data for the pie chart, including percentage calculation
+    topic_names = [topic.name for topic in topics]
+    participant_counts = [topic.participant_count for topic in topics]
+    participant_percentages = [(count / total_participants) * 100 for count in participant_counts]
+
+    context = {
+        'topic_names': topic_names,
+        'participant_counts': participant_counts,
+        'participant_percentages': participant_percentages,
+    }
+
+    return render(request, 'base/topic_distribution.html', context)

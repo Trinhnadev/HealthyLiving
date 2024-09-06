@@ -73,13 +73,125 @@
   .scrollable-container::-webkit-scrollbar {
     display: none;
   }
+
+
+
+  
+.post-actions .comment:hover .svg-span{
+    color: #1da1f2;
+    background-color: #dfeffa;
+    box-shadow: 0 0 0 3px #dfeffa;
+    transition-duration: .2s;
+    cursor: pointer;
+}
+.post-actions .save:hover .svg-span{
+    color: #17bf63;
+    background-color: #def2eb;
+    box-shadow: 0 0 0 3px #def2eb;
+    transition-duration: .2s;
+    cursor: pointer;
+}
+
+.comment-div{
+    margin: 10px 0px;
+    padding-left: 10px;
+    max-height: 75vh;
+    overflow: hidden;
+}
+.comment-div #spinner{
+    transform: translate(-50%, 0%);
+}
+.comment-div > div{
+    width: 100%;
+}
+.head-comment-input{
+    width: 100%;
+    display: flex;
+}
+
+@keyframes godown{
+    0%{
+        margin-top: -10px;
+        opacity: .7;
+    }
+    100%{
+        margin-top: 10px;
+        opacity: 1;
+    }
+}
+
+.eachrow{
+    display: flex;
+    margin-top: 10px;
+    width: 90%;
+}
+.godown{
+    animation-name: godown;
+    animation-duration: .3s;
+    animation-fill-mode: forwards;
+}
+.comment-div .small-profilepic{
+    width: 2.7vw;
+    height: 2.7vw;
+}
+.comment-input-div{
+    width: 100%;
+    height: 100%;
+    border-radius: 17px;
+    background-color: #f0f2f5;
+    overflow: hidden;
+    padding: 0px 10px;
+    transition-duration: .4s;
+}
+.post:hover .comment-input-div{
+    /*background-color: white;*/
+    transition-duration: .4s;
+}
+.comment-input-div form{
+    height: 100%;
+}
+.comment-input-div input{
+    background: none;
+    width: 100%;
+    height: 100%;
+    border: none;
+    outline: none;
+    font-size: 1.1em;
+}
+.comment-text-div{
+    padding:8px 13px;
+    background-color: #f0f2f5;
+    border-radius: 17px;
+    cursor: auto;
+    display: inline-block;
+}
+.post:hover .comment-text-div{
+    /*background-color: white;*/
+    transition-duration: .4s;
+}
+.comment-text-div a{
+    font-size: .93em;
+    font-weight: 630;
+}
+.comment-text-div a:hover{
+    text-decoration: underline;
+}
+
+#spinner{
+    position:relative;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    display: none;
+}
 </style>
 
 <div class="posts-section mb-5" style="margin-left: 15px;">
   {% for content in combined_content %}
-  <div class="post border-bottom p-3 bg-white w-shadow ">
+  <div class="post border-bottom p-3 bg-white w-shadow " data-post_id="{{content.id}}">
     <div class="media text-muted pt-3">
-      <img src="{% if content.title %}{{ content.author.avatar.url }}{% elif content.post %}{{ content.user.avatar.url }}{% else %}{{ content.host.avatar.url }}{% endif %}"
+      <img
+        src="{% if content.title %}{{ content.author.avatar.url }}{% elif content.post %}{{ content.user.avatar.url }}{% else %}{{ content.host.avatar.url }}{% endif %}"
         alt="Online user" class="mr-3 post-user-image" width="55px" height="55px">
       <div class="media-body pb-3 mb-0 small lh-125">
         <div class="d-flex justify-content-between align-items-center w-100">
@@ -87,6 +199,7 @@
             class="text-gray-dark post-user-name">
             {% if content.title %}
             {{ content.author.name }}
+            
             {% elif content.post %}
             {{ content.user.name }} (shared {{ content.post.author.name }}'s post)
             {% else %}
@@ -142,16 +255,19 @@
             <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-left post-dropdown-menu">
               <a href="#" class="dropdown-item delete-share-button" data-id="{{ content.id }}">
                 <div class="row">
-                    <div class="col-md-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
-                            <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
-                        </svg>
-                        <span class="fs-9">Delete Share</span>
-                    </div>
+                  <div class="col-md-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                      class="bi bi-trash" viewBox="0 0 16 16">
+                      <path
+                        d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                      <path
+                        d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+                    </svg>
+                    <span class="fs-9">Delete Share</span>
+                  </div>
                 </div>
-            </a>
-            
+              </a>
+
             </div>
           </div>
           {% elif content.host and content.host.id == request.user.id %}
@@ -215,8 +331,8 @@
     </div>
 
     {% if content.title %}
-    <div class="mt-0 col-md-12">
-      <p>{{ content.content }}</p>
+    <div class="mt-0 col-md-12" data-post_id="{{content.id}}">
+      <p>{{ content.content }} </p>
       {% if content.image %}
       <img src="{{ content.image.url }}" alt="" class="img-fluid">
       {% endif %}
@@ -224,18 +340,19 @@
       <video controls class="img-fluid">
         <source src="{{ content.video.url }}" type="video/mp4">
         Your browser does not support the video tag.
-    </video>
+      </video>
       {% endif %}
-      
+
     </div>
 
     {% elif content.post %}
     <div class="mt-0 col-md-9">
-      <div class="shared-post">
-        <p>{{ content.content }}</p>
-        <div class="post border p-3" >
+      <div class="shared-post" data-post_id="{{content.id}}">
+        <p>{{ content.content }} </p>
+        <div class="post border p-3">
           <div class="media text-muted pt-3">
-            <img src="{{ content.post.author.avatar.url }}" alt="Post user" class="mr-3 post-user-image" width="55px" height="55px">
+            <img src="{{ content.post.author.avatar.url }}" alt="Post user" class="mr-3 post-user-image" width="55px"
+              height="55px">
             <div class="media-body pb-3 mb-0 small lh-125">
               <div class="d-flex justify-content-between align-items-center w-100">
                 <a href="{% url 'profile' content.post.author.id %}" class="text-gray-dark post-user-name">
@@ -243,27 +360,36 @@
                 </a>
                 {% if content.post.author.id == request.user.id %}
                 <div class="dropdown">
-                  <a href="#" class="post-more-settings" role="button" data-toggle="dropdown" id="postOptions" aria-haspopup="true" aria-expanded="false">
+                  <a href="#" class="post-more-settings" role="button" data-toggle="dropdown" id="postOptions"
+                    aria-haspopup="true" aria-expanded="false">
                     <i class='bx bx-dots-horizontal-rounded'></i>
                   </a>
                   <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-left post-dropdown-menu">
-                    <a href="#" class="dropdown-item update-post-button" data-id="{{ content.post.id }}" aria-describedby="reportPost">
+                    <a href="#" class="dropdown-item update-post-button" data-id="{{ content.post.id }}"
+                      aria-describedby="reportPost">
                       <div class="row">
                         <div class="col-md-2">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-                            <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-                            <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                            class="bi bi-pencil-square" viewBox="0 0 16 16">
+                            <path
+                              d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                            <path fill-rule="evenodd"
+                              d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
                           </svg>
                           <span class="fs-9">Update Post</span>
                         </div>
                       </div>
                     </a>
-                    <a href="#" class="dropdown-item delete-post-button" data-id="{{ content.post.id }}" onclick="confirmDelete(event, {{ content.post.id }})">
+                    <a href="#" class="dropdown-item delete-post-button" data-id="{{ content.post.id }}"
+                      onclick="confirmDelete(event, {{ content.post.id }})">
                       <div class="row">
                         <div class="col-md-2">
-                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-                            <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
-                            <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                            class="bi bi-trash" viewBox="0 0 16 16">
+                            <path
+                              d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
+                            <path
+                              d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
                           </svg>
                           <span class="fs-9">Delete Post</span>
                         </div>
@@ -272,14 +398,14 @@
                   </div>
                 </div>
 
-                
+
                 {% endif %}
               </div>
               <span class="d-block">{{ content.post.created_at|timesince }}</span>
             </div>
           </div>
           <div class="mt-2 col-md-12">
-            <p>{{ content.post.content }}</p>
+            <p>{{ content.post.content }} </p>
             {% if content.post.image %}
             <img src="{{ content.post.image.url }}" alt="Post image" class="img-fluid">
             {% endif %}
@@ -287,40 +413,46 @@
             <video controls class="img-fluid">
               <source src="{{ content.post.video.url }}" type="video/mp4">
               Your browser does not support the video tag.
-          </video>
+            </video>
             {% endif %}
           </div>
           <div class="mb-3">
             <div class="argon-reaction">
               <span class="like-btn">
                 <a href="#" class="post-card-buttons like-button" data-id="{{ content.post.id }}">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart {% if request.user in content.post.likes.all %}liked{% endif %}" viewBox="0 0 16 16">
-                    <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15" />
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                    class="bi bi-heart {% if request.user in content.post.likes.all %}liked{% endif %}"
+                    viewBox="0 0 16 16">
+                    <path
+                      d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15" />
                   </svg>
                   <span class="like-count">{{ content.post.like_count }}</span> Likes
                 </a>
               </span>
             </div>
-            <a href="javascript:void(0)" class="post-card-buttons" id="show-comments">{{ content.post.comments.count }} <i class='bx bx-message-rounded mr-2'></i></a>
+
+
+            <a onclick="show_comment(this)" data-post_id="{{content.id}}">{{ content.post.comments.count }} <i class='bx bx-message-rounded mr-2'></i></a>
+
 
 
             <div class="dropdown dropup share-dropup">
               <a href="#" class="post-card-buttons" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  <i class='bx bx-share-alt mr-2'></i> Share
+                <i class='bx bx-share-alt mr-2'></i> Share
               </a>
               <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-left post-dropdown-menu">
-                  <a href="#" class="dropdown-item share-post-button" data-id="{{ content.id }}">
-                      <i class="bx bx-share-alt"></i> Share Post
-                  </a>
+                <a href="#" class="dropdown-item share-post-button" data-id="{{ content.id }}">
+                  <i class="bx bx-share-alt"></i> Share Post
+                </a>
               </div>
 
 
-          </div>
+            </div>
 
 
           </div>
           <!-- COMMENT SECTION -->
-          <!-- <div class="border-top pt-3 hide-comments" id="comments-section-{{ content.post.id }}" style="display: none;">
+          <div class="border-top pt-3 hide-comments" id="comments-section-{{ content.post.id }}" style="display: none;">
             <div class="row bootstrap snippets">
               <div class="col-md-12">
                 <div class="comment-wrapper">
@@ -332,14 +464,17 @@
                             <img src="{{request.user.avatar.url}}" alt="" class="img-circle">
                           </a>
                           <div class="media-body">
-                            <form id="comment-form-{{ content.post.id }}" class="comment-form" action="{% url 'add-comment' content.post.id %}" method="POST">
+                            <form id="comment-form-{{ content.post.id }}" class="comment-form"
+                              action="{% url 'add-comment' content.post.id %}" method="POST">
                               {% csrf_token %}
                               <div class="row">
                                 <div class="col-md-12">
                                   <div class="input-group">
-                                    <input type="text" name="content" class="form-control comment-input" placeholder="Write a comment...">
+                                    <input type="text" name="content" class="form-control comment-input"
+                                      placeholder="Write a comment...">
                                     <div class="input-group-btn">
-                                      <button type="submit" class="btn comment-form-btn"><i class='bx bxs-smiley-happy'></i></button>
+                                      <button type="submit" class="btn comment-form-btn"><i
+                                          class='bx bxs-smiley-happy'></i></button>
                                     </div>
                                   </div>
                                 </div>
@@ -355,7 +490,8 @@
                             </a>
                             <div class="media-body">
                               <div class="d-flex justify-content-between align-items-center w-100">
-                                <strong class="text-gray-dark"><a href="#" class="fs-8">{{ comment.user.name}}</a></strong>
+                                <strong class="text-gray-dark"><a href="#" class="fs-8">{{
+                                    comment.user.name}}</a></strong>
                               </div>
                               <span class="d-block comment-created-time">{{ comment.created_at|timesince }} ago</span>
                               <p class="fs-8 pt-2">{{ comment.content }}</p>
@@ -369,13 +505,13 @@
                 </div>
               </div>
             </div>
-          </div> -->
+          </div>
           <!-- END COMMENT SECTION -->
         </div>
       </div>
     </div>
     {% else %}
-    
+
     <div class="mt-0">
       <a href="{% url 'room' content.id %}">
         <h6>{{ content.name }}</h6>
@@ -418,85 +554,69 @@
       </div>
 
       {% if content.title %}
-      <a href="javascript:void(0)" class="post-card-buttons" id="show-comments">{{ content.comments.count }} <i
-          class='bx bx-message-rounded mr-2'></i></a>
-      
+
+      <a onclick="show_comment(this)" data-post_id="{{content.id}}">{{ content.post.comments.count }} <i class='bx bx-message-rounded mr-2'></i></a>
 
 
 
-          <div class="dropdown dropup share-dropup">
-            <a href="#" class="post-card-buttons" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                <i class='bx bx-share-alt mr-2'></i> Share
-            </a>
-            <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-left post-dropdown-menu">
-                <a href="#" class="dropdown-item share-post-button" data-id="{{ content.id }}">
-                    <i class="bx bx-share-alt"></i> Share Post
-                </a>
-            </div>
+
+
+      <div class="dropdown dropup share-dropup">
+        <a href="#" class="post-card-buttons" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class='bx bx-share-alt mr-2'></i> Share
+        </a>
+        <div class="dropdown-menu dropdown-menu-right dropdown-menu-lg-left post-dropdown-menu">
+          <a href="#" class="dropdown-item share-post-button" data-id="{{ content.id }}">
+            <i class="bx bx-share-alt"></i> Share Post
+          </a>
         </div>
+      </div>
       {% else %}
       {{ content.message_count }} <i class='bx bx-message-rounded mr-2'></i>
       {% endif %}
     </div>
 
     <!-- COMMENT SECTION -->
-    <div class="border-top pt-3 hide-comments" id="comments-section-{{ content.id }}" style="display: none;">
-      <div class="row bootstrap snippets">
-        <div class="col-md-12">
-          <div class="comment-wrapper">
-            <div class="panel panel-info">
-              <div class="panel-body">
-                <ul class="media-list comments-list" id="comment-list-{{ content.id }}">
-                  <li class="media comment-form">
-                    <a href="#" class="pull-left">
-                      <img src="{{request.user.avatar.url}}" alt="" class="img-circle">
-                    </a>
-                    <div class="media-body">
-                      <form id="comment-form-{{ content.id }}" class="comment-form"
-                        action="{% url 'add-comment' content.id %}" method="POST">
-                        {% csrf_token %}
-                        <div class="row">
-                          <div class="col-md-12">
-                            <div class="input-group">
-                              <input type="text" name="content" class="form-control comment-input"
-                                placeholder="Write a comment...">
-                              <div class="input-group-btn">
-                                <button type="submit" class="btn comment-form-btn"><i class='bx bxs-smiley-happy'></i></button>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </form>
-                    </div>
-                  </li>
-                  <div class="scrollable-container">
-                    {% for comment in content.comments.all %}
-                    <li class="media">
-                      <a href="#" class="pull-left">
-                        <img src="{{ comment.user.avatar.url }}" alt="" class="img-circle">
-                      </a>
-                      <div class="media-body">
-                        <div class="d-flex justify-content-between align-items-center w-100">
-                          <strong class="text-gray-dark"><a href="#" class="fs-8">{{ comment.user.username}}</a></strong>
-                        </div>
-                        <span class="d-block comment-created-time">{{ comment.created_at|timesince }} ago</span>
-                        <p class="fs-8 pt-2">{{ comment.content }}</p>
-                      </div>
-                    </li>
-                    {% endfor %}
-                  </div>
-                </ul>
-              </div>
+    <div class="comment-div" style="display: none;" data-post_id="{{content.id}}">
+      <div class="spinner-div">
+        <img src="{% static 'images/spinner.gif' %}" id="spinner" height="65px">
+      </div>
+      {% if user.is_authenticated %}
+      <div class="comment-div-data" style="display: none;">
+        <div class="head-comment-input">
+          <div>
+            <a href="">
+              <div class="small-profilepic"><img src="{{request.user.avatar.url}}" alt="" style="width: 2.1vw;
+                height: 2.1vw;
+                border-radius: 9999px;
+                overflow: hidden;
+                margin-right: 8px;
+                background-size: cover;
+                background-repeat: no-repeat;
+                background-position: center;
+                box-sizing: content-box;
+                gap: 10px;"></div>
+            </a>
+          </div>
+          <div style="flex: 1;">
+            <div class="comment-input-div">
+              <form class="comment-form" onsubmit="return write_comment(this)">
+                <input type="text" name="comment" class="comment-input" placeholder="Write a comment...">
+              </form>
             </div>
           </div>
         </div>
+        <div class="comment-comments"></div>
       </div>
+      {% endif %}
     </div>
     <!-- END COMMENT SECTION -->
 
   </div>
   {% endfor %}
 </div>
+
+
 
 <!-- Update Post Modal -->
 <div id="updatePostModal" class="modal container-fluid col-md-9" style="height: 90%;">
@@ -527,7 +647,8 @@
           Your browser does not support the video tag.
         </video>
         <span class="close-btn" id="removeMedia">&times;</span>
-        <input type="file" id="updatePostMedia" class="form-control-file" accept="image/*,video/*" style="display:none;">
+        <input type="file" id="updatePostMedia" class="form-control-file" accept="image/*,video/*"
+          style="display:none;">
       </div>
     </div>
 
@@ -542,31 +663,148 @@
 <!-- Modal share/ -->
 
 
+
+
+
 <!-- Modal xác nhận chia sẻ -->
 <div id="sharePostModal" class="modal" style="height: 60%;">
   <div class="modal-dialog">
-      <div class="modal-content" style="padding: 10px;">
-          <span class="close">&times;</span>
-          <h5>Do you want to share this post?</h5>
-          <p>This will share the post to your followers.</p>
+    <div class="modal-content" style="padding: 10px;">
+      <span class="close">&times;</span>
+      <h5>Do you want to share this post?</h5>
+      <p>This will share the post to your followers.</p>
 
-          <div class="form-group">
-              <label for="updatePostContent">Content</label>
-              <textarea id="shareContent" rows="4" placeholder="Write your post content..." class="form-control"
-                  required></textarea>
-          </div>
-
-          <input type="hidden" id="sharePostId" value="">
-
-          <button type="button" class="btn btn-primary" id="confirmShare">Confirm Share</button>
+      <div class="form-group">
+        <label for="updatePostContent">Content</label>
+        <textarea id="shareContent" rows="4" placeholder="Write your post content..." class="form-control"
+          required></textarea>
       </div>
+
+      <input type="hidden" id="sharePostId" value="">
+
+      <button type="button" class="btn btn-primary" id="confirmShare">Confirm Share</button>
+    </div>
   </div>
 </div>
 <!-- end -->
 
+
+
+
+<!-- Show/Hide Comments Script -->
+<script>
+  function show_comment(element) {
+
+    let post_div = element.parentElement.parentElement;
+    let post_id = post_div.dataset.post_id;
+
+    console.log(post_div);
+    console.log(post_id);
+    let comment_div = post_div.querySelector('.comment-div');
+    let comment_div_data = comment_div.querySelector('.comment-div-data');
+    let comment_comments = comment_div_data.querySelector('.comment-comments');//
+    if (comment_div.style.display === 'block') {
+      comment_div.querySelector('input').focus()
+      return;
+    }
+    comment_div.querySelector('#spinner').style.display = 'block';
+    comment_div.style.display = 'block';
+    fetch('/n/post/' + parseInt(post_id) + '/comments')
+      .then(response => response.json())
+      .then(comments => {
+        comments.forEach(comment => {
+          display_comment(comment, comment_comments);
+        });
+      })
+      .then(() => {
+        setTimeout(() => {
+          comment_div.querySelector('.spinner-div').style.display = 'none';
+          comment_div.querySelector('.comment-div-data').style.display = 'block';
+          comment_div.style.overflow = 'auto';
+        }, 500);
+      });
+  }
+
+  function write_comment(element) {
+    let post_id = element.parentElement.parentElement.parentElement.parentElement.parentElement.dataset.post_id;
+    let comment_text = element.querySelector('.comment-input').value;
+    let comment_comments = element.parentElement.parentElement.parentElement.parentElement.querySelector('.comment-comments');//
+    // let comment_count = comment_comments.parentElement.parentElement.parentElement.querySelector('.cmt-count');
+    console.log(comment_comments);
+    console.log(post_id);
+
+    if (comment_text.trim().length <= 0) {
+      return false;
+    }
+    fetch('/n/post/' + parseInt(post_id) + '/write_comment', {
+      method: 'POST',
+      body: JSON.stringify({
+        comment_text: comment_text
+      })
+    })
+      .then(response => response.json())
+      .then(comment => {
+        console.log(comment);
+        element.querySelector('input').value = '';
+        display_comment(comment[0], comment_comments, true);
+        console.log(comment[0])
+        console.log(comment_comments)
+        return false;
+      });
+    return false;
+  }
+
+  function display_comment(comment, container, new_comment = false) {
+    // let writer = document.querySelector('#user_is_authenticated').dataset.username;
+    let eachrow = document.createElement('div');
+    eachrow.className = 'eachrow';
+    eachrow.setAttribute('data-id', comment.id);
+    eachrow.innerHTML = `
+        <div>
+            <a href='/${comment.user.username}'>
+                <div class="small-profilepic"><img src="${comment.user.avatar}" alt="" style="width: 2.1vw;
+                height: 2.1vw;
+                border-radius: 9999px;
+                overflow: hidden;
+                margin-right: 8px;
+                background-size: cover;
+                background-repeat: no-repeat;
+                background-position: center;
+                box-sizing: content-box;
+                gap: 10px;"></div>
+            </a>
+        </div>
+        <div style="flex: 1;">
+            <div class="comment-text-div">
+                <div class="comment-user">
+                    <a href="/${comment.user.name}">
+                        ${comment.user.name} 
+                    </a>
+                </div>
+                ${comment.body}
+            </div>
+        </div>`;
+    if (new_comment) {
+      eachrow.classList.add('godown');
+      let comments = container.innerHTML;
+      container.prepend(eachrow);
+    }
+    else {
+      container.append(eachrow);
+    }
+  }
+
+</script>
+
+
+
+
+
+
+
 <!-- Update Post Script -->
 <script>
- $(document).on('click', '.update-post-button', function (e) {
+  $(document).on('click', '.update-post-button', function (e) {
     e.preventDefault();
     var post_id = $(this).data('id');
     $.ajax({
@@ -576,7 +814,7 @@
         $('#updatePostId').val(data.id);
         $('#updatePostTitle').val(data.title);
         $('#updatePostContent').val(data.content);
-        
+
         if (data.image) {
           $('#imagePreview').attr('src', data.image).show();
           $('#videoPreview').hide();
@@ -594,56 +832,56 @@
           $('.icon-placeholder').show();
           $('#removeMedia').hide();
         }
-        
+
         $('#updatePostModal').show();
       }
     });
-});
+  });
 
-$('#mediaPreviewContainer').on('click', function () {
+  $('#mediaPreviewContainer').on('click', function () {
     $('#updatePostMedia').click();
-});
+  });
 
-$('#updatePostMedia').on('change', function () {
+  $('#updatePostMedia').on('change', function () {
     var file = this.files[0];
     var fileType = file.type.split('/')[0];
 
     if (fileType === 'image') {
-        var reader = new FileReader();
-        reader.onload = function (e) {
-            $('#imagePreview').attr('src', e.target.result).show();
-            $('#videoPreview').hide();
-            $('.icon-placeholder').hide();
-            $('#removeMedia').show();
-        };
-        reader.readAsDataURL(file);
+      var reader = new FileReader();
+      reader.onload = function (e) {
+        $('#imagePreview').attr('src', e.target.result).show();
+        $('#videoPreview').hide();
+        $('.icon-placeholder').hide();
+        $('#removeMedia').show();
+      };
+      reader.readAsDataURL(file);
     } else if (fileType === 'video') {
-        var reader = new FileReader();
-        reader.onload = function (e) {
-            $('#videoSource').attr('src', e.target.result);
-            $('#videoPreview').show();
-            $('#imagePreview').hide();
-            $('.icon-placeholder').hide();
-            $('#removeMedia').show();
-        };
-        reader.readAsDataURL(file);
+      var reader = new FileReader();
+      reader.onload = function (e) {
+        $('#videoSource').attr('src', e.target.result);
+        $('#videoPreview').show();
+        $('#imagePreview').hide();
+        $('.icon-placeholder').hide();
+        $('#removeMedia').show();
+      };
+      reader.readAsDataURL(file);
     }
-});
+  });
 
-$('#removeMedia').on('click', function (e) {
+  $('#removeMedia').on('click', function (e) {
     e.stopPropagation();
     $('#imagePreview').hide().attr('src', '#');
     $('#videoPreview').hide().attr('src', '#');
     $('.icon-placeholder').show();
     $('#removeMedia').hide();
     $('#updatePostMedia').val('');
-});
+  });
 
-$('.close').on('click', function () {
+  $('.close').on('click', function () {
     $('#updatePostModal').hide();
-});
+  });
 
-$('#savePostChanges').on('click', function () {
+  $('#savePostChanges').on('click', function () {
     var postId = $('#updatePostId').val();
     var postTitle = $('#updatePostTitle').val();
     var postContent = $('#updatePostContent').val();
@@ -669,7 +907,7 @@ $('#savePostChanges').on('click', function () {
         location.reload();
       }
     });
-});
+  });
 
 </script>
 
@@ -742,89 +980,6 @@ $('#savePostChanges').on('click', function () {
   }
 </script>
 
-<!-- Show/Hide Comments Script -->
-<script>
-  $(document).ready(function () {
-    $('.post-card-buttons#show-comments').on('click', function (e) {
-      e.preventDefault();
-      var commentsSection = $(this).closest('.post').find('.hide-comments');
-      if (commentsSection.is(':visible')) {
-        commentsSection.slideUp();
-      } else {
-        commentsSection.slideDown();
-        $('html, body').animate({
-          scrollTop: commentsSection.offset().top - 100
-        }, 500);
-      }
-    });
-  });
-
- 
-</script>
-
-
-<script>
-
- function loadMoreComments(postId, offset) {
-    $.ajax({
-      url: "{% url 'load_more_comments' %}",
-      data: {
-        'post_id': postId,
-        'offset': offset
-      },
-      success: function (data) {
-        var commentList = $("#comment-list-" + postId);
-        for (var i = 0; i < data.comments.length; i++) {
-          var comment = data.comments[i];
-          var commentHtml = `
-                <li class="media">
-                    <a href="#" class="pull-left">
-                        <img src="..." alt="" class="img-circle">
-                    </a>
-                    <div class="media-body">
-                        <div class="d-flex justify-content-between align-items-center w-100">
-                            <strong class="text-gray-dark"><a href="#" class="fs-8">${comment.user}</a></strong>
-                            <a href="#"><i class='bx bx-dots-horizontal-rounded'></i></a>
-                        </div>
-                        <span class="d-block comment-created-time">${comment.created_at} ago</span>
-                        <p class="fs-8 pt-2">${comment.content}</p>
-                    </div>
-                </li>`;
-          commentList.append(commentHtml);
-        }
-
-        if (data.comments.length === 5) {
-          var seeMoreBtn = $(`#comments-section-${postId} .comment-see-more button`);
-          seeMoreBtn.attr("onclick", `loadMoreComments(${postId}, ${offset + 5})`);
-        } else {
-          $(`#comments-section-${postId} .comment-see-more`).remove();
-        }
-      }
-    });
-  }
-</script>
-<!-- Submit Comment Script -->
-<script>
-  $(document).ready(function () {
-    $('.comment-form').on('submit', function (event) {
-      event.preventDefault();
-      var form = $(this);
-      var formData = form.serialize();
-      var url = form.attr('action');
-      var commentList = $('#comment-list-' + form.closest('.hide-comments').attr('id').split('-')[2]);
-
-      $.ajax({
-        type: 'POST',
-        url: url,
-        data: formData,
-        success: function (response) {
-          commentList.append(response.html);
-          form.find('input[name="content"]').val('');
-        }
-      });
-    });
-  });
-</script>
 
 
 
@@ -832,44 +987,44 @@ $('#savePostChanges').on('click', function () {
 
 
 <script>// Mở modal khi nhấn nút share
-$(document).on('click', '.share-post-button', function (e) {
+  $(document).on('click', '.share-post-button', function (e) {
     e.preventDefault();
     var post_id = $(this).data('id');
     $('#sharePostId').val(post_id);
     $('#sharePostModal').show();
-});
+  });
 
-// Đóng modal khi nhấn nút close
-$(document).on('click', '.close', function () {
+  // Đóng modal khi nhấn nút close
+  $(document).on('click', '.close', function () {
     $('#sharePostModal').hide();
-});
+  });
 
-// Đóng modal khi nhấn ngoài modal-content
-$(window).on('click', function (e) {
+  // Đóng modal khi nhấn ngoài modal-content
+  $(window).on('click', function (e) {
     if ($(e.target).is('#sharePostModal')) {
-        $('#sharePostModal').hide();
+      $('#sharePostModal').hide();
     }
-});
+  });
 
-// Xác nhận chia sẻ bài post
-$('#confirmShare').on('click', function () {
+  // Xác nhận chia sẻ bài post
+  $('#confirmShare').on('click', function () {
     var postId = $('#sharePostId').val();
-    
+
     $.ajax({
-        url: '/share-post/' + postId + '/',
-        type: 'POST',
-        data: {
-            'csrfmiddlewaretoken': '{{ csrf_token }}',
-            'content': $('#shareContent').val(),
-        },
-        success: function (response) {
-            $('#sharePostModal').hide();
-            alert('Post shared successfully!');
-            location.reload();
-        }
+      url: '/share-post/' + postId + '/',
+      type: 'POST',
+      data: {
+        'csrfmiddlewaretoken': '{{ csrf_token }}',
+        'content': $('#shareContent').val(),
+      },
+      success: function (response) {
+        $('#sharePostModal').hide();
+        alert('Post shared successfully!');
+        location.reload();
+      }
     });
-});
-  </script>
+  });
+</script>
 
 
 <!-- end Share -->
@@ -884,27 +1039,27 @@ $('#confirmShare').on('click', function () {
   function confirmDeleteShare(event, shareId) {
     event.preventDefault();
     if (confirm("Are you sure you want to delete this share?")) {
-        var form = document.createElement('form');
-        form.method = 'POST';
-        form.action = `/delete-share/${shareId}/`;
+      var form = document.createElement('form');
+      form.method = 'POST';
+      form.action = `/delete-share/${shareId}/`;
 
-        var csrfToken = document.createElement('input');
-        csrfToken.type = 'hidden';
-        csrfToken.name = 'csrfmiddlewaretoken';
-        csrfToken.value = '{{ csrf_token }}';  // Use the CSRF token provided by Django
+      var csrfToken = document.createElement('input');
+      csrfToken.type = 'hidden';
+      csrfToken.name = 'csrfmiddlewaretoken';
+      csrfToken.value = '{{ csrf_token }}';  // Use the CSRF token provided by Django
 
-        form.appendChild(csrfToken);
-        document.body.appendChild(form);
+      form.appendChild(csrfToken);
+      document.body.appendChild(form);
 
-        form.submit();  // Submit the form to delete the share
+      form.submit();  // Submit the form to delete the share
     }
-}
+  }
 
-// Event listener for delete share buttons
-$(document).on('click', '.delete-share-button', function(e) {
+  // Event listener for delete share buttons
+  $(document).on('click', '.delete-share-button', function (e) {
     var shareId = $(this).data('id');
     confirmDeleteShare(e, shareId);  // Call the confirm delete function
-});
+  });
 </script>
 
 

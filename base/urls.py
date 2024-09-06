@@ -181,5 +181,10 @@ urlpatterns = [
     path('share-post/<int:post_id>/', views.share_post, name='share-post'),
     path('delete-share/<int:share_id>/', views.delete_share, name='delete_share'),
     
+    path('store-revenue/', views.top_stores_by_revenue, name='store_revenue'),
+    path('topic-distribution/', views.topic_distribution, name='topic_distribution'),
+
+    path("n/post/<int:post_id>/comments", views.comment, name="comments"),
+    path("n/post/<int:post_id>/write_comment",views.comment, name="writecomment"),
 
 ]

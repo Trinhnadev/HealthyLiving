@@ -8,8 +8,10 @@
     align-items: center;
   }
 
-  input[type=password], input[type=text] {
-    padding-right: 30px; /* Make space for the icon */
+  input[type=password],
+  input[type=text] {
+    padding-right: 30px;
+    /* Make space for the icon */
   }
 
   .toggle-password {
@@ -23,11 +25,13 @@
   .scrollable-container {
     overflow-y: scroll;
     height: 80vh;
-    scrollbar-width: none; /* For Firefox */
+    scrollbar-width: none;
+    /* For Firefox */
   }
 
   .scrollable-container::-webkit-scrollbar {
-    display: none; /* For Chrome, Safari, and Opera */
+    display: none;
+    /* For Chrome, Safari, and Opera */
   }
 
   .form-outline {
@@ -62,14 +66,45 @@
     max-width: 900px;
     margin: 0 auto;
   }
+/* Alert notification styles */
+.alert-container {
+    position: fixed;
+    top: 20px;
+    right: -400px; /* Ban đầu ngoài màn hình */
+    width: 300px;
+    z-index: 9999;
+    transition: right 0.5s ease-in-out;
+}
 
-  
+.alert-slide-in {
+    right: 20px; /* Khi trượt vào */
+}
+
+.alert {
+    padding: 15px;
+    border-radius: 5px;
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+
 
   /* alert */
 </style>
 
 <main class="auth layout">
   <section class="vh-100" style="background-color: #9A616D;">
+    <div id="alert-container" class="alert-container">
+      <div id="alert-message" class="alert"></div>
+  </div>
+  
     <div class="container py-5 h-100">
       <div class="row d-flex justify-content-center align-items-center h-100">
         <div class="col col-xl-10">
@@ -81,12 +116,20 @@
               </div>
               <div class="col-md-6 col-lg-7 d-flex align-items-center">
                 <div class="card-body p-4 p-lg-5 text-black">
+
+
+
+
                   {% if page == 'login' %}
+
+
                   <form action="" method="POST">
                     {% csrf_token %}
                     <div class="d-flex align-items-center mb-3 pb-1">
-                      <svg xmlns="http://www.w3.org/2000/svg" style="color: #ff6219;" width="36" height="36" fill="currentColor" class="bi bi-activity me-3" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd" d="M6 2a.5.5 0 0 1 .47.33L10 12.036l1.53-4.208A.5.5 0 0 1 12 7.5h3.5a.5.5 0 0 1 0 1h-3.15l-1.88 5.17a.5.5 0 0 1-.94 0L6 3.964 4.47 8.171A.5.5 0 0 1 4 8.5H.5a.5.5 0 0 1 0-1h3.15l1.88-5.17A.5.5 0 0 1 6 2"/>
+                      <svg xmlns="http://www.w3.org/2000/svg" style="color: #ff6219;" width="36" height="36"
+                        fill="currentColor" class="bi bi-activity me-3" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                          d="M6 2a.5.5 0 0 1 .47.33L10 12.036l1.53-4.208A.5.5 0 0 1 12 7.5h3.5a.5.5 0 0 1 0 1h-3.15l-1.88 5.17a.5.5 0 0 1-.94 0L6 3.964 4.47 8.171A.5.5 0 0 1 4 8.5H.5a.5.5 0 0 1 0-1h3.15l1.88-5.17A.5.5 0 0 1 6 2" />
                       </svg>
                       <span class="h1 fw-bold mb-0">Health Care</span>
                     </div>
@@ -94,12 +137,14 @@
                     <h5 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">Sign into your account</h5>
 
                     <div class="form-outline mb-4">
-                      <input id="username" name="username" type="text" placeholder="e.g. dennis_ivy@email.com" class="form-control form-control-lg" />
-                     
+                      <input id="username" name="username" type="text" placeholder="e.g. dennis_ivy@email.com"
+                        class="form-control form-control-lg" />
+
                     </div>
 
                     <div class="form-outline mb-4 password-input-container">
-                      <input id="password" name="password" type="password" placeholder="••••••••" class="form-control form-control-lg" />
+                      <input id="password" name="password" type="password" placeholder="••••••••"
+                        class="form-control form-control-lg" />
                       <span class="toggle-password" onclick="togglePasswordVisibility()">👁</span>
                     </div>
 
@@ -108,17 +153,20 @@
                     </div>
 
                     <a class="small text-muted" href="{% url 'password_reset_request' %}">Forgot password?</a>
-                    <p class="mb-5 pb-lg-2" style="color: #393f81;">Don't have an account? <a href="{% url 'sign' %}" style="color: #393f81;">Register here</a></p>
+                    <p class="mb-5 pb-lg-2" style="color: #393f81;">Don't have an account? <a href="{% url 'sign' %}"
+                        style="color: #393f81;">Register here</a></p>
 
 
-                    
+
                   </form>
                   {% else %}
                   <form action="" method="POST">
                     {% csrf_token %}
                     <div class="d-flex align-items-center mb-3 pb-1">
-                      <svg xmlns="http://www.w3.org/2000/svg" style="color: #ff6219;" width="36" height="36" fill="currentColor" class="bi bi-activity me-3" viewBox="0 0 16 16">
-                        <path fill-rule="evenodd" d="M6 2a.5.5 0 0 1 .47.33L10 12.036l1.53-4.208A.5.5 0 0 1 12 7.5h3.5a.5.5 0 0 1 0 1h-3.15l-1.88 5.17a.5.5 0 0 1-.94 0L6 3.964 4.47 8.171A.5.5 0 0 1 4 8.5H.5a.5.5 0 0 1 0-1h3.15l1.88-5.17A.5.5 0 0 1 6 2"/>
+                      <svg xmlns="http://www.w3.org/2000/svg" style="color: #ff6219;" width="36" height="36"
+                        fill="currentColor" class="bi bi-activity me-3" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd"
+                          d="M6 2a.5.5 0 0 1 .47.33L10 12.036l1.53-4.208A.5.5 0 0 1 12 7.5h3.5a.5.5 0 0 1 0 1h-3.15l-1.88 5.17a.5.5 0 0 1-.94 0L6 3.964 4.47 8.171A.5.5 0 0 1 4 8.5H.5a.5.5 0 0 1 0-1h3.15l1.88-5.17A.5.5 0 0 1 6 2" />
                       </svg>
                       <span class="h1 fw-bold mb-0">Health Care</span>
                     </div>
@@ -136,8 +184,9 @@
                       <button class="btn btn-dark btn-lg btn-block" type="submit">Register</button>
                     </div>
 
-                    <p class="mb-5 pb-lg-2" style="color: #393f81;">Already signed up? <a href="{% url 'login' %}" style="color: #393f81;">Sign In</a></p>
-                    
+                    <p class="mb-5 pb-lg-2" style="color: #393f81;">Already signed up? <a href="{% url 'login' %}"
+                        style="color: #393f81;">Sign In</a></p>
+
                   </form>
                   {% endif %}
                 </div>
@@ -150,7 +199,7 @@
   </section>
 
 
-  
+
 </main>
 
 <script>
@@ -159,5 +208,33 @@
     var passwordType = passwordInput.type === 'password' ? 'text' : 'password';
     passwordInput.type = passwordType;
   }
+</script>
+
+<script>
+  function showAlert(message, type = 'error') {
+    var alertContainer = document.getElementById('alert-container');
+    var alertMessage = document.getElementById('alert-message');
+
+    // Set message and type (success or error)
+    alertMessage.textContent = message;
+    if (type === 'success') {
+        alertMessage.classList.add('alert-success');
+    } else {
+        alertMessage.classList.remove('alert-success');
+    }
+
+    // Slide in the alert
+    alertContainer.classList.add('alert-slide-in');
+
+    // Hide the alert after 5 seconds
+    setTimeout(function () {
+        alertContainer.classList.remove('alert-slide-in');
+    }, 5000);
+  }
+
+  // Check if there's a login_result from the server
+  {% if login_result %}
+      showAlert('{{ login_result }}');
+  {% endif %}
 </script>
 {% endblock content %}

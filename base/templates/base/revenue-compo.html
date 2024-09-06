@@ -152,7 +152,7 @@
           revenueChart.destroy();
         }
         revenueChart = new Chart(ctx, {
-          type: 'line',
+          type: 'bar',
           data: {
             labels: month === 0 ? ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'] : ['Month ' + month],
             datasets: [{

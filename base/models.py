@@ -29,6 +29,14 @@ class User(AbstractUser):
     REQUIRED_FIELDS = []
     def is_admin(self):
         return self.role == self.UserRole.ADMIN
+    
+    def serialize(self):
+        return {
+            'id': self.id,
+            "username": self.username,
+            "avatar": self.avatar.url,
+            "name": self.name,
+        }
 
 
 
@@ -282,7 +290,7 @@ class Post(models.Model):
 
 class Comment(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='commenters')
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -292,6 +300,16 @@ class Comment(models.Model):
 
     def __str__(self):
         return f'Comment by {self.user.username} on {self.post.title}'
+    
+    def serialize(self):
+        return {
+            "id": self.id,
+            "user": self.user.serialize(),
+            "body": self.content,
+            "timestamp": self.created_at.strftime("%b %d %Y, %I:%M %p")
+        }
+    
+    
     
 
 class Share(models.Model):
@@ -306,6 +324,8 @@ class Share(models.Model):
 
     def __str__(self):
         return f'{self.user.username} shared {self.post.title}'
+    
+
 
 class ShareComment(models.Model):
     share = models.ForeignKey(Share, on_delete=models.CASCADE, related_name='comments')

@@ -1,18 +1,19 @@
+{%load static%}
+
 <div class="col-md-10 second-section" id="page-content-wrapper">
 
 
   <div class="jumbotron groups-banner">
     <div class="container group-banner-content">
-      <h1 class="jumbotron-heading mt-auto banner-about"><img src="assets/images/icons/theme/shopping-bag-white.png"
-          class="mr-3" alt="Welcome to groups"> Marketplace</h1>
-      <p>Get most popular products.</p>
+      <h1 class="jumbotron-heading mt-auto banner-about"> Event</h1>
+      <p>Get most popular events.</p>
     </div>
   </div>
 
   <!-- Groups -->
   <div class="groups products py-3 px-4">
     <div class="card-head d-flex justify-content-between">
-      <h5 class="mb-4">Popular Products</h5>
+      <h5 class="mb-4">Popular Events</h5>
 
 
     </div>
@@ -23,7 +24,7 @@
         <div class="card group-card">
           <img style="height:160px" src="{{e.img.url}}" class="card-img-top group-card-image" alt="Group image">
           <div class="card-body">
-            <h5 class="product-card-price"> <a href="{% url 'event_detail' e.id%}">{{e.title}}</a></h5>
+            <h5 class="product-card-price"> <a href="{% url 'event_detail' e.id%}">{{ e.title|truncatechars:18 }}</a></h5>
             <h5 class="card-title"><a href="#"> <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
                   fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
                   <path

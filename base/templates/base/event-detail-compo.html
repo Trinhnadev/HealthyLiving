@@ -46,6 +46,8 @@
 
   .event-body {
     padding: 20px;
+    display: flex;
+    gap: 10px;
     /* Style for your event body */
   }
 
@@ -169,259 +171,334 @@
   }
 
   .thread-e {
-  border-left: 2px solid var(--color-dark);
-  padding-left: 1rem;
-  padding: 2rem;
+    border-left: 2px solid var(--color-dark);
+    padding-left: 1rem;
+    padding: 2rem;
 
 
-}
+  }
 
-.room__box__e {
-  padding-left: 2rem;
-  padding-right: 2rem;
-  height: 50.5vh;
-  overflow-y: auto;
-  padding-bottom: 0;
-}
+  .room__box__e {
+    padding-left: 2rem;
+    padding-right: 2rem;
+    height: 50.5vh;
+    overflow-y: auto;
+    padding-bottom: 0;
+  }
 
-.form {
-      max-width: 1000px;
-      border-radius: 25px;
-      border: 1px solid #dddddd;
-      padding: 10px 10px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
+  .form {
+    max-width: 1000px;
+    border-radius: 25px;
+    border: 1px solid #dddddd;
+    padding: 10px 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
 
-    .form input[type="text"] {
-      margin-top: 2px;
-      flex-grow: 1;
-      border: none;
-      outline: none;
-      padding: 10px;
-      border-radius: 10px;
-      background-color:  #696d97;
-    }
+  .form input[type="text"] {
+    margin-top: 2px;
+    flex-grow: 1;
+    border: none;
+    outline: none;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: #696d97;
+  }
 
-    .form button {
-      background-color: transparent;
-      border: none;
-      cursor: pointer;
-      outline: none;
-    }
+  .form button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    outline: none;
+  }
 
-    .form button:focus,
-    .form input[type="text"]:focus {
-      outline: none;
-    }
+  .form button:focus,
+  .form input[type="text"]:focus {
+    outline: none;
+  }
 
-    /* Đặt biểu tượng gửi hoặc một nút gửi nếu bạn muốn */
-    .form button::before {
-      content: '\21A9';
-      /* Biểu tượng "enter" trên bàn phím */
-      font-size: 1.5em;
-      color: #555555;
-    }
+  /* Đặt biểu tượng gửi hoặc một nút gửi nếu bạn muốn */
+  .form button::before {
+    content: '\21A9';
+    /* Biểu tượng "enter" trên bàn phím */
+    font-size: 1.5em;
+    color: #555555;
+  }
 
-    .image-upload-label {
-      cursor: pointer;
-      /* Thêm các thuộc tính CSS khác để định dạng icon tải lên của bạn */
-    }
+  .image-upload-label {
+    cursor: pointer;
+    /* Thêm các thuộc tính CSS khác để định dạng icon tải lên của bạn */
+  }
 
-    .image-upload-label img {
-      width: 45px;
-      /* hoặc kích thước bạn muốn */
-      height: auto;
-    }
+  .image-upload-label img {
+    width: 45px;
+    /* hoặc kích thước bạn muốn */
+    height: auto;
+  }
 
-    #image-upload {
-      display: none;
-      /* Ẩn input tệp tin */
-    }
+  #image-upload {
+    display: none;
+    /* Ẩn input tệp tin */
+  }
 
 
-    .cmessage {
-      color: #ffffff;
-      /* Màu chữ cho tin nhắn của người nhận */
-      border-radius: 8px;
-      /* Bo góc cho khung tin nhắn */
-      padding: 8px;
-      text-align: left;
-      /* Đặt tin nhắn về phía bên phải */
-      max-width: 300px;
-      /* Giới hạn độ rộng lớn nhất của tin nhắn */
-      display: inline-block;
-      /* Đặt display là inline-block để cho phép co dãn */
-      word-wrap: break-word;
-      /* Khoảng cách từ chữ đến viền khung */
-    }
-    /* Định dạng cho danh sách gợi ý */
+  .cmessage {
+    color: #ffffff;
+    /* Màu chữ cho tin nhắn của người nhận */
+    border-radius: 8px;
+    /* Bo góc cho khung tin nhắn */
+    padding: 8px;
+    text-align: left;
+    /* Đặt tin nhắn về phía bên phải */
+    max-width: 300px;
+    /* Giới hạn độ rộng lớn nhất của tin nhắn */
+    display: inline-block;
+    /* Đặt display là inline-block để cho phép co dãn */
+    word-wrap: break-word;
+    /* Khoảng cách từ chữ đến viền khung */
+  }
+
+  /* Định dạng cho danh sách gợi ý */
+
+
+  .details-container {
+    width: 350px;
+    background-color: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .details-header {
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+
+  .details-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .details-item img {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+  }
+
+  .details-item span {
+    font-size: 14px;
+    color: #333;
+  }
+
+  .details-description {
+    font-size: 14px;
+    color: #333;
+    margin: 10px 0;
+  }
+
+  .details-description span {
+    display: inline-block;
+    margin-bottom: 5px;
+  }
+
+  .details-location {
+    display: inline-block;
+    background-color: #f1f2f6;
+    color: #333;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    margin-top: 10px;
+    display: block;
+    text-align: center;
+  }
+
+  .location-container {
+            width: 350px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin: 0 auto;
+        }
+        .location-map {
+            width: 100%;
+            height: 200px;
+            background-image: url('https://via.placeholder.com/350x200'); /* Placeholder map image */
+            background-size: cover;
+            background-position: center;
+        }
+        .location-details {
+            padding: 10px 15px;
+        }
+        .location-name {
+            font-weight: bold;
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        .location-address {
+            font-size: 14px;
+            color: #555;
+        }
 </style>
-<div class="container col-md-9">
-<div class="event-card col-md-12">
-  <div class="event-img">
-    <img src="{{event.img.url}}" alt="" style="height: 250px; width: 100%;">
-  </div>
-  <div class="event-header">
-    <div class="date-badge">17</div>
-    <div class="event-title">
-      <h1> {{event.title}}</h1>
-      <h2> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
-        <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A32 32 0 0 1 8 14.58a32 32 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10"/>
-        <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4m0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
-      </svg> {{event.location}}</h2>
-      <p> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-check" viewBox="0 0 16 16">
-        <path d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m1.679-4.493-1.335 2.226a.75.75 0 0 1-1.174.144l-.774-.773a.5.5 0 0 1 .708-.708l.547.548 1.17-1.951a.5.5 0 1 1 .858.514M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4"/>
-        <path d="M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z"/>
-      </svg> {{event.par.count}} Joined</p>
+<div class="container-fluid col-md-9">
+  <div class="event-card col-md-12">
+    <div class="event-img">
+      <img src="{{event.img.url}}" alt="" style="height: 250px; width: 100%;">
     </div>
-    <div class="date-info">
-      <p> {{ event.start_time|date:"l, d F, Y H:i" }} <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-alarm" viewBox="0 0 16 16">
-        <path d="M8.5 5.5a.5.5 0 0 0-1 0v3.362l-1.429 2.38a.5.5 0 1 0 .858.515l1.5-2.5A.5.5 0 0 0 8.5 9z"/>
-        <path d="M6.5 0a.5.5 0 0 0 0 1H7v1.07a7.001 7.001 0 0 0-3.273 12.474l-.602.602a.5.5 0 0 0 .707.708l.746-.746A6.97 6.97 0 0 0 8 16a6.97 6.97 0 0 0 3.422-.892l.746.746a.5.5 0 0 0 .707-.708l-.601-.602A7.001 7.001 0 0 0 9 2.07V1h.5a.5.5 0 0 0 0-1zm1.038 3.018a6 6 0 0 1 .924 0 6 6 0 1 1-.924 0M0 3.5c0 .753.333 1.429.86 1.887A8.04 8.04 0 0 1 4.387 1.86 2.5 2.5 0 0 0 0 3.5M13.5 1c-.753 0-1.429.333-1.887.86a8.04 8.04 0 0 1 3.527 3.527A2.5 2.5 0 0 0 13.5 1"/>
-      </svg></p>
-      <div class="dropdown">
-        <div class="dropdown-toggle" id="dropdownMenuButton">
-          <!-- <span>⋮</span> -->
-        </div>
-        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-          {% if request.user == event.host %}
-          {%if event.status != 'rejected'%}
-          <a class="dropdown-item" href="{% url 'events' event.id %}">Invite <svg xmlns="http://www.w3.org/2000/svg"
-              width="16" height="16" fill="currentColor" class="bi bi-envelope" viewBox="0 -2 16 16">
-              <path
-                d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z" />
-            </svg></a>
-            {%endif%}
-          <a class="dropdown-item" href="{% url 'update_event' event.id %}">Edit <svg enable-background="new 0 0 24 24"
-              height="16" viewBox="0 -1 24 24" width="16" xmlns="http://www.w3.org/2000/svg">
-              <title>edit</title>
-              <g>
-                <path d="m23.5 22h-15c-.276 0-.5-.224-.5-.5s.224-.5.5-.5h15c.276 0 .5.224.5.5s-.224.5-.5.5z" />
-              </g>
-              <g>
-                <g>
-                  <path
-                    d="m2.5 22c-.131 0-.259-.052-.354-.146-.123-.123-.173-.3-.133-.468l1.09-4.625c.021-.09.067-.173.133-.239l14.143-14.143c.565-.566 1.554-.566 2.121 0l2.121 2.121c.283.283.439.66.439 1.061s-.156.778-.439 1.061l-14.142 14.141c-.065.066-.148.112-.239.133l-4.625 1.09c-.038.01-.077.014-.115.014zm1.544-4.873-.872 3.7 3.7-.872 14.042-14.041c.095-.095.146-.22.146-.354 0-.133-.052-.259-.146-.354l-2.121-2.121c-.19-.189-.518-.189-.707 0zm3.081 3.283h.01z" />
-                </g>
-                <g>
-                  <path
-                    d="m17.889 10.146c-.128 0-.256-.049-.354-.146l-3.535-3.536c-.195-.195-.195-.512 0-.707s.512-.195.707 0l3.536 3.536c.195.195.195.512 0 .707-.098.098-.226.146-.354.146z" />
-                </g>
-              </g>
-            </svg>
-          </a>
-          <a class="dropdown-item" href="{% url 'delete_event' event.id %}"
-            onclick="return confirm('Bạn có chắc chắn muốn xóa sự kiện này?');">Delete <svg
-              xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3"
-              viewBox="0 0 16 16">
-              <path
-                d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
-            </svg></a>
-          {% else %}
-          {% if request.user in event.par.all %}
-          <a class="dropdown-item" href="{% url 'discareAbout' event.id %}">Not Interested <svg
-              xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill"
-              viewBox="0 -1 16 16">
-              <path
-                d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
-            </svg></a>
-          {% else %}
-          <a class="dropdown-item" href="{% url 'careAbout' event.id %}">Care about <svg
-              xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star"
-              viewBox="0 -1 16 16">
-              <path
-                d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.56.56 0 0 0-.163-.505L1.71 6.745l4.052-.576a.53.53 0 0 0 .393-.288L8 2.223l1.847 3.658a.53.53 0 0 0 .393.288l4.052.575-2.906 2.77a.56.56 0 0 0-.163.506l.694 3.957-3.686-1.894a.5.5 0 0 0-.461 0z" />
-            </svg></a>
-          {% endif %}
-          {% endif %}
-        </div>
+    <div class="event-header">
+      <div class="date-badge">17</div>
+      <div class="event-title">
+        <h1> {{event.title}}</h1>
+        <h2> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt"
+            viewBox="0 0 16 16">
+            <path
+              d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A32 32 0 0 1 8 14.58a32 32 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10" />
+            <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4m0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
+          </svg> {{event.location}}</h2>
+        <p> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+            class="bi bi-person-check" viewBox="0 0 16 16">
+            <path
+              d="M12.5 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7m1.679-4.493-1.335 2.226a.75.75 0 0 1-1.174.144l-.774-.773a.5.5 0 0 1 .708-.708l.547.548 1.17-1.951a.5.5 0 1 1 .858.514M11 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0M8 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4" />
+            <path
+              d="M8.256 14a4.5 4.5 0 0 1-.229-1.004H3c.001-.246.154-.986.832-1.664C4.484 10.68 5.711 10 8 10q.39 0 .74.025c.226-.341.496-.65.804-.918Q8.844 9.002 8 9c-5 0-6 3-6 4s1 1 1 1z" />
+          </svg> {{event.par.count}} Joined</p>
       </div>
-    </div>
-  </div>
-  <div class="event-body">
-    <div class="room">
-    <div class="room__conversation">
-      <div class="room__box__e scroll">
-      <div class="thread-e scroll" id="message-container">
-        {% for message in message %}
-        <div class="thread">
-          <div class="thread__top">
-            <div class="thread__author">
-              <a href="{% url 'profile' message.user.id %}" class="thread__authorInfo">
-                <div class="avatar avatar--small">
-                  <img src="{{message.user.avatar.url}}" />
-                </div>
-                <span>@{{message.user.username}}</span>
-              </a>
-              <span class="thread__date">{{message.created|timesince}} ago</span>
-
-            </div>
-            
-            {% if request.user == message.user %}
-            <a href="{% url 'delete_event_message' event_id=event.id message_id=message.id %}">
-              <div class="thread__delete">
-                <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-                  <title>remove</title>
-                  <path
-                    d="M27.314 6.019l-1.333-1.333-9.98 9.981-9.981-9.981-1.333 1.333 9.981 9.981-9.981 9.98 1.333 1.333 9.981-9.98 9.98 9.98 1.333-1.333-9.98-9.98 9.98-9.981z">
-                  </path>
-                </svg>
-              </div>
+      <div class="date-info">
+        <p> {{ event.start_time|date:"l, d F, Y H:i" }} <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+            fill="currentColor" class="bi bi-alarm" viewBox="0 0 16 16">
+            <path d="M8.5 5.5a.5.5 0 0 0-1 0v3.362l-1.429 2.38a.5.5 0 1 0 .858.515l1.5-2.5A.5.5 0 0 0 8.5 9z" />
+            <path
+              d="M6.5 0a.5.5 0 0 0 0 1H7v1.07a7.001 7.001 0 0 0-3.273 12.474l-.602.602a.5.5 0 0 0 .707.708l.746-.746A6.97 6.97 0 0 0 8 16a6.97 6.97 0 0 0 3.422-.892l.746.746a.5.5 0 0 0 .707-.708l-.601-.602A7.001 7.001 0 0 0 9 2.07V1h.5a.5.5 0 0 0 0-1zm1.038 3.018a6 6 0 0 1 .924 0 6 6 0 1 1-.924 0M0 3.5c0 .753.333 1.429.86 1.887A8.04 8.04 0 0 1 4.387 1.86 2.5 2.5 0 0 0 0 3.5M13.5 1c-.753 0-1.429.333-1.887.86a8.04 8.04 0 0 1 3.527 3.527A2.5 2.5 0 0 0 13.5 1" />
+          </svg></p>
+        <div class="dropdown">
+          <div class="dropdown-toggle" id="dropdownMenuButton">
+            <!-- <span>⋮</span> -->
+          </div>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            {% if request.user == event.host %}
+            {%if event.status != 'rejected'%}
+            <a class="dropdown-item" href="{% url 'events' event.id %}">Invite <svg xmlns="http://www.w3.org/2000/svg"
+                width="16" height="16" fill="currentColor" class="bi bi-envelope" viewBox="0 -2 16 16">
+                <path
+                  d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v.217l7 4.2 7-4.2V4a1 1 0 0 0-1-1zm13 2.383-4.708 2.825L15 11.105zm-.034 6.876-5.64-3.471L8 9.583l-1.326-.795-5.64 3.47A1 1 0 0 0 2 13h12a1 1 0 0 0 .966-.741M1 11.105l4.708-2.897L1 5.383z" />
+              </svg></a>
+            {%endif%}
+            <a class="dropdown-item" href="{% url 'update_event' event.id %}">Edit <svg
+                enable-background="new 0 0 24 24" height="16" viewBox="0 -1 24 24" width="16"
+                xmlns="http://www.w3.org/2000/svg">
+                <title>edit</title>
+                <g>
+                  <path d="m23.5 22h-15c-.276 0-.5-.224-.5-.5s.224-.5.5-.5h15c.276 0 .5.224.5.5s-.224.5-.5.5z" />
+                </g>
+                <g>
+                  <g>
+                    <path
+                      d="m2.5 22c-.131 0-.259-.052-.354-.146-.123-.123-.173-.3-.133-.468l1.09-4.625c.021-.09.067-.173.133-.239l14.143-14.143c.565-.566 1.554-.566 2.121 0l2.121 2.121c.283.283.439.66.439 1.061s-.156.778-.439 1.061l-14.142 14.141c-.065.066-.148.112-.239.133l-4.625 1.09c-.038.01-.077.014-.115.014zm1.544-4.873-.872 3.7 3.7-.872 14.042-14.041c.095-.095.146-.22.146-.354 0-.133-.052-.259-.146-.354l-2.121-2.121c-.19-.189-.518-.189-.707 0zm3.081 3.283h.01z" />
+                  </g>
+                  <g>
+                    <path
+                      d="m17.889 10.146c-.128 0-.256-.049-.354-.146l-3.535-3.536c-.195-.195-.195-.512 0-.707s.512-.195.707 0l3.536 3.536c.195.195.195.512 0 .707-.098.098-.226.146-.354.146z" />
+                  </g>
+                </g>
+              </svg>
             </a>
-            {%else%}
-            <a href="{%url 'report_mess' message.id %}">
-              <div class="thread__delete">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-triangle" viewBox="0 0 16 16">
-                  <path d="M7.938 2.016A.13.13 0 0 1 8.002 2a.13.13 0 0 1 .063.016.15.15 0 0 1 .054.057l6.857 11.667c.036.06.035.124.002.183a.2.2 0 0 1-.054.06.1.1 0 0 1-.066.017H1.146a.1.1 0 0 1-.066-.017.2.2 0 0 1-.054-.06.18.18 0 0 1 .002-.183L7.884 2.073a.15.15 0 0 1 .054-.057m1.044-.45a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767z"/>
-                  <path d="M7.002 12a1 1 0 1 1 2 0 1 1 0 0 1-2 0M7.1 5.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0z"/>
-                </svg>
-              </div>
-            </a>
+            <a class="dropdown-item" href="{% url 'delete_event' event.id %}"
+              onclick="return confirm('Bạn có chắc chắn muốn xóa sự kiện này?');">Delete <svg
+                xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3"
+                viewBox="0 0 16 16">
+                <path
+                  d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5" />
+              </svg></a>
+            {% else %}
+            {% if request.user in event.par.all %}
+            <a class="dropdown-item" href="{% url 'discareAbout' event.id %}">Not Interested <svg
+                xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star-fill"
+                viewBox="0 -1 16 16">
+                <path
+                  d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z" />
+              </svg></a>
+            {% else %}
+            <a class="dropdown-item" href="{% url 'careAbout' event.id %}">Care about <svg
+                xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-star"
+                viewBox="0 -1 16 16">
+                <path
+                  d="M2.866 14.85c-.078.444.36.791.746.593l4.39-2.256 4.389 2.256c.386.198.824-.149.746-.592l-.83-4.73 3.522-3.356c.33-.314.16-.888-.282-.95l-4.898-.696L8.465.792a.513.513 0 0 0-.927 0L5.354 5.12l-4.898.696c-.441.062-.612.636-.283.95l3.523 3.356-.83 4.73zm4.905-2.767-3.686 1.894.694-3.957a.56.56 0 0 0-.163-.505L1.71 6.745l4.052-.576a.53.53 0 0 0 .393-.288L8 2.223l1.847 3.658a.53.53 0 0 0 .393.288l4.052.575-2.906 2.77a.56.56 0 0 0-.163.506l.694 3.957-3.686-1.894a.5.5 0 0 0-.461 0z" />
+              </svg></a>
+            {% endif %}
             {% endif %}
           </div>
-          <div class="thread__details">
-
-            <div class="cmessage">
-              {{message.body}}
-              {% if message.image %}
-              <img src="{{ message.image.url }}" alt="Sent image">
-              {% endif %}
-            </div>
-
-          </div>
         </div>
-        {% endfor %}
       </div>
     </div>
+    <div class="event-body col-lg-12" >
+      <div class="details-container col-md-6" >
+        <div class="details-header">Details</div>
+
+        <div class="details-item">
+          
+          <span> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-people" viewBox="0 0 16 16">
+            <path d="M15 14s1 0 1-1-1-4-5-4-5 3-5 4 1 1 1 1zm-7.978-1L7 12.996c.001-.264.167-1.03.76-1.72C8.312 10.629 9.282 10 11 10c1.717 0 2.687.63 3.24 1.276.593.69.758 1.457.76 1.72l-.008.002-.014.002zM11 7a2 2 0 1 0 0-4 2 2 0 0 0 0 4m3-2a3 3 0 1 1-6 0 3 3 0 0 1 6 0M6.936 9.28a6 6 0 0 0-1.23-.247A7 7 0 0 0 5 9c-4 0-5 3-5 4q0 1 1 1h4.216A2.24 2.24 0 0 1 5 13c0-1.01.377-2.042 1.09-2.904.243-.294.526-.569.846-.816M4.92 10A5.5 5.5 0 0 0 4 13H1c0-.26.164-1.03.76-1.724.545-.636 1.492-1.256 3.16-1.275ZM1.5 5.5a3 3 0 1 1 6 0 3 3 0 0 1-6 0m3-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4"/>
+          </svg>  {{event.par.count}} people responded</span>
+        </div>
+
+        <div class="details-item">
+          
+          <span> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
+            <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6m2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0m4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4m-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10s-3.516.68-4.168 1.332c-.678.678-.83 1.418-.832 1.664z"/>
+          </svg> Event by <strong>{{event.host.name}}</strong></span>
+        </div>
+
+        <div class="details-item">
+          <span> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
+            <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A32 32 0 0 1 8 14.58a32 32 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10"/>
+            <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4m0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+          </svg> {{event.location}}</span>
+        </div>
+
+        <div class="details-item">
+          <span>{%if event.is_private%} <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lock" viewBox="0 0 16 16">
+            <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2m3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2M5 8h6a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1"/>
+          </svg> Private {%else%} <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-unlock" viewBox="0 0 16 16">
+            <path d="M11 1a2 2 0 0 0-2 2v4a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2h5V3a3 3 0 0 1 6 0v4a.5.5 0 0 1-1 0V3a2 2 0 0 0-2-2M3 8a1 1 0 0 0-1 1v5a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1z"/>
+          </svg>  Public {%endif%} · Anyone on or off HealthMinds</span>
+        </div>
+
+        <div class="details-description">
+          <span>{{event.description}}</span>
+          
+        </div>
+
+        <div class="details-location">{{event.location}}</div>
+
+
+
+
+
+        
+
+
+      </div>
+
+      <div class="location-container col-md-6">
+        <div class="location-map"></div>
+        <div class="location-details">
+            <div class="location-name">Trường Tiểu Học Vĩnh Hải 4</div>
+            <div class="location-address">Quầy Thuốc Duy Bằng, Xã Vĩnh Hải, Thị Xã Vĩnh Châu, Sóc Trăng, Việt Nam</div>
+        </div>
     </div>
 
 
-    <div class="room__message">
-      <form class="form col-md-12" action="" method="POST" enctype="multipart/form-data">
-        {% csrf_token %}
-        <label for="image-upload" class="image-upload-label">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-card-image"
-            viewBox="0 0 16 16">
-            <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0" />
-            <path
-              d="M1.5 2A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h13a1.5 1.5 0 0 0 1.5-1.5v-9A1.5 1.5 0 0 0 14.5 2zm13 1a.5.5 0 0 1 .5.5v6l-3.775-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12v.54L1 12.5v-9a.5.5 0 0 1 .5-.5z" />
-          </svg>
 
-        </label>
-        <input type="file" name="image" id="image-upload" hidden>
-        <div class="image-preview-container" id="image-preview-container"></div>
-        <input name="body" id="message-input" class ="col-lg-11" placeholder="Write your message here..." style="border: none;"/>
-        <div id="user-suggestions" style="display: none;"></div>
-        <button type="submit" id="message-submit" hidden>submib
-        </button>
-      </form>
+
+
     </div>
   </div>
-</div>
-</div>
 </div>
 </div>
 <script>

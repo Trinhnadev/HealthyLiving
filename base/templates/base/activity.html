@@ -28,15 +28,17 @@
         <div class="card-body">
             {% for suggestion in friend_suggestions %}
             <div class="friend-suggestion">
+              <a href="{% url 'profile' suggestion.user.id %}">
                 <div class="friend-info">
                     <img src="{{ suggestion.user.avatar.url }}" alt="Profile Picture" class="profile-picture">
                     <div class="friend-details">
                         <span class="friend-name">{{ suggestion.user.name }}</span>
-                        <span class="mutual-friends">{{ suggestion.mutual_friends }} bạn chung</span>
+                        <span class="mutual-friends">{{ suggestion.mutual_friends }} mutual friends</span>
                     </div>
                 </div>
+              </a>
                 <div class="friend-actions">
-                    <button class="add-friend-button">Thêm bạn bè</button>
+                      <a href="{% url 'addFriend' suggestion.user.id %}"><button class="add-friend-button">Add Friend</button></a>
                 </div>
             </div>
             {% endfor %}
@@ -48,26 +50,7 @@
 </div>
 
 
-<div class="col-md-3 third-section" >
-    <div class="card shadow-sm" style="margin-right:-15px">
-        <div class="card-body">
 
-            <div class="friend-suggestion">
-                <div class="friend-info">
-                  <img src="path_to_profile_image.jpg" alt="Profile Picture" class="profile-picture">
-                  <div class="friend-details">
-                    <span class="friend-name">Kimm Ngân</span>
-                    <span class="mutual-friends">1 bạn chung</span>
-                  </div>
-                </div>
-                <div class="friend-actions">
-                  <button class="add-friend-button">Thêm bạn bè</button>
-                  <button class="remove-button">Gỡ</button>
-                </div>
-              </div>
-        </div>
-    </div>
-  </div>
 <style>
     .friend-suggestion {
   display: flex;

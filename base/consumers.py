@@ -161,60 +161,36 @@ class ChatFriendConsumer(AsyncWebsocketConsumer):
 class CommentConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.post_id = self.scope['url_route']['kwargs']['post_id']
-        self.room_group_name = f'comments_{self.post_id}'
+        self.post_group_name = f'post_{self.post_id}'
 
-        # Join room group
         await self.channel_layer.group_add(
-            self.room_group_name,
+            self.post_group_name,
             self.channel_name
         )
 
         await self.accept()
 
     async def disconnect(self, close_code):
-        # Leave room group
         await self.channel_layer.group_discard(
-            self.room_group_name,
+            self.post_group_name,
             self.channel_name
         )
 
     async def receive(self, text_data):
         data = json.loads(text_data)
-        comment_content = data.get('content', '')
-        username = data['username']
-        userAvatar = data['userAvatar']
+        comment_content = data['comment']
 
-        # Save comment to the database
-        comment = await self.save_comment(username, comment_content)
-
-        # Send comment to room group
         await self.channel_layer.group_send(
-            self.room_group_name,
+            self.post_group_name,
             {
-                'type': 'comment_message',
-                'content': comment_content,
-                'username': username,
-                'userAvatar': userAvatar,
-                'created_at': comment.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+                'type': 'send_comment',
+                'comment': comment_content
             }
         )
 
-    async def comment_message(self, event):
-        content = event['content']
-        username = event['username']
-        userAvatar = event['userAvatar']
-        created_at = event['created_at']
+    async def send_comment(self, event):
+        comment = event['comment']
 
-        # Send comment to WebSocket
         await self.send(text_data=json.dumps({
-            'content': content,
-            'username': username,
-            'userAvatar': userAvatar,
-            'created_at': created_at,
+            'comment': comment
         }))
-
-    @database_sync_to_async
-    def save_comment(self, username, content):
-        user = User.objects.get(username=username)
-        post = Post.objects.get(id=self.post_id)
-        return Comment.objects.create(user=user, post=post, content=content)

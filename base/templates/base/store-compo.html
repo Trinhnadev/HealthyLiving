@@ -1,11 +1,11 @@
-
+{%load static%}
   <div class="col-md-10 second-section" id="page-content-wrapper">
     
 
     <div class="jumbotron groups-banner">
         <div class="container group-banner-content">
             <h1 class="jumbotron-heading mt-auto banner-about"><img
-                    src="assets/images/icons/theme/shopping-bag-white.png" class="mr-3"
+                    src="{%static 'assets/images/icons/theme/shopping-bag-white.png' %}" class="mr-3"
                     alt="Welcome to groups"> Marketplace</h1>
             <p>Get most popular products.</p>
         </div>
@@ -28,7 +28,7 @@
                   <div class="card-body">
                       <h5 class="product-card-price">${{p.price}}</h5>
                       <h5 class="card-title"><a href="#">{{p.name}}</a></h5>
-                      <p class="card-text">California, CA</p>
+                        <a href="{%url 'store_detail' p.store.id%}"><p class="card-text">{{p.store.name}}</p></a>
                       <a href="{%url 'product_detail' store_id=p.store.id product_id=p.id%}"
                           class="btn btn-quick-link join-group-btn border w-100">Details</a>
                   </div>

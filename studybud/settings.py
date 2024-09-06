@@ -13,9 +13,19 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os
 from pathlib import Path
 
+
+from django.contrib.messages import constants as messages
+
+MESSAGE_TAGS = {
+    messages.ERROR: 'error',
+    messages.SUCCESS: 'success',
+    messages.WARNING: 'warning',
+    messages.INFO: 'info',
+}
 # from celery import Celery
 
-LANGUAGE_CODE = 'vi'
+LANGUAGE_CODE = 'en-us'
+
 TIME_ZONE = 'Asia/Ho_Chi_Minh'
 USE_TZ = True
 

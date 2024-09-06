@@ -1,4 +1,6 @@
-from django.forms import ModelForm
+import re
+
+from django.forms import ModelForm, ValidationError
 from django.contrib.auth.forms import UserCreationForm
 from django import forms
 from .models import Room ,User, Event ,Store,Product,Order,MessageReport
@@ -7,7 +9,25 @@ from .models import Room ,User, Event ,Store,Product,Order,MessageReport
 class MyUserCreationForm(UserCreationForm):
     class Meta:
         model = User
-        fields = ['name','username','email','password1','password2']
+        fields = ['name', 'username', 'email', 'password1', 'password2']
+
+    def clean_password2(self):
+        password1 = self.cleaned_data.get('password1')
+        password2 = self.cleaned_data.get('password2')
+
+        # Kiểm tra mật khẩu 1 và 2 phải giống nhau
+        if password1 and password2 and password1 != password2:
+            raise ValidationError("Passwords do not match.")
+
+        # Kiểm tra mật khẩu có ít nhất một ký tự viết hoa
+        if not re.search(r'[A-Z]', password1):
+            raise ValidationError("Password must contain at least one uppercase letter.")
+
+        # Kiểm tra mật khẩu có ít nhất một ký tự đặc biệt
+        if not re.search(r'[\W_]', password1):
+            raise ValidationError("Password must contain at least one special character.")
+
+        return password2
 
 class ProfileForm(ModelForm):
     class Meta:

@@ -48,10 +48,10 @@
           {% for u in users %}
           <div class="col-md-4 col-sm-6">
             <div class="card group-card shadow-sm">
-              <img src="{{u.avatar.url}}" class="card-img-top group-card-image" alt="Group image" height="200vh" width="50px">
+              <img src="{{u.avatar.url}}" class="card-img-top group-card-image" alt="Group image" height="250vh" width="50px">
               <div class="card-body">
                 <h5 class="card-title"><a href="{% url 'profile' u.id%}">{{ u.name }}</a></h5>
-                <p class="card-text">10k Members 20+ post a week</p>
+
                 {% if u in sent_friend_requests %}
                 <div class="btn-group w-100" role="group">
                   <a href="{% url 'reject' u.id %}" class="btn btn-quick-link join-group-btn border w-100">Cancel</a>

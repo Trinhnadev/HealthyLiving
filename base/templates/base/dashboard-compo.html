@@ -82,7 +82,8 @@
                   {% for product in top_products %}
                   <tr>
                     <td class="d-flex align-items-center">
-                      <img src="{{ product.image.url }}" alt="{{ product.name }}" class="img-thumbnail" style="width: 50px; height: auto; margin-right: 15px;">
+                      <!-- <p>{{ product.image.url }}</p> -->
+                      <img src="{{ product.image }}" alt="{{ product.name }}" class="img-thumbnail" style="width: 50px; height: auto; margin-right: 15px;">
                       {{ product.name }}
                     </td>
                     <td>{{ product.orders_count }}</td>

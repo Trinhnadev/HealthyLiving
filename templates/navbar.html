@@ -1,6 +1,6 @@
 {%load static%}
 
-{% if request.path != '/sign/' and request.path != '/' %}
+{% if request.path != '/sign/' and request.path != '/' and request.path != '/password_reset/' and request.path != '/enter_reset_code/' and request.path != '/reset_password/'  %}
 <style>
     /* Dropdown Menu Styles */
     /* Dropdown Menu Styles */
@@ -178,9 +178,9 @@
     <div class="w-100 justify-content-md-center">
         <ul class="nav navbar-nav enable-mobile px-2">
             <li class="nav-item">
-                <button type="button" class="btn nav-link p-0"><img
-                        src="{% static 'assets/images/icons/theme/post-image.png' %}" class="f-nav-icon"
-                        alt="Quick make post"></button>
+                <a href="{%url 'home'%}"><button type="button" class="btn nav-link p-0"><img
+                        src="{% static 'assets/images/logomain.png' %}" class="f-nav-icon"
+                        alt="Quick make post"></button></a>
             </li>
             <li class="nav-item w-100 py-2">
                 <form class="d-inline form-inline w-100 px-4">
@@ -195,7 +195,7 @@
                 </form>
             </li>
             <li class="nav-item">
-                <a href="messages.html" class="nav-link nav-icon nav-links message-drop drop-w-tooltip"
+                <a href="{% url 'chat' %}" class="nav-link nav-icon nav-links message-drop drop-w-tooltip"
                     data-placement="bottom" data-title="Messages">
                     <img src="{% static 'assets/images/icons/navbar/message.png' %}" class="message-dropdown f-nav-icon"
                         alt="navbar icon">
@@ -212,48 +212,21 @@
 
 
             <!-- Search -->
-            <form class="w-30 mx-2 my-auto d-inline form-inline mr-5 dropdown search-form">
-                <div class="input-group" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
-                    id="searchDropdown">
-                    <input type="text" class="form-control search-input w-75"
+            <form method="get" action="{% url 'home' %}" class="w-30 mx-2 my-auto d-inline form-inline mr-5 ">
+                {% csrf_token %}
+                <div class="input-group" >
+                    <input type="text" name="q" class="form-control search-input w-75"
                         placeholder="Search for people, companies, events and more..." aria-label="Search"
-                        aria-describedby="search-addon">
+                        aria-describedby="search-addon" value="{{ request.GET.q }}">
                     <div class="input-group-append">
-                        <button class="btn search-button" type="button"><i class='bx bx-search'></i></button>
+                        <button class="btn search-button" type="submit"><i class='bx bx-search'></i></button>
                     </div>
                 </div>
-                <ul class="dropdown-menu notify-drop nav-drop shadow-sm" aria-labelledby="searchDropdown">
-                    <div class="notify-drop-title">
-                        <div class="row">
-                            <div class="col-md-6 col-sm-6 col-xs-6 fs-8">Search Results <span
-                                    class="badge badge-pill badge-primary ml-2">29</span></div>
-                        </div>
-                    </div>
-                    <!-- end notify title -->
-                    <!-- notify content -->
-                    <div class="drop-content">
-                        <h6 class="dropdown-header">Peoples</h6>
-
-                        <li class="dropdown-item">
-                            <div class="col-md-2 col-sm-2 col-xs-2">
-                                <div class="notify-img">
-                                    <img src="" alt="Search result">
-                                </div>
-                            </div>
-                            <div class="col-md-10 col-sm-10 col-xs-10">
-                                <a href="#" class="notification-user">Name</a>
-                                <a href="#" class="btn btn-quick-link join-group-btn border text-right float-right">
-                                    Join chat
-                                </a>
-                                <p class="time"> member</p>
-                            </div>
-                        </li>
-
-                        <div class="notify-drop-footer text-center">
-                            <a href="#">See More</a>
-                        </div>
-                </ul>
             </form>
+            
+
+
+            
 
 
 
@@ -277,8 +250,7 @@
                             </div>
                         </div>
                     </a>
-                    <a href="#" class="dropdown-item" aria-describedby="createEvent" data-toggle="modal"
-                        data-target="#createPostModal">
+                    <a href="{%url 'create-event'%}" class="dropdown-item" aria-describedby="createEvent" >
                         <div class="row">
                             <div class="col-md-2">
                                 <i class='bx bx-calendar post-option-icon'></i>
@@ -407,7 +379,7 @@
 
 
             <li class="nav-item s-nav dropdown notification">
-                <a href="#" class="nav-link nav-links rm-drop-mobile drop-w-tooltip" data-toggle="dropdown"
+                <a href="" class="nav-link nav-links rm-drop-mobile drop-w-tooltip" data-toggle="dropdown"
                     data-placement="bottom" data-title="Notifications" role="button" aria-haspopup="true"
                     aria-expanded="false">
                     <img src="{% static 'assets/images/icons/navbar/notification.png' %}" class="notification-bell"

@@ -163,8 +163,8 @@
               {% for room in chat_rooms %}
               {% for f in room.members.all %}
               {% if f != user %}
-              <a href="{% url 'open_chat' room.id %}">
-                <li class="contact messenger-user-active">
+              <a href="{% url 'open_chat' room.id %}" >
+                <li class="contact messenger-user-active" style="padding: 10px 0 15px 0">
                   <div class="wrap">
                     <span class="contact-status busy"></span>
                     <img src="{{ f.avatar.url }}" alt="{{ f.name }}" />
@@ -183,7 +183,7 @@
 
         <div class="content">
           <div class="contact-profile">
-            <img src="{{ friend.avatar.url }}" alt="{{ friend.name }}" />
+            <img src="{{ friend.avatar.url }}" alt="{{ friend.name }}" style="width: 40px !important ;height: 40px !important;"/>
             <p>{{ friend.name }}</p>
           </div>
           <div class="messages">
@@ -277,7 +277,7 @@
 
       let mediaContent = '';
       if (data.media && data.media_type === 'image') {
-        mediaContent = `<img src="${data.media}" alt="Image" class="img-thumbnail" />`;
+        mediaContent = `<img src="${data.media}" alt="Image" class="img-thumbnail" style="border-radius: 0 !important; height: 100% !important; width: 100% !important;"/>`;
       } else if (data.media && data.media_type === 'video') {
         mediaContent = `<video controls><source src="${data.media}" type="video/mp4">Your browser does not support the video tag.</video>`;
       }

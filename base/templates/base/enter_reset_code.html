@@ -1,6 +1,37 @@
 {% extends 'main.html' %}
 
 {% block content %}
+<style>
+  /* Alert notification styles */
+  .alert-container {
+      position: fixed;
+      top: 20px;
+      right: -400px; /* Ban đầu ngoài màn hình */
+      width: 300px;
+      z-index: 9999;
+      transition: right 0.5s ease-in-out;
+  }
+
+  .alert-slide-in {
+      right: 20px; /* Khi trượt vào */
+  }
+
+  .alert {
+      padding: 15px;
+      border-radius: 5px;
+      color: white;
+      background-color: #f44336; /* Màu nền lỗi */
+  }
+
+  .alert-success {
+      background-color: #4CAF50; /* Màu nền thành công */
+  }
+
+  .alert-danger {
+      background-color: #f44336; /* Màu nền lỗi */
+  }
+</style>
+
 <section class="vh-100" style="background-color: #9A616D;">
   <div class="container py-5 h-100">
     <div class="row d-flex justify-content-center align-items-center h-100">
@@ -27,7 +58,7 @@
                     <div id="countdown" style="color: #001e1d;"></div>
                     <input id="code" name="code" type="text" placeholder="J5GTE3" class="form-control form-control-lg" />
                   </div>
-                  
+
                   <div class="pt-1 mb-4">
                     <button class="btn btn-dark btn-lg btn-block" type="submit">
                       <svg version="1.1" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
@@ -39,14 +70,16 @@
                     </button>
                   </div>
                 </form>
-                
-                {% if error %}
-                <div class="error">{{ error }}</div>
-                {% endif %}
-                
+
                 <div class="auth__action">
-                  <p style="color: #001e1d;">Tôi Đã nhớ mật khẩu <a href="{% url 'login' %}" class="btn btn--link">Login</a></p>
+                  <p style="color: #001e1d;"> <a href="{% url 'login' %}" class="btn btn--link">Login</a></p>
                 </div>
+
+                <!-- Phần chứa alert -->
+                <div id="alert-container" class="alert-container">
+                    <div id="alert-message" class="alert"></div>
+                </div>
+                
               </div>
             </div>
           </div>
@@ -54,7 +87,7 @@
       </div>
     </div>
   </div>
-  
+
   {{ sent_at|json_script:"sent-at" }}
   <script>
     // Tính toán thời gian kết thúc dựa trên thời gian gửi mã và thêm 60 giây
@@ -78,6 +111,33 @@
             document.getElementById("countdown").innerHTML = "EXPIRED";
         }
     }, 1000);
+
+    // Hàm hiển thị alert
+    function showAlert(message, type = 'error') {
+      var alertContainer = document.getElementById('alert-container');
+      var alertMessage = document.getElementById('alert-message');
+
+      // Set message and type (success or error)
+      alertMessage.textContent = message;
+      if (type === 'success') {
+          alertMessage.classList.add('alert-success');
+      } else {
+          alertMessage.classList.add('alert-danger');
+      }
+
+      // Slide in the alert
+      alertContainer.classList.add('alert-slide-in');
+
+      // Hide the alert after 5 seconds
+      setTimeout(function () {
+          alertContainer.classList.remove('alert-slide-in');
+      }, 5000);
+    }
+
+    // Nếu có lỗi từ server thì hiển thị alert
+    {% if error %}
+        showAlert("{{ error }}", "error");
+    {% endif %}
   </script>
 </section>
 {% endblock content %}

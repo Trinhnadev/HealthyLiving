@@ -1,3 +1,5 @@
+
+{%load static%}
 <div class="col-md-10 second-section" id="page-content-wrapper">
     {%if store.status == 'approved'%}
     <div class="mb-3">
@@ -13,7 +15,7 @@
     <div class="jumbotron groups-banner">
         <div class="container group-banner-content">
             <h1 class="jumbotron-heading mt-auto banner-about"><img
-                    src="assets/images/icons/theme/shopping-bag-white.png" class="mr-3" alt="Welcome to groups">
+                    src="{%static 'assets/images/icons/theme/shopping-bag-white.png' %}" class="mr-3" alt="Welcome to groups">
                 Marketplace</h1>
             <p>Get most popular products.</p>
         </div>

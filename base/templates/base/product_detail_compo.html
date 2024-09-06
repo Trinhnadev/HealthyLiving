@@ -1,6 +1,16 @@
+<style>
+      .scrollable-container {
+    overflow-y: scroll;
+    height: 10vh;
+    scrollbar-width: none;
+  }
 
-<section class="py-5">
-    <div class="container">
+  .scrollable-container::-webkit-scrollbar {
+    display: none;
+  }
+</style>
+
+    <div  class="py-5 col-md-9 container" style="height: 88vh;  margin-right: 0 !important;">
         <div class="row gx-5">
             <aside class="col-lg-6">
                 <div class="border rounded-4 mb-3 d-flex justify-content-center">
@@ -39,12 +49,11 @@
                         <span class="text-muted">/per box</span>
                     </div>
 
+                    <div class="scrollable-container">
                     <p>
-                        Modern look and quality demo item is a streetwear-inspired collection that continues to break
-                        away from the conventions of mainstream fashion. Made in Italy, these black and brown clothing
-                        low-top shirts for
-                        men.
+                        {{product.description}}
                     </p>
+                </div>
 
 
 
@@ -75,7 +84,7 @@
             </main>
         </div>
     </div>
-</section>
+
 <!-- content -->
 
 
