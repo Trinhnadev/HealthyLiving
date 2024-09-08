@@ -203,12 +203,23 @@ def userProfile(request, pk):
     # Query for rooms, posts, and shares associated with the user profile
     rooms = Room.objects.filter(host=user_profile)
     posts = Post.objects.filter(author=user_profile)
-    shares = Share.objects.filter(user=user_profile).select_related('post')
+    shares = Share.objects.all()
     print(shares)
 
     # Combine the rooms, posts, and shares into a single queryset, ordered by creation time
     combined_content = sorted(
         chain(rooms, posts, shares),
+        key=attrgetter('created_at'),
+        reverse=True
+    )
+    sent = Friendship.objects.filter(receiver=request.user, status='pending')
+    invitations = Invitation.objects.filter(invitee=request.user, accepted=False)
+    accepted_friends = Friendship.objects.filter(
+        Q(sender=request.user, status='accepted') | 
+        Q(receiver=request.user, status='accepted')
+    )
+    combined_notifications = sorted(
+        chain(invitations, sent),
         key=attrgetter('created_at'),
         reverse=True
     )
@@ -235,6 +246,7 @@ def userProfile(request, pk):
         'sent': sent_requests,
         'friendship': friendship,
         'chat_room': chat_room,
+        'combined_notifications':combined_notifications,
     }
 
     return render(request, 'base/profile.html', context)
@@ -355,7 +367,7 @@ def loginPage(request):
     page = 'login'
     login_result = ''
     if request.method == 'POST':
-        username = request.POST.get('username').lower()
+        username = request.POST.get('username')
         password = request.POST.get('password')
 
         # Sử dụng authenticate để kiểm tra thông tin đăng nhập
@@ -386,7 +398,7 @@ def sign(request):
     if request.method == 'POST':
         form = MyUserCreationForm(request.POST)
         if form.is_valid():
-            email = form.cleaned_data.get('email')
+            email = form.cleaned_data.get('email').lower()
             if User.objects.filter(email=email).exists():
                 login_result = 'This email is already registered.'
             else:

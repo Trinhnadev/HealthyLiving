@@ -255,7 +255,7 @@
                 <li class="sent">
                   <p>
                     {% if message.body %}
-                    {{ message.body }}
+                    {{ message.body|linebreaksbr }}
                     {% endif %}
 
                     <br>
@@ -294,7 +294,7 @@
                   <img src="{{ message.user.avatar.url }}" alt="{{ message.user.name }}" />
                   <p class="mess-replies">
                     {% if message.body %}
-                    {{ message.body }}
+                    {{ message.body|linebreaksbr }}
                     {% endif %}
 
                     <br>

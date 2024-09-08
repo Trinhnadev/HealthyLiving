@@ -76,65 +76,73 @@
 
 
 
-  
-.post-actions .comment:hover .svg-span{
+
+  .post-actions .comment:hover .svg-span {
     color: #1da1f2;
     background-color: #dfeffa;
     box-shadow: 0 0 0 3px #dfeffa;
     transition-duration: .2s;
     cursor: pointer;
-}
-.post-actions .save:hover .svg-span{
+  }
+
+  .post-actions .save:hover .svg-span {
     color: #17bf63;
     background-color: #def2eb;
     box-shadow: 0 0 0 3px #def2eb;
     transition-duration: .2s;
     cursor: pointer;
-}
+  }
 
-.comment-div{
+  .comment-div {
     margin: 10px 0px;
     padding-left: 10px;
     max-height: 75vh;
     overflow: hidden;
-}
-.comment-div #spinner{
+  }
+
+  .comment-div #spinner {
     transform: translate(-50%, 0%);
-}
-.comment-div > div{
+  }
+
+  .comment-div>div {
     width: 100%;
-}
-.head-comment-input{
+  }
+
+  .head-comment-input {
     width: 100%;
     display: flex;
-}
+  }
 
-@keyframes godown{
-    0%{
-        margin-top: -10px;
-        opacity: .7;
+  @keyframes godown {
+    0% {
+      margin-top: -10px;
+      opacity: .7;
     }
-    100%{
-        margin-top: 10px;
-        opacity: 1;
-    }
-}
 
-.eachrow{
+    100% {
+      margin-top: 10px;
+      opacity: 1;
+    }
+  }
+
+  .eachrow {
     display: flex;
     margin-top: 10px;
     width: 90%;
-}
-.godown{
+  }
+
+  .godown {
     animation-name: godown;
     animation-duration: .3s;
     animation-fill-mode: forwards;
-}
-.comment-div .small-profilepic{
+  }
+
+  .comment-div .small-profilepic {
     width: 2.7vw;
     height: 2.7vw;
-}
-.comment-input-div{
+  }
+
+  .comment-input-div {
     width: 100%;
     height: 100%;
     border-radius: 17px;
@@ -142,48 +150,55 @@
     overflow: hidden;
     padding: 0px 10px;
     transition-duration: .4s;
-}
-.post:hover .comment-input-div{
+  }
+
+  .post:hover .comment-input-div {
     /*background-color: white;*/
     transition-duration: .4s;
-}
-.comment-input-div form{
+  }
+
+  .comment-input-div form {
     height: 100%;
-}
-.comment-input-div input{
+  }
+
+  .comment-input-div input {
     background: none;
     width: 100%;
     height: 100%;
     border: none;
     outline: none;
     font-size: 1.1em;
-}
-.comment-text-div{
-    padding:8px 13px;
+  }
+
+  .comment-text-div {
+    padding: 8px 13px;
     background-color: #f0f2f5;
     border-radius: 17px;
     cursor: auto;
     display: inline-block;
-}
-.post:hover .comment-text-div{
+  }
+
+  .post:hover .comment-text-div {
     /*background-color: white;*/
     transition-duration: .4s;
-}
-.comment-text-div a{
+  }
+
+  .comment-text-div a {
     font-size: .93em;
     font-weight: 630;
-}
-.comment-text-div a:hover{
-    text-decoration: underline;
-}
+  }
 
-#spinner{
-    position:relative;
+  .comment-text-div a:hover {
+    text-decoration: underline;
+  }
+
+  #spinner {
+    position: relative;
     top: 50%;
     left: 50%;
-    transform: translate(-50%,-50%);
+    transform: translate(-50%, -50%);
     display: none;
-}
+  }
 </style>
 
 <div class="posts-section mb-5" style="margin-left: 15px;">
@@ -199,7 +214,7 @@
             class="text-gray-dark post-user-name">
             {% if content.title %}
             {{ content.author.name }}
-            
+
             {% elif content.post %}
             {{ content.user.name }} (shared {{ content.post.author.name }}'s post)
             {% else %}
@@ -332,7 +347,16 @@
 
     {% if content.title %}
     <div class="mt-0 col-md-12" data-post_id="{{content.id}}">
-      <p>{{ content.content }} </p>
+      <p id="short-content-{{ content.id }}">
+        {{ content.content|truncatewords:40|safe|linebreaksbr }}...
+        <a href="javascript:void(0);" onclick="showFullContent('{{ content.id }}')">See more</a>
+      </p>
+
+      <!-- Full content, initially hidden -->
+      <p id="full-content-{{ content.id }}" style="display: none;">
+        {{ content.content|safe }}
+        <a href="javascript:void(0);" onclick="showShortContent('{{ content.id }}')">See less</a>
+      </p>
       {% if content.image %}
       <img src="{{ content.image.url }}" alt="" class="img-fluid">
       {% endif %}
@@ -348,11 +372,22 @@
     {% elif content.post %}
     <div class="mt-0 col-md-9">
       <div class="shared-post" data-post_id="{{content.id}}">
-        <p>{{ content.content }} </p>
+        <p id="short-content-{{ content.id }}">
+          {{ content.content|truncatewords:40|safe|linebreaksbr }}...
+          <a href="javascript:void(0);" onclick="showFullContent('{{ content.id }}')">See more</a>
+        </p>
+
+        <!-- Full content, initially hidden -->
+        <p id="full-content-{{ content.id }}" style="display: none;">
+          {{ content.content|safe }}
+          <a href="javascript:void(0);" onclick="showShortContent('{{ content.id }}')">See less</a>
+        </p>
+
+
         <div class="post border p-3">
           <div class="media text-muted pt-3">
             <img src="{{ content.post.author.avatar.url }}" alt="Post user" class="mr-3 post-user-image" width="55px"
-              height="55px">
+              height="40px">
             <div class="media-body pb-3 mb-0 small lh-125">
               <div class="d-flex justify-content-between align-items-center w-100">
                 <a href="{% url 'profile' content.post.author.id %}" class="text-gray-dark post-user-name">
@@ -405,7 +440,16 @@
             </div>
           </div>
           <div class="mt-2 col-md-12">
-            <p>{{ content.post.content }} </p>
+            <p id="short-content-share-{{ content.post.id }}">
+              {{ content.post.content|truncatewords:40|safe|linebreaksbr }}...
+              <a href="javascript:void(0);" onclick="showFullContent('{{ content.post.id }}')">See more</a>
+            </p>
+
+            <!-- Full content, initially hidden -->
+            <p id="full-content-share-{{ content.post.id }}" style="display: none;">
+              {{ content.post.content|safe }}
+              <a href="javascript:void(0);" onclick="showShortContent('{{ content.post.id }}')">See less</a>
+            </p>
             {% if content.post.image %}
             <img src="{{ content.post.image.url }}" alt="Post image" class="img-fluid">
             {% endif %}
@@ -432,7 +476,8 @@
             </div>
 
 
-            <a onclick="show_comment(this)" data-post_id="{{content.id}}">{{ content.post.comments.count }} <i class='bx bx-message-rounded mr-2'></i></a>
+            <a onclick="show_comment(this)" data-post_id="{{content.id}}">{{ content.post.comments.count }} <i
+                class='bx bx-message-rounded mr-2'></i></a>
 
 
 
@@ -555,7 +600,8 @@
 
       {% if content.title %}
 
-      <a onclick="show_comment(this)" data-post_id="{{content.id}}">{{ content.post.comments.count }} <i class='bx bx-message-rounded mr-2'></i></a>
+      <a onclick="show_comment(this)" data-post_id="{{content.id}}">{{ content.post.comments.count }} <i
+          class='bx bx-message-rounded mr-2'></i></a>
 
 
 
@@ -980,6 +1026,20 @@
   }
 </script>
 
+
+<script>
+  // Function to show full content
+  function showFullContent(postId) {
+    document.getElementById('short-content-' + postId).style.display = 'none';
+    document.getElementById('full-content-' + postId).style.display = 'block';
+  }
+
+  // Function to show short content
+  function showShortContent(postId) {
+    document.getElementById('short-content-' + postId).style.display = 'block';
+    document.getElementById('full-content-' + postId).style.display = 'none';
+  }
+</script>
 
 
 

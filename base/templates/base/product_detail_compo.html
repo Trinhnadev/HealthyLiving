@@ -10,7 +10,7 @@
   }
 </style>
 
-    <div  class="py-5 col-md-9 container" style="height: 88vh;  margin-right: 0 !important;">
+    <div  class="py-2 px-0 mx-2 col-md-9 container" style="height: 88vh;  margin-right: 0 !important;">
         <div class="row gx-5">
             <aside class="col-lg-6">
                 <div class="border rounded-4 mb-3 d-flex justify-content-center">
@@ -49,11 +49,18 @@
                         <span class="text-muted">/per box</span>
                     </div>
 
-                    <div class="scrollable-container">
-                    <p>
-                        {{product.description}}
+                    
+                    <p id="short-description-{{ product.id }}">
+                        {{ product.description|truncatewords:50|linebreaksbr }}...
+                        <a href="javascript:void(0);" onclick="showFullDescription('{{ product.id }}')">See more</a>
                     </p>
-                </div>
+    
+                    <!-- Full description, initially hidden -->
+                    <p id="full-description-{{ product.id }}" style="display: none;">
+                        {{ product.description|linebreaksbr }}
+                        <a href="javascript:void(0);" onclick="showShortDescription('{{ product.id }}')">See less</a>
+                    </p>
+
 
 
 
@@ -90,3 +97,16 @@
 
 
 <!-- Footer -->
+<script>
+    // Function to show full description
+    function showFullDescription(productId) {
+        document.getElementById('short-description-' + productId).style.display = 'none';
+        document.getElementById('full-description-' + productId).style.display = 'block';
+    }
+
+    // Function to show truncated description
+    function showShortDescription(productId) {
+        document.getElementById('short-description-' + productId).style.display = 'block';
+        document.getElementById('full-description-' + productId).style.display = 'none';
+    }
+</script>
