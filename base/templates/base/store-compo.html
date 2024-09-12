@@ -1,42 +1,77 @@
 {%load static%}
-  <div class="col-md-10 second-section" id="page-content-wrapper">
-    
+<div class="col-md-10 second-section" id="page-content-wrapper">
 
-    <div class="jumbotron groups-banner">
-        <div class="container group-banner-content">
-            <h1 class="jumbotron-heading mt-auto banner-about"><img
-                    src="{%static 'assets/images/icons/theme/shopping-bag-white.png' %}" class="mr-3"
-                    alt="Welcome to groups"> Marketplace</h1>
-            <p>Get most popular products.</p>
-        </div>
+
+  <div class="jumbotron groups-banner">
+    <div class="container group-banner-content">
+      <h1 class="jumbotron-heading mt-auto banner-about"><img
+          src="{%static 'assets/images/icons/theme/shopping-bag-white.png' %}" class="mr-3" alt="Welcome to groups">
+        Marketplace</h1>
+      <p>Get most popular products.</p>
     </div>
+  </div>
 
-    <!-- Groups -->
-    <div class="groups products py-3 px-4">
-      <div class="card-head d-flex justify-content-between">
-          <h5 class="mb-4">Popular Products</h5>
-          
+  <!-- Groups -->
+  <div class="groups products py-3 px-4">
+    <div class="card-head d-flex justify-content-between">
+      <h5 class="mb-4">Popular Products</h5>
 
-      </div>
-      <div class="row">
-        {%for p in products%}
-          <div class="col-md-2 col-sm-6" >
-            
-              <div class="card group-card" style="background-color: #fff;">
-                  <img style = "height:160px" src="{{p.image.url}}"
-                      class="card-img-top group-card-image" alt="Group image">
-                  <div class="card-body">
-                      <h5 class="product-card-price">${{p.price}}</h5>
-                      <h5 class="card-title"><a href="#">{{p.name}}</a></h5>
-                        <a href="{%url 'store_detail' p.store.id%}"><p class="card-text">{{p.store.name}}</p></a>
-                      <a href="{%url 'product_detail' store_id=p.store.id product_id=p.id%}"
-                          class="btn btn-quick-link join-group-btn border w-100">Details</a>
-                  </div>
+
+    </div>
+    <div class="row">
+      {%for p in products%}
+      <div class="col-md-2 col-sm-6">
+
+        <div class="card group-card" style="background-color: #fff;">
+          <img style="height:160px" src="{{p.image.url}}" class="card-img-top group-card-image" alt="Group image">
+          <div class="card-body">
+            <h5 class="product-card-price">${{p.price}}</h5>
+            <h5 class="card-title"><a href="#">{{ p.name|slice:":20" }}{% if p.name|length > 5 %}...{% endif %}</a></h5>
+            <a href="{%url 'store_detail' p.store.id%}">
+              <p class="card-text">{{p.store.name}}</p>
+            </a>
+            <div class="btn-group w-100" role="group">
+              <a href="{%url 'product_detail' store_id=p.store.id product_id=p.id%}"
+                class="btn btn-quick-link join-group-btn border w-100">Details</a>
+
+              <div class="btn-group" role="group">
+                <button id="friendsMore" type="button" class="btn btn-quick-link join-group-btn border btn-group-drop"
+                  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <i class='bx bx-dots-horizontal-rounded'></i>
+                </button>
+
+
+
+                <div class="dropdown-menu" aria-labelledby="friendsMore">
+                  <a class="dropdown-item" href="javascript:void(0);"
+                  onclick="copyToClipboard('{{ request.scheme }}://{{ request.get_host }}{% url 'product_detail' store_id=p.store.id product_id=p.id %}')">
+                  Copy Link
+              </a>
+  
+                </div>
               </div>
-          </div>
-          {%endfor%}
+            </div>
 
+
+          </div>
+        </div>
       </div>
+      {%endfor%}
+
+    </div>
   </div>
 
 </div>
+
+
+<script>
+    function copyToClipboard(link) {
+        const el = document.createElement('textarea');
+        el.value = link;
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+        alert('Product link copied to clipboard!');
+    }
+</script>

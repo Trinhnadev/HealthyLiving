@@ -7,9 +7,14 @@ from django.core.mail import send_mail
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from .models import Event
+import signal
+import sys
 
 # Múi giờ Việt Nam
 VIETNAM_TZ = pytz_timezone('Asia/Ho_Chi_Minh')
+
+# Cờ để dừng tất cả các threads nếu cần thiết
+stop_threads = False
 
 def send_reminder_email(event):
     participants = event.par.all()  # Giả sử `par` là trường ManyToMany chứa danh sách người tham gia
@@ -57,15 +62,15 @@ def send_event_delete_warning_email(event):
     )
 
 def countdown_to_end(event_end_time, event_title, event):
+    global stop_threads
     current_time = timezone.now().astimezone(VIETNAM_TZ)
     time_to_delete = event_end_time + timedelta(minutes=1)
     warning_email_sent = False  # Cờ để kiểm tra email cảnh báo đã được gửi
 
-    while current_time < time_to_delete:
+    while current_time < time_to_delete and not stop_threads:
         remaining_time = time_to_delete - current_time
         minutes_left = remaining_time.total_seconds() // 60  # Tính số phút còn lại
 
-        # Hiển thị thông tin trên một dòng duy nhất
         print(f"END [{current_time.strftime('%Y-%m-%d %H:%M:%S')}] Event '{event_title}' - End time: {event_end_time.strftime('%Y-%m-%d %H:%M:%S')} - Minutes left before deletion: {int(minutes_left)} phút", flush=True)
 
         if minutes_left == 1 and not warning_email_sent:
@@ -76,20 +81,19 @@ def countdown_to_end(event_end_time, event_title, event):
         time.sleep(60)  # Dừng chương trình trong 1 phút
         current_time = timezone.now().astimezone(VIETNAM_TZ)
 
-    # Xóa sự kiện sau khi đã hết thời gian
     print(f"[{timezone.now().astimezone(VIETNAM_TZ).strftime('%Y-%m-%d %H:%M:%S')}] Event '{event_title}' đã bị xóa.", flush=True)
     event.delete()
 
 def countdown_timer(event_start_time, event_title, event):
+    global stop_threads
     current_time = timezone.now().astimezone(VIETNAM_TZ)
     time_to_wait = event_start_time - timedelta(minutes=1)
     reminder_email_sent = False  # Cờ để kiểm tra email nhắc nhở đã được gửi
 
-    while current_time < time_to_wait:
+    while current_time < time_to_wait and not stop_threads:
         remaining_time = time_to_wait - current_time
         minutes_left = remaining_time.total_seconds() // 60  # Tính số phút còn lại
 
-        # Hiển thị thông tin trên một dòng duy nhất
         print(f"START [{current_time.strftime('%Y-%m-%d %H:%M:%S')}] Event '{event_title}' - Start time: {event_start_time.strftime('%Y-%m-%d %H:%M:%S')} - Minutes left: {int(minutes_left)} phút", flush=True)
 
         if minutes_left == 1 and not reminder_email_sent:
@@ -100,8 +104,8 @@ def countdown_timer(event_start_time, event_title, event):
         time.sleep(60)  # Dừng chương trình trong 1 phút
         current_time = timezone.now().astimezone(VIETNAM_TZ)
 
-    # Bắt đầu đếm ngược đến khi xóa sự kiện sau khi sự kiện kết thúc
-    countdown_to_end(event.end_time, event_title, event)
+    if not stop_threads:
+        countdown_to_end(event.end_time, event_title, event)
 
 def check_approved_events():
     approved_events = Event.objects.filter(status='approved')
@@ -110,6 +114,7 @@ def check_approved_events():
         event_start_time = event.start_time
         event_title = event.title
         countdown_thread = threading.Thread(target=countdown_timer, args=(event_start_time, event_title, event))
+        countdown_thread.daemon = True  # Sử dụng daemon thread để tự động đóng khi chương trình chính dừng
         countdown_thread.start()
 
 @receiver(post_save, sender=Event)
@@ -120,4 +125,17 @@ def start_countdown_for_new_event(sender, instance, **kwargs):
         event_start_time = instance.start_time
         event_title = instance.title
         countdown_thread = threading.Thread(target=countdown_timer, args=(event_start_time, event_title, instance))
-        countdown_thread.start()  # Bắt đầu luồng
+        countdown_thread.daemon = True  # Sử dụng daemon thread để tự động đóng khi chương trình chính dừng
+        countdown_thread.start()
+
+# Thêm xử lý tín hiệu để dừng các luồng khi server được tắt
+def signal_handler(signal, frame):
+    global stop_threads
+    stop_threads = True  # Đánh dấu để tất cả các luồng dừng
+    print("Shutting down gracefully...")
+    sys.exit(0)
+
+signal.signal(signal.SIGINT, signal_handler)  # Xử lý Ctrl+C
+
+# Django AppConfig
+

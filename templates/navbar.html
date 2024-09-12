@@ -44,130 +44,117 @@
     }
 
     /* Modal Styles */
-    .modal {
-        display: none;
-        position: fixed;
-        z-index: 1051;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        width: 85%;
-        /* Slightly increased width for more space */
-        max-width: 450px;
-        /* Increased max-width for a larger modal */
-        overflow: auto;
-        background-color: #ffffff;
-        /* Clean white background */
-        border-radius: 0.75rem;
-        /* Softer, more rounded corners */
-        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-        /* Deeper shadow for emphasis */
-        padding: 25px;
-        /* Increased padding for more content space */
-    }
-    .modal-open {
-    overflow: hidden; /* Ngăn chặn cuộn trang khi modal mở */
-    }
-    /* Hide the backdrop */
-    .modal-backdrop {
-        display: none !important;
-    }
+    /* Modal Styles */
 
-    .close {
-        color: #aaa;
-        float: right;
-        font-size: 24px;
-        /* Slightly reduced size for balance */
-        font-weight: bold;
+    .modal-backdrop{
+        position: relative !important;
     }
-
-    .close:hover,
-    .close:focus {
-        color: #000;
-        /* Darker color on hover for better visibility */
-        text-decoration: none;
-        cursor: pointer;
-    }
-
-    /* Add subtle transitions for better UX */
-    .dropdown-menu,
-    .modal-content {
-        transition: all 0.3s ease-in-out;
-    }
-
-    .close {
-        transition: color 0.2s ease-in-out;
-    }
-
-    #postImageContainer {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 100%;
-        height: 250px;
-        /* Chiều cao của container */
-        background-color: #333;
-        /* Màu nền tối */
-        border: 2px dashed #ddd;
-        /* Viền dạng nét đứt */
-        position: relative;
-        cursor: pointer;
-    }
-
-    #postImageContainer img {
-        max-width: 100%;
-        max-height: 100%;
-        display: none;
-        /* Ẩn ảnh cho đến khi có ảnh */
-        object-fit: cover;
-    }
-
-    #postImageContainer .icon-placeholder {
-        color: #fff;
-        text-align: center;
-        font-size: 16px;
-    }
-
-    #postImageContainer:hover {
-        border-color: #888;
-        /* Đổi màu viền khi hover */
-    }
-
-    #postImageContainer .close-btn {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        color: #fff;
-        font-size: 24px;
-        cursor: pointer;
-        display: none;
-        /* Ẩn nút x cho đến khi có ảnh */
-    }
-
-    #postImageContainer img.displayed {
-        display: block;
-        /* Hiển thị hình ảnh khi có ảnh */
-    }
-
-    #postImageContainer .close-btn.displayed {
-        display: block;
-        /* Hiển thị nút x khi có ảnh */
-    }
-
-    @media (max-width: 576px) {
-    .modal-dialog {
-        max-width: 100%;
-        margin: 0;
-    }
-    
-
+.modal-content {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
 }
 
-@media (min-width: 576px) {
+.modal-header {
+    background-color: #f5f6f7;
+    border-bottom: 1px solid #e1e4e8;
+    padding: 15px 20px;
+}
+
+.modal-title {
+    font-weight: bold;
+    font-size: 18px;
+    color: #333;
+}
+
+.modal-body {
+    padding: 20px;
+    background-color: #f5f5f5;
+}
+
+.modal-footer {
+    background-color: #f5f6f7;
+    border-top: 1px solid #e1e4e8;
+    padding: 15px 20px;
+    text-align: right;
+}
+
+.modal-header .close {
+    font-size: 24px;
+    color: #333;
+    opacity: 0.7;
+}
+
+.modal-header .close:hover {
+    opacity: 1;
+    color: #000;
+}
+
+/* Form Styles */
+.form-control {
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    padding: 10px;
+    font-size: 14px;
+}
+
+.form-control:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 4px rgba(0, 123, 255, 0.25);
+}
+
+.form-control-file {
+    margin-top: 10px;
+}
+
+.btn-primary {
+    background-color: #1877f2;
+    border-color: #1877f2;
+    border-radius: 6px;
+    font-size: 14px;
+    padding: 8px 16px;
+    color: #fff;
+}
+
+.btn-primary:hover {
+    background-color: #165ad6;
+    border-color: #165ad6;
+}
+
+.btn-secondary {
+    background-color: #f0f0f0;
+    border-color: #ced4da;
+    border-radius: 6px;
+    font-size: 14px;
+    padding: 8px 16px;
+    color: #333;
+}
+
+.btn-secondary:hover {
+    background-color: #e6e6e6;
+}
+
+textarea.form-control {
+    resize: none;
+}
+
+/* Modal Custom Size */
+#createPostModal {
+    max-width: 600px;
+    margin: auto;
+    top: 10%;
+    left: 30%;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
     .modal-dialog {
-        max-width: 500px;
+        max-width: 90%;
     }
 }
+
 
 /* Button Styles for Dark Mode Toggle */
 
@@ -268,7 +255,7 @@
 
             </style>
             <!-- Modal for Creating a Post -->
-            <div id="createPostModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="createPostModalLabel" aria-hidden="true" style="height: 70%; ">
+            <div id="createPostModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="createPostModalLabel" aria-hidden="true" >
                 <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                     <div class="modal-content" >
                         <div class="modal-header">
@@ -420,8 +407,7 @@
                                 <div class="col-md-10 col-sm-10 col-xs-10">
                                     <a href="{% url 'profile' notification.invitee.id %}" class="notification-user"
                                         style="font-size: 15px;">{{ notification.event.host.name }}</a>
-                                    <span class="notification-type">invited you to participate in the event "{{
-                                        notification.event.title }}"</span>
+                                    <span class="notification-type">invited you to participate in the event "{{notification.event.title }}"</span>
                                     <div class="action col-md-9">
                                         <a href="{% url 'accept_invitation' notification.id %}"
                                             class="notification-for">
@@ -507,38 +493,10 @@
                     aria-labelledby="settings-dropdown">
 
 
-                    <a class="dropdown-item d-flex align-items-center dark-mode" onClick="event.stopPropagation();"
-                    href="#">
-                    <img src="{% static 'assets/images/icons/navbar/moon.png' %}" alt="Navbar icon"> Dark Mode
-                    <button type="button" class="btn btn-lg btn-toggle ml-auto" id="darkModeToggle"
-                        aria-pressed="false" autocomplete="off">
-                        <div class="handle"></div>
-                    </button>
+                   
+
                 </a>
-                <script>
-                    document.addEventListener("DOMContentLoaded", function () {
-    const toggleButton = document.getElementById('darkModeToggle');
-
-    // Kiểm tra xem dark mode có được lưu trong localStorage hay không
-    if (localStorage.getItem('darkMode') === 'enabled') {
-        document.body.classList.add('dark-mode');
-        toggleButton.classList.add('active');  // Set trạng thái nút toggle sang active
-    }
-
-    toggleButton.addEventListener('click', function () {
-        document.body.classList.toggle('dark-mode');
-        toggleButton.classList.toggle('active');  // Toggle trạng thái nút
-
-        // Lưu trạng thái vào localStorage
-        if (document.body.classList.contains('dark-mode')) {
-            localStorage.setItem('darkMode', 'enabled');
-        } else {
-            localStorage.removeItem('darkMode');
-        }
-    });
-});
-
-                </script>
+                
                 
                     <a class="dropdown-item" href="{%url 'update-user'%}">
                         <img src="{% static 'assets/images/icons/navbar/gear-1.png' %}" alt="Navbar icon"> Settings</a>

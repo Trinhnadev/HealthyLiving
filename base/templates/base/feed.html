@@ -199,6 +199,153 @@
     transform: translate(-50%, -50%);
     display: none;
   }
+
+  /* General Modal Styles */
+#updatePostModal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1050;
+    background-color: white;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    overflow: hidden;
+    width: 100%;
+    max-width: 700px;
+    height: auto;
+    padding: 20px;
+}
+
+.modal-content {
+    padding: 20px;
+    border-radius: 10px;
+    background-color: #fff;
+}
+
+.close {
+    font-size: 24px;
+    color: #888;
+    float: right;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: #000;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-control {
+    border-radius: 8px;
+    padding: 10px;
+    border: 1px solid #ced4da;
+    box-shadow: none;
+    transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.form-control:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+#mediaPreviewContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: #f8f9fa;
+    border: 2px dashed #ddd;
+    padding: 20px;
+    border-radius: 8px;
+    position: relative;
+    cursor: pointer;
+}
+
+.icon-placeholder {
+    color: #888;
+    font-size: 20px;
+    text-align: center;
+}
+
+#imagePreview {
+    max-width: 100%;
+    height: auto;
+    display: none;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+#videoPreview {
+    max-width: 100%;
+    height: auto;
+    display: none;
+    border-radius: 8px;
+    margin-top: 10px;
+}
+
+#mediaPreviewContainer:hover {
+    border-color: #007bff;
+}
+
+#removeMedia {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    color: #ff5e5e;
+    cursor: pointer;
+    display: none;
+}
+
+#removeMedia:hover {
+    color: #ff0000;
+}
+
+#mediaPreviewContainer img.displayed,
+#mediaPreviewContainer video.displayed,
+#mediaPreviewContainer .close-btn.displayed {
+    display: block;
+}
+
+#savePostChanges {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#savePostChanges:hover {
+    background-color: #0056b3;
+}
+
+/* Media Queries for Mobile */
+@media (max-width: 768px) {
+    #updatePostModal {
+        width: 90%;
+    }
+
+    .modal-content {
+        padding: 15px;
+    }
+
+    #mediaPreviewContainer {
+        padding: 15px;
+    }
+
+    #imagePreview,
+    #videoPreview {
+        max-width: 90%;
+    }
+}
+
+
+
 </style>
 
 <div class="posts-section mb-5" style="margin-left: 15px;">
@@ -618,7 +765,7 @@
         </div>
       </div>
       {% else %}
-      {{ content.message_count }} <i class='bx bx-message-rounded mr-2'></i>
+     <a href="{% url 'room' content.id %}"><i class='bx bx-message-rounded mr-2'></i></a>
       {% endif %}
     </div>
 
@@ -665,8 +812,8 @@
 
 
 <!-- Update Post Modal -->
-<div id="updatePostModal" class="modal container-fluid col-md-9" style="height: 90%;">
-  <div class="modal-content" style="padding: 10px;">
+<div id="updatePostModal" class="modal container-fluid col-md-9" style="height: 100%;">
+  <div class="modal-content" style=" margin: 10px 10px;">
     <span class="close">&times;</span>
 
     <input type="hidden" id="updatePostId" value="">
@@ -827,7 +974,7 @@
                         ${comment.user.name} 
                     </a>
                 </div>
-                ${comment.body}
+                ${comment.body}|urlize
             </div>
         </div>`;
     if (new_comment) {

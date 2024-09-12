@@ -203,7 +203,7 @@ def userProfile(request, pk):
     # Query for rooms, posts, and shares associated with the user profile
     rooms = Room.objects.filter(host=user_profile)
     posts = Post.objects.filter(author=user_profile)
-    shares = Share.objects.all()
+    shares = Post.objects.filter(user=user_profile).select_related('post')
     print(shares)
 
     # Combine the rooms, posts, and shares into a single queryset, ordered by creation time
@@ -1882,7 +1882,6 @@ def ManageEvent(request):
     event = Event.objects.filter(
         Q(title__icontains =q) |
         Q(location__icontains = q),
-        is_private = False,
         status='waiting'
     )
     context = {'event':event,'invitations':invitations}

@@ -19,7 +19,15 @@
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
       "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji" !important;
   }
+  .messages-content a {
+    color: burlywood;
+    text-decoration: underline;
+}
 
+.messages-content a:hover {
+    color: #d4a373; /* A slightly darker shade for the hover effect */
+    text-decoration: none;
+}
   .message-input {
     display: flex;
     align-items: center;
@@ -192,7 +200,7 @@
               {% for message in messages %}
               {% if request.user == message.sender %}
               <li class="sent">
-                <p>{{ message.content }}
+                <p>{{ message.content|urlize }}
                   <br>
                 {% if message.image %}
                 <img src="{{ message.image.url }}" alt="Image" class="img-thumbnail" style="border-radius: 0 !important; height: 100% !important; width: 100% !important;" />
@@ -208,7 +216,7 @@
               {% else %}
               <li class="replies">
                 <img src="{{ message.sender.avatar.url }}" alt="{{ message.sender.name }}" />
-                <p>{{ message.content }}
+                <p>{{ message.content|urlize }}
                   <br>
                 {% if message.image %}
                 <img src="{{ message.image.url }}" alt="Image" class="img-thumbnail" style="border-radius: 0 !important; height: 100% !important; width: 100% !important;" />
