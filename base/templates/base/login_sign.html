@@ -34,37 +34,36 @@
     /* For Chrome, Safari, and Opera */
   }
 
+  .register {
+    display: flex;
+    flex-wrap: wrap; /* Allow wrapping to create multiple rows */ /* Space between the form fields */
+    justify-content: space-between; /* Distribute space evenly */
+  }
+
   .form-outline {
-    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    width: 48%; /* Two fields per row */
   }
 
   .form-outline label {
-    display: block;
-    margin-bottom: 0.5rem;
     font-weight: bold;
+    margin-bottom: 5px;
   }
 
   .form-outline input {
-    width: 100%;
-    padding: 0.5rem;
-    font-size: 1rem;
+    padding: 10px;
+    font-size: 16px;
     border: 1px solid #ced4da;
     border-radius: 0.25rem;
+    width: 100%; /* Ensure the input fields take full width */
   }
 
-  .form-outline .form-control-lg {
-    font-size: 1.25rem;
-    padding: 0.75rem;
-  }
-
-  .btn-lg {
-    padding: 0.75rem 1.25rem;
-    font-size: 1.25rem;
-  }
-
-  .card {
-    max-width: 900px;
-    margin: 0 auto;
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .form-outline {
+      width: 100%; /* For smaller screens, stack fields vertically */
+    }
   }
 /* Alert notification styles */
 .alert-container {
@@ -138,11 +137,11 @@
 
                     <div class="form-outline mb-4">
                       <input id="username" name="username" type="text" placeholder="e.g. dennis_ivy@email.com"
-                        class="form-control form-control-lg" />
+                        class="form-control form-control-lg" style="width: 200% !important;"/>
 
                     </div>
 
-                    <div class="form-outline mb-4 password-input-container">
+                    <div class="form-outline mb-4 password-input-container" style="width: 96% !important;">
                       <input id="password" name="password" type="password" placeholder="••••••••"
                         class="form-control form-control-lg" />
                       <span class="toggle-password" onclick="togglePasswordVisibility()">👁</span>
@@ -172,13 +171,14 @@
                     </div>
 
                     <h5 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">Register your account</h5>
-
+                    <div class="register">
                     {% for field in form %}
                     <div class="form-outline mb-4">
                       <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
                       {{ field }}
                     </div>
                     {% endfor %}
+                  </div>
 
                     <div class="pt-1 mb-4">
                       <button class="btn btn-dark btn-lg btn-block" type="submit">Register</button>

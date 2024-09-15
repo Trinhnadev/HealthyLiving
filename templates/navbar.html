@@ -155,12 +155,51 @@ textarea.form-control {
     }
 }
 
+/* Container for the notifications */
+#notifications-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Add space between each notification */
+}
+
+/* Each notification style */
+.error-notification {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 10px 20px;
+    border-radius: 5px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    min-width: 300px;
+    transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+    opacity: 0;
+    transform: translateX(100%); /* Initially hide */
+}
+
+.error-notification.show {
+    transform: translateX(0); /* Slide in */
+    opacity: 1;
+}
+
+.error-notification.hide {
+    transform: translateX(100%); /* Slide out */
+    opacity: 0;
+}
 
 /* Button Styles for Dark Mode Toggle */
 
 
 
 </style>
+<!-- Notifications Container -->
+<div id="notifications-container"></div>
+
 <nav id="navbar-main" class="navbar navbar-expand-lg shadow-sm sticky-top">
     <div class="w-100 justify-content-md-center">
         <ul class="nav navbar-nav enable-mobile px-2">
@@ -296,61 +335,109 @@ textarea.form-control {
 
             <script>
                 document.addEventListener("DOMContentLoaded", function () {
-    const createPostModal = document.getElementById("createPostModal");
-    const closeBtn = createPostModal.querySelector(".close");
-    const createPostForm = document.getElementById("createPostForm");
-
-    // Close the modal when the close button is clicked
-    closeBtn.onclick = function () {
-        createPostModal.style.display = "none";
-        // Remove the "modal-open" class from the body to re-enable scrolling and interaction
-        document.body.classList.remove("modal-open");
-    };
-
-    // Close the modal when clicking outside of the modal content
-    window.onclick = function (event) {
-        if (event.target === createPostModal) {
-            createPostModal.style.display = "none";
-            document.body.classList.remove("modal-open");
-        }
-    };
-
-    // Handle form submission via AJAX
-    createPostForm.onsubmit = function (event) {
-        event.preventDefault(); // Prevent the default form submission
-
-        const formData = new FormData(createPostForm); // Create a FormData object with the form's data
-
-        fetch(createPostForm.action, {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest', // Mark this as an AJAX request
-            },
-        })
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    throw new Error('Network response was not ok.');
-                }
-            })
-            .then(data => {
-                // Handle the successful post creation
-                console.log('Post created successfully:', data);
-                createPostModal.style.display = "none";
-                document.body.classList.remove("modal-open");
-                location.reload(); // Or dynamically update the post list without reloading
-            })
-            .catch(error => {
-                console.error('Error creating post:', error);
-            });
-    };
-});
-
-
-
+                    const createPostModal = document.getElementById("createPostModal");
+                    const closeBtn = createPostModal.querySelector(".close");
+                    const createPostForm = document.getElementById("createPostForm");
+            
+                    // Close the modal when the close button is clicked
+                    closeBtn.onclick = function () {
+                        createPostModal.style.display = "none";
+                        // Remove the "modal-open" class from the body to re-enable scrolling and interaction
+                        document.body.classList.remove("modal-open");
+                    };
+            
+                    // Close the modal when clicking outside of the modal content
+                    window.onclick = function (event) {
+                        if (event.target === createPostModal) {
+                            createPostModal.style.display = "none";
+                            document.body.classList.remove("modal-open");
+                        }
+                    };
+            
+                    // Handle form submission via AJAX
+                    createPostForm.onsubmit = function (event) {
+                        event.preventDefault(); // Prevent the default form submission
+            
+                        const formData = new FormData(createPostForm); // Create a FormData object with the form's data
+            
+                        // Check if title or content are empty
+                        const title = formData.get('title');
+                        const content = formData.get('content');
+            
+                        if (!title || !content) {
+                            // If title or content is missing, show an error notification
+                            showErrorNotification('Title and content cannot be empty.');
+                            return;
+                        }
+            
+                        // Proceed with form submission via fetch if valid
+                        fetch(createPostForm.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest', // Mark this as an AJAX request
+                            },
+                        })
+                        .then(response => {
+                            if (response.ok) {
+                                return response.json();
+                            } else {
+                                throw new Error('Network response was not ok.');
+                            }
+                        })
+                        .then(data => {
+                            // Handle the successful post creation with SweetAlert
+                            Swal.fire({
+                                position: "center",
+                                icon: "success",
+                                title: "POST SUCCESSFULLY",
+                                showConfirmButton: false,
+                                timer: 2000
+                            }).then(() => {
+                                // After the alert, close the modal and reload or update the post list
+                                createPostModal.style.display = "none";
+                                document.body.classList.remove("modal-open");
+                                location.reload();
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Error creating post:', error);
+                        });
+                    };
+            
+                    // Function to show error notification
+                    function showErrorNotification(message) {
+                        const notification = document.createElement('div');
+                        notification.classList.add('error-notification');
+                        notification.innerHTML = `
+                            <div class="alert alert-danger" role="alert">
+                                ${message}
+                            </div>
+                        `;
+                        
+                        const notificationsContainer = document.getElementById('notifications-container');
+                        notificationsContainer.appendChild(notification);
+            
+                        // Slide in the notification and set a timer to remove it
+                        setTimeout(() => {
+                            notification.classList.add('show'); // Trigger slide-in animation
+                        }, 100); // Delay to ensure element is rendered
+            
+                        setTimeout(() => {
+                            notification.classList.remove('show'); // Trigger fade-out animation
+                        }, 5000); // Show for 5 seconds
+            
+                        // After fading out, remove it completely from DOM
+                        setTimeout(() => {
+                            notification.remove();
+                        }, 5500);
+                    }
+                });
             </script>
+            
+            
+            
+            
 
 
 

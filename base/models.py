@@ -62,8 +62,6 @@ class Room(models.Model):
     updated = models.DateTimeField(auto_now=True)
     created = models.DateTimeField(auto_now_add=True)
     is_private = models.BooleanField(default=False)  # New field to indicate privacy
-    question = models.CharField(max_length=200,null=True, blank=True)  # New field for question
-    answer = models.CharField(max_length=200,null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
 
@@ -72,6 +70,18 @@ class Room(models.Model):
 
     def __str__(seft):
         return seft.name
+    
+
+class JoinRequest(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='join_requests')
+    room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='join_requests')
+    message = models.TextField()  # Lý do tham gia phòng
+    status = models.CharField(max_length=20, choices=[('pending', 'Pending'), ('approved', 'Approved'), ('rejected', 'Rejected')], default='pending')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Join request from {self.user.username} for room {self.room.name} - Status: {self.status}"
+
     
 class Message(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -172,17 +182,7 @@ class Event(models.Model):
     
 
 
-class EventMessage(models.Model):
-    user = models.ForeignKey(User,on_delete=models.CASCADE)
-    event = models.ForeignKey(Event, on_delete=models.CASCADE,related_name='messages')
-    image = models.ImageField(blank=True, null=True)
-    body = models.TextField()
-    updated = models.DateTimeField(auto_now=True)
-    created = models.DateTimeField(auto_now_add=True)
-    class Meta:
-        ordering = ['updated','-created']
-    def __str__(seft):
-        return seft.body[0:50]
+
     
 
 class Invitation(models.Model):
@@ -327,15 +327,3 @@ class Share(models.Model):
     
 
 
-class ShareComment(models.Model):
-    share = models.ForeignKey(Share, on_delete=models.CASCADE, related_name='comments')
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    content = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        ordering = ['-created_at']
-
-    def __str__(self):
-        return f'Comment by {self.user.username} on shared post {self.share.post.title}'

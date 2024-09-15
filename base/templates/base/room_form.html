@@ -186,6 +186,30 @@
       }
   }
 
+
+  .alert-message {
+    position: fixed;
+    top: 20px;
+    right: -400px; /* Start from outside the screen */
+    width: 300px;
+    padding: 15px;
+    background-color: #f44336; /* Màu đỏ cho thông báo lỗi */
+    color: white;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+    transition: right 0.5s ease-in-out, opacity 0.5s ease-in-out;
+}
+
+.alert-message.show {
+    right: 20px; /* Di chuyển vào trong màn hình */
+}
+
+.alert-message.fade-out {
+    opacity: 0; /* Dần dần mờ đi */
+    right: -400px; /* Di chuyển ra khỏi màn hình */
+}
+
 </style>
 
 <div class="container-fluid col-md-12 mx-2 " style="margin-right: 0;">
@@ -231,19 +255,9 @@
         <div class="form__group">
           <label for="room_status">Room Status</label>
           <select id="room_status" name="is_private" onchange="toggleQuestionAnswer();">
-            <option value="False" {% if room.is_private == False %}selected{% endif %}>Public</option>
-            <option value="True" {% if room.is_private == True %}selected{% endif %}>Private</option>
+            <option value="False">Public</option>
+            <option value="True">Private</option>
           </select>
-        </div>
-
-        <div class="form__group question-answer" style="display: none;">
-          <label for="room_question">Room Question</label>
-          <input type="text" name="question" value="{{ room.question }}">
-        </div>
-
-        <div class="form__group question-answer" style="display: none;">
-          <label for="room_answer">Room Keyword</label>
-          <input type="text" name="answer" value="{{ room.answer }}">
         </div>
 
         <div class="form__action">
@@ -255,19 +269,37 @@
   </div>
 </div>
 
-<script>
-  function toggleQuestionAnswer() {
-    var status = document.getElementById('room_status').value;
-    var displayStyle = status === 'True' ? 'block' : 'none'; // Show fields if Private is selected
-    document.querySelectorAll('.question-answer').forEach(function(element) {
-      element.style.display = displayStyle;
-    });
-  }
 
-  // Initial loading of form when page loads
-  window.onload = function() {
-    toggleQuestionAnswer(); // Ensure the correct fields are shown based on the current room status
-  };
-</script>
+{% if messages %}
+    <div class="alert-message" id="alert-message">
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    </div>
+{% endif %}
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+      const alertMessage = document.getElementById('alert-message');
+  
+      if (alertMessage) {
+          // Hiển thị thông báo từ bên ngoài vào
+          setTimeout(function () {
+              alertMessage.classList.add('show');
+          }, 100); // Delay nhỏ để đảm bảo phần tử được render
+  
+          // Sau 5 giây, bắt đầu làm mờ và ẩn thông báo
+          setTimeout(function () {
+              alertMessage.classList.add('fade-out');
+          }, 5000); // Hiển thị trong 5 giây
+  
+          // Sau khi mờ đi, xóa phần tử khỏi DOM
+          setTimeout(function () {
+              alertMessage.remove();
+          }, 5500); // Sau 5.5 giây, thông báo biến mất hoàn toàn
+      }
+  });
+  </script>
+  
 
 {% endblock content %}

@@ -70,17 +70,16 @@
                     <div class="row mb-4">
                         <div class="col-md-4 col-6 mb-3">
                             <label class="mb-2 d-block">Quantity</label>
-                            <form action="{% url 'add_to_cart' product.id %}" method="post">
+                            <form id="addToCartForm" action="{% url 'add_to_cart' product.id %}" method="post">
                                 {% csrf_token %}
                                 <div class="input-group mb-3" style="width: 170px;">
-                                    
                                     <input type="number" name="quantity"
-                                        class="form-control text-center border border-secondary" id="quantity" value="1"
-                                        min="1" max="100" aria-label="Quantity" aria-describedby="button-addon1">
-                                   
+                                           class="form-control text-center border border-secondary" id="quantity" value="1"
+                                           min="1" max="100" aria-label="Quantity" aria-describedby="button-addon1">
                                 </div>
-                                <button type="submit" class="btn btn-primary shadow-0"> <i
-                                        class="me-1 fa fa-shopping-basket"></i> Add to cart </button>
+                                <button type="submit" class="btn btn-primary shadow-0">
+                                    <i class="me-1 fa fa-shopping-basket"></i> Add to cart
+                                </button>
                             </form>
                         </div>
                     </div>
@@ -95,7 +94,39 @@
 <!-- content -->
 
 
+<script>
+    $(document).ready(function () {
+        $('#addToCartForm').submit(function (event) {
+            event.preventDefault();  // Ngăn chặn việc form submit mặc định
 
+            var form = $(this);
+            var formData = form.serialize();  // Lấy tất cả dữ liệu từ form
+
+            $.ajax({
+                url: form.attr('action'),
+                type: 'POST',
+                data: formData,
+                success: function (response) {
+                    Swal.fire({
+                        position: "center",
+                        icon: "success",
+                        title: "Item added to cart successfully!",
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                },
+                error: function (xhr, status, error) {
+                    Swal.fire({
+                        position: "center",
+                        icon: "error",
+                        title: "There was a problem adding the item to the cart.",
+                        showConfirmButton: true
+                    });
+                }
+            });
+        });
+    });
+</script>
 <!-- Footer -->
 <script>
     // Function to show full description

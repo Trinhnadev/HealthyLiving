@@ -17,6 +17,13 @@ urlpatterns = [
     path('create-room/',views.createRoom, name ="create-room"),
     path('update-room/<slug:pk>/',views.updateRoom, name ="update-room"),
     path('delete-room/<int:room_id>/', views.delete_room, name='delete_room'),
+    path('my-rooms/', views.my_rooms, name='my-rooms'),
+    
+
+    # path('request-join-room/<int:room_id>/', views.request_to_join_room, name='request_to_join_room'),  # URL gửi yêu cầu tham gia phòng
+    path('manage-join-requests/<int:room_id>/', views.manage_join_requests, name='manage_join_requests'),
+      
+        # URL quản lý yêu cầu tham gia
     path('logout/',views.logoutUser,name="logout"),
     path('sign/',views.sign,name="sign"),
     path('profile/<str:pk>/',views.userProfile,name="profile"),

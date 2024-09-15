@@ -7,14 +7,14 @@
       <div class="col col-xl-10">
         <div class="card" style="border-radius: 1rem;">
           <div class="card-body p-4 p-lg-5 text-black">
-            <h5 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">Room Access Question</h5>
+            <h5 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">{{room.name}}</h5>
 
             <!-- Hiển thị form để nhập câu trả lời -->
             <form action="" method="POST">
               {% csrf_token %}
               <div class="form-outline mb-4">
-                <label class="form-label" for="answer">Please enter the answer</label>
-                <input id="answer" name="answer" type="text" class="form-control form-control-lg" placeholder="Enter your answer">
+                <label class="form-label" for="message">Enter request to join</label>
+                <textarea id="message" name="message" type="text" class="form-control form-control-lg" placeholder="Enter request to join...."></textarea>
               </div>
               <div class="pt-1 mb-4">
                 <button class="btn btn-dark btn-lg btn-block" type="submit">Submit</button>

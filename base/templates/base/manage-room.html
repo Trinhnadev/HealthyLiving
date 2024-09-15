@@ -1,20 +1,14 @@
 {%extends 'main.html'%}
-
 {% block content%}
 <div class="container-fluid" id="wrapper">
-  <div class="row newsfeed-size">
-      <div class="col-md-12 newsfeed-right-side">
-          <div class="row newsfeed-right-side-content mt-3">
-              {%include 'base/manage_action.html'%}
-
-
-              {%include 'base/manage-room-compo.html'%}
-          </div>
-      </div>
-  </div>
-
-
-{%endblock%}
-
-{%block scripts%}
-{%endblock%}
+    <div class="row newsfeed-size">
+        <div class="col-md-12 newsfeed-right-side">
+            <div class="row newsfeed-right-side-content mt-3">
+                {%include 'base/manage_action.html'%}
+                {%include 'base/manage-room-compo.html'%}
+            </div>
+        </div>
+    </div>
+    {%endblock%}
+    {%block scripts%}
+    {%endblock%}

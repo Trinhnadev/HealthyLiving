@@ -1,0 +1,385 @@
+{%extends 'main.html'%}
+{% block content%}
+<style>
+    body {
+        background-color: #f0f0f5;
+        font-family: Arial, sans-serif;
+    }
+
+    .dashboard {
+        width: 1250px;
+        margin: 1px auto;
+        background-color: #ffffff;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        border-radius: 8px;
+        height: 90vh;
+    }
+
+    .room__top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .room__topLeft {
+        display: flex;
+        align-items: center;
+    }
+
+    .room__topLeft svg {
+        margin-right: 10px;
+    }
+
+    .room__topLeft h3 {
+        margin: 0;
+        font-size: 24px;
+        color: #333;
+    }
+
+    .cart {
+        width: 100%;
+        height: 85vh;
+        background-color: #fff;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        color: #b2bdbd;
+        overflow: auto;
+    }
+
+    h1 {
+        font-size: 24px;
+        margin: 0;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    table th,
+    table td {
+        border: 1px solid #001e1d;
+        padding: 10px;
+        text-align: left;
+    }
+
+    table th {
+        background-color: #51546e;
+        color: #fff;
+    }
+
+    table td img {
+        max-width: 50px;
+        height: auto;
+    }
+
+    .checkout {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+    }
+
+    .search-form {
+        display: flex;
+        gap: 10px;
+    }
+
+    .search-input {
+        width: 400px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .create-account-btn {
+        padding: 10px 20px;
+        background-color: #337ab7;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        display: inline-block;
+        cursor: pointer;
+    }
+
+    .create-account-btn:hover {
+        background-color: #286090;
+    }
+
+    .pagination {
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .pagination a {
+        padding: 5px 10px;
+        margin: 0 5px;
+        background-color: #51546e;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .pagination a.active {
+        background-color: #007bff;
+    }
+
+    button {
+        padding: 10px 20px;
+        font-size: 14px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    /* Nút Phê duyệt */
+    button[name="action"][value="approve"] {
+        background-color: #28a745;
+        /* Màu xanh */
+        color: #fff;
+    }
+
+    button[name="action"][value="approve"]:hover {
+        background-color: #218838;
+        /* Màu xanh đậm hơn khi hover */
+    }
+
+    /* Nút Từ chối */
+    button[name="action"][value="reject"] {
+        background-color: #dc3545;
+        /* Màu đỏ */
+        color: #fff;
+    }
+
+    button[name="action"][value="reject"]:hover {
+        background-color: #c82333;
+        /* Màu đỏ đậm hơn khi hover */
+    }
+</style>
+<div class="container-fluid" id="wrapper">
+    <div class="row newsfeed-size">
+        <div class="col-md-12 newsfeed-right-side">
+            <div class="row newsfeed-right-side-content mt-3">
+
+
+
+
+                <div class="col-md-2 newsfeed-left-side sticky-top shadow-sm" id="sidebar-wrapper">
+                    <div class="card newsfeed-user-card h-100">
+
+                        
+                        <ul class="list-group list-group-flush newsfeed-left-sidebar" id="marketplace-parameters">
+                            <li class="list-group-item d-flex align-items-center justify-content-between">
+                                <h6>MY ROOMS</h6>
+                            </li>
+                            {% if rooms %}
+                            {% for room in rooms %}
+
+                            <li class="list-group-item d-flex align-items-center justify-content-between">
+                                <a href="{% url 'manage_join_requests' room.id%}">
+                                    <h6> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                            fill="currentColor" class="bi bi-people-fill" viewBox="0 0 16 16">
+                                            <path
+                                                d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5" />
+                                        </svg> {{ room.name }}</h6>
+                                </a>
+                                {% if room.pending_requests_count > 0 %}
+                                <span class="badge badge-primary badge-pill">{{ room.pending_requests_count }}</span>
+                                {% endif %}
+                            </li>
+                            {% endfor %}
+
+                            {% else %}
+                        <li class="list-group-item d-flex align-items-center justify-content-between">
+                            <h6>None</h6>
+                        </li>
+                        {% endif %}
+
+                        </ul>
+                        
+                    </div>
+                </div>
+
+
+
+
+
+
+                <div class="container-fluid col-md-9" style="margin-right: 0;">
+                    <div class="row justify-content-center col-lg-12">
+                        <div class="col-lg-12">
+                            <div class="card mb-4 col-lg-12">
+                                <div class="card-body col-lg-12">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <form action="" method="GET">
+                                            <div class="input-group">
+                                                <input type="search" name="q" placeholder="Search Account"
+                                                    class="form-control">
+                                                <button type="submit" class="btn btn-outline-secondary"
+                                                    hidden>Search</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="chat-header mb-3">Rooms</div>
+                                    <div class="table-responsive">
+                                        {% if join_requests %}
+                                        <table class="table table-bordered table-hover w-100">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th>Image</th>
+                                                    <th>Name</th>
+                                                    <th>Message</th>
+                                                    <th>Action</th>
+                                                </tr>
+                                            </thead>
+
+                                            <tbody>
+                                                {% for req in join_requests %}
+                                                <tr>
+                                                    <td><img src="{{ req.user.avatar.url }}" alt="Background"
+                                                            class="img-thumbnail" style="width: 50px; height: auto;">
+                                                    </td>
+                                                    <td>{{ req.user.username }}</td>
+                                                    <td>{{ req.message }}</td>
+                                                    <td>
+                                                        <form method="post">
+                                                            {% csrf_token %}
+                                                            <input type="hidden" name="request_id" value="{{ req.id }}">
+                                                            <button type="submit" name="action"
+                                                                value="approve">Approve</button>
+                                                            <button type="submit" name="action"
+                                                                value="reject">Reject</button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                                {% endfor %}
+                                            </tbody>
+                                        </table>
+                                        {% else %}
+                                        <p>No pending requests.</p>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {%endblock%}
+
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const rowsPerPage = 5;
+            const table = document.querySelector("table");
+            const tbody = table.querySelector("tbody");
+            const rows = tbody.querySelectorAll("tr");
+            const numPages = Math.ceil(rows.length / rowsPerPage);
+            let currentPage = 1;
+
+            function showRows(page) {
+                const start = (page - 1) * rowsPerPage;
+                const end = start + rowsPerPage;
+                rows.forEach((row, index) => {
+                    if (index >= start && index < end) {
+                        row.style.display = "table-row";
+                    } else {
+                        row.style.display = "none";
+                    }
+                });
+            }
+
+            function createNavigation() {
+                const nav = document.createElement("div");
+                nav.classList.add("pagination");
+
+                const prevPageLink = document.createElement("a");
+                prevPageLink.textContent = "\u00AB"; // Unicode for "«"
+                prevPageLink.href = "#";
+                prevPageLink.classList.add("prev-page");
+                prevPageLink.addEventListener("click", function (event) {
+                    event.preventDefault();
+                    if (currentPage > 1) {
+                        currentPage--;
+                        showRows(currentPage);
+                        updateActivePage();
+                    }
+                });
+                nav.appendChild(prevPageLink);
+
+                for (let i = 1; i <= numPages; i++) {
+                    const pageLink = document.createElement("a");
+                    pageLink.textContent = i;
+                    pageLink.href = "#";
+                    pageLink.addEventListener("click", function (event) {
+                        event.preventDefault();
+                        currentPage = i;
+                        showRows(currentPage);
+                        updateActivePage();
+                    });
+                    nav.appendChild(pageLink);
+                }
+
+                const nextPageLink = document.createElement("a");
+                nextPageLink.textContent = "\u00BB"; // Unicode for "»"
+                nextPageLink.href = "#";
+                nextPageLink.classList.add("next-page");
+                nextPageLink.addEventListener("click", function (event) {
+                    event.preventDefault();
+                    if (currentPage < numPages) {
+                        currentPage++;
+                        showRows(currentPage);
+                        updateActivePage();
+                    }
+                });
+                nav.appendChild(nextPageLink);
+
+                table.insertAdjacentElement("afterend", nav);
+            }
+
+            function updateActivePage() {
+                const pageLinks = document.querySelectorAll(".pagination a");
+                pageLinks.forEach(link => {
+                    if (parseInt(link.textContent) === currentPage) {
+                        link.classList.add("active");
+                    } else {
+                        link.classList.remove("active");
+                    }
+                });
+            }
+
+            showRows(currentPage);
+            createNavigation();
+            updateActivePage();
+        });
+
+
+
+
+        document.getElementById('create-account-btn').onclick = function () {
+            document.getElementById('create-account-modal').style.display = 'block';
+        }
+
+        document.getElementsByClassName('close-btn')[0].onclick = function () {
+            document.getElementById('create-account-modal').style.display = 'none';
+        }
+
+        window.onclick = function (event) {
+            if (event.target == document.getElementById('create-account-modal')) {
+                document.getElementById('create-account-modal').style.display = 'none';
+            }
+        }
+
+
+    </script>
+    {%block scripts%}
+    {%endblock%}

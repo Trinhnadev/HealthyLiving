@@ -201,7 +201,7 @@
   }
 
   /* General Modal Styles */
-#updatePostModal {
+  #updatePostModal {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -215,43 +215,43 @@
     max-width: 700px;
     height: auto;
     padding: 20px;
-}
+  }
 
-.modal-content {
+  .modal-content {
     padding: 20px;
     border-radius: 10px;
     background-color: #fff;
-}
+  }
 
-.close {
+  .close {
     font-size: 24px;
     color: #888;
     float: right;
     cursor: pointer;
-}
+  }
 
-.close:hover {
+  .close:hover {
     color: #000;
-}
+  }
 
-.form-group {
+  .form-group {
     margin-bottom: 20px;
-}
+  }
 
-.form-control {
+  .form-control {
     border-radius: 8px;
     padding: 10px;
     border: 1px solid #ced4da;
     box-shadow: none;
     transition: border-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
-}
+  }
 
-.form-control:focus {
+  .form-control:focus {
     border-color: #86b7fe;
     box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
-}
+  }
 
-#mediaPreviewContainer {
+  #mediaPreviewContainer {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -262,35 +262,35 @@
     border-radius: 8px;
     position: relative;
     cursor: pointer;
-}
+  }
 
-.icon-placeholder {
+  .icon-placeholder {
     color: #888;
     font-size: 20px;
     text-align: center;
-}
+  }
 
-#imagePreview {
+  #imagePreview {
     max-width: 100%;
     height: auto;
     display: none;
     border-radius: 8px;
     margin-top: 10px;
-}
+  }
 
-#videoPreview {
+  #videoPreview {
     max-width: 100%;
     height: auto;
     display: none;
     border-radius: 8px;
     margin-top: 10px;
-}
+  }
 
-#mediaPreviewContainer:hover {
+  #mediaPreviewContainer:hover {
     border-color: #007bff;
-}
+  }
 
-#removeMedia {
+  #removeMedia {
     position: absolute;
     top: 10px;
     right: 10px;
@@ -298,19 +298,19 @@
     color: #ff5e5e;
     cursor: pointer;
     display: none;
-}
+  }
 
-#removeMedia:hover {
+  #removeMedia:hover {
     color: #ff0000;
-}
+  }
 
-#mediaPreviewContainer img.displayed,
-#mediaPreviewContainer video.displayed,
-#mediaPreviewContainer .close-btn.displayed {
+  #mediaPreviewContainer img.displayed,
+  #mediaPreviewContainer video.displayed,
+  #mediaPreviewContainer .close-btn.displayed {
     display: block;
-}
+  }
 
-#savePostChanges {
+  #savePostChanges {
     background-color: #007bff;
     color: white;
     border: none;
@@ -318,34 +318,31 @@
     border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.3s ease;
-}
+  }
 
-#savePostChanges:hover {
+  #savePostChanges:hover {
     background-color: #0056b3;
-}
+  }
 
-/* Media Queries for Mobile */
-@media (max-width: 768px) {
+  /* Media Queries for Mobile */
+  @media (max-width: 768px) {
     #updatePostModal {
-        width: 90%;
+      width: 90%;
     }
 
     .modal-content {
-        padding: 15px;
+      padding: 15px;
     }
 
     #mediaPreviewContainer {
-        padding: 15px;
+      padding: 15px;
     }
 
     #imagePreview,
     #videoPreview {
-        max-width: 90%;
+      max-width: 90%;
     }
-}
-
-
-
+  }
 </style>
 
 <div class="posts-section mb-5" style="margin-left: 15px;">
@@ -765,7 +762,7 @@
         </div>
       </div>
       {% else %}
-     <a href="{% url 'room' content.id %}"><i class='bx bx-message-rounded mr-2'></i></a>
+
       {% endif %}
     </div>
 
@@ -974,7 +971,7 @@
                         ${comment.user.name} 
                     </a>
                 </div>
-                ${comment.body}|urlize
+                ${comment.body}
             </div>
         </div>`;
     if (new_comment) {
@@ -1096,13 +1093,20 @@
       contentType: false,
       success: function (response) {
         $('#updatePostModal').hide();
-        alert('Post updated successfully!');
-        location.reload();
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "Update successful",
+          showConfirmButton: false,
+          timer: 1500
+        }).then(() => {
+          location.reload();
+        });
       }
     });
   });
-
 </script>
+
 
 <!-- Like Post Script -->
 <script>
@@ -1133,45 +1137,91 @@
 <script>
   function confirmDelete(event, postId) {
     event.preventDefault();
-    if (confirm("Are you sure you want to delete this post?")) {
-      var form = document.createElement('form');
-      form.method = 'POST';
-      form.action = `/delete-post/${postId}/`;
 
-      var csrfToken = document.createElement('input');
-      csrfToken.type = 'hidden';
-      csrfToken.name = 'csrfmiddlewaretoken';
-      csrfToken.value = '{{ csrf_token }}';
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Create a form to submit the delete request
+        var form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/delete-post/${postId}/`;
 
-      form.appendChild(csrfToken);
-      document.body.appendChild(form);
+        // Create and append the CSRF token input
+        var csrfToken = document.createElement('input');
+        csrfToken.type = 'hidden';
+        csrfToken.name = 'csrfmiddlewaretoken';
+        csrfToken.value = '{{ csrf_token }}';
 
-      form.submit();
-    }
+        form.appendChild(csrfToken);
+        document.body.appendChild(form);
+
+        // Submit the form
+        form.submit();
+
+        // Show the success alert after form submission
+        Swal.fire({
+          title: "Deleted!",
+          text: "Your post has been deleted.",
+          icon: "success",
+          timer: 2000
+        });
+      }
+    });
   }
 </script>
+
 
 <!-- Delete Room Script -->
 <script>
   function confirmDeleteRoom(event, roomId) {
     event.preventDefault();
-    if (confirm("Are you sure you want to delete this room?")) {
-      var form = document.createElement('form');
-      form.method = 'POST';
-      form.action = `/delete-room/${roomId}/`;
 
-      var csrfToken = document.createElement('input');
-      csrfToken.type = 'hidden';
-      csrfToken.name = 'csrfmiddlewaretoken';
-      csrfToken.value = '{{ csrf_token }}';
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Tạo form để gửi yêu cầu xóa
+        var form = document.createElement('form');
+        form.method = 'POST';
+        form.action = `/delete-room/${roomId}/`;
 
-      form.appendChild(csrfToken);
-      document.body.appendChild(form);
+        // Tạo và thêm input CSRF token
+        var csrfToken = document.createElement('input');
+        csrfToken.type = 'hidden';
+        csrfToken.name = 'csrfmiddlewaretoken';
+        csrfToken.value = '{{ csrf_token }}';
 
-      form.submit();
-    }
+        form.appendChild(csrfToken);
+        document.body.appendChild(form);
+
+        // Gửi form
+        form.submit();
+
+        // Hiển thị thông báo thành công sau khi xóa
+        Swal.fire({
+          title: "Deleted!",
+          text: "The room has been deleted.",
+          icon: "success",
+          timer: 2000
+        });
+      }
+    });
   }
 </script>
+
 
 
 <script>

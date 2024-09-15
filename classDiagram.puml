@@ -1,7 +1,5 @@
 @startuml
 
-skinparam ClassAttributeIconSize 0
-
 class User {
     + id: Integer
     + username: String
@@ -14,6 +12,7 @@ class User {
     + USERNAME_FIELD: String
     + REQUIRED_FIELDS: List
     + is_admin(): Boolean
+    + serialize(): Dict
 }
 
 class Topic {
@@ -33,8 +32,16 @@ class Room {
     + updated: DateTime
     + created: DateTime
     + is_private: Boolean
-    + question: String
-    + answer: String
+    + __str__(): String
+}
+
+class JoinRequest {
+    + id: Integer
+    + user: ForeignKey
+    + room: ForeignKey
+    + message: Text
+    + status: String
+    + created_at: DateTime
     + __str__(): String
 }
 
@@ -64,6 +71,7 @@ class Friendship {
     + sender: ForeignKey
     + receiver: ForeignKey
     + status: String
+    + created_at: DateTime
     + __str__(): String
 }
 
@@ -80,6 +88,7 @@ class Chat {
     + sender: ForeignKey
     + receiver: ForeignKey
     + image: String
+    + video: String
     + content: Text
     + timestamp: DateTime
     + __str__(): String
@@ -117,6 +126,7 @@ class Invitation {
     + event: ForeignKey
     + invitee: ForeignKey
     + accepted: Boolean
+    + created_at: DateTime
     + __str__(): String
 }
 
@@ -212,20 +222,13 @@ class Share {
     + __str__(): String
 }
 
-class ShareComment {
-    + id: Integer
-    + share: ForeignKey
-    + user: ForeignKey
-    + content: Text
-    + created_at: DateTime
-    + updated_at: DateTime
-    + __str__(): String
-}
-
 User "1" -- "n" Room : hosts
+User "n" -- "n" Room : participants
 Topic "1" -- "n" Room : topics
 User "1" -- "n" Message : sends
 Room "1" -- "n" Message : contains
+Room "1" -- "n" JoinRequest : receives
+User "1" -- "n" JoinRequest : sends
 Message "1" -- "n" MessageReport : is reported in
 User "n" -- "n" MessageReport : reports
 User "1" -- "n" Friendship : sends
@@ -239,8 +242,7 @@ Event "1" -- "n" EventMessage : contains
 User "1" -- "n" EventMessage : writes
 Event "1" -- "n" Invitation : sends
 User "1" -- "n" Invitation : receives
-User "1" -- "n" Store : owns
-Store "1" -- "n" Product : sells
+Store "1" -- "n" Product : contains
 User "1" -- "1" Cart : has
 Cart "1" -- "n" CartItem : contains
 Product "1" -- "n" CartItem : in

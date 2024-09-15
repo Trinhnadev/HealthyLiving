@@ -163,6 +163,31 @@
   .btn--main:hover {
     background-color: #0056b3;
   }
+
+
+  .alert-message {
+    position: fixed;
+    top: 20px;
+    right: -400px; /* Start from outside the screen */
+    width: 300px;
+    padding: 15px;
+    background-color: #f44336; /* Màu đỏ cho thông báo lỗi */
+    color: white;
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+    transition: right 0.5s ease-in-out, opacity 0.5s ease-in-out;
+}
+
+.alert-message.show {
+    right: 20px; /* Di chuyển vào trong màn hình */
+}
+
+.alert-message.fade-out {
+    opacity: 0; /* Dần dần mờ đi */
+    right: -400px; /* Di chuyển ra khỏi màn hình */
+}
+
 </style>
 
 
@@ -233,6 +258,9 @@
     </div>
 
     </div>
+
+
+    
     <script>
       var defaultImageURL = "{% static 'images/bannerstore.jpg' %}";
 
@@ -252,5 +280,35 @@
       // Set the default image initially
       document.getElementById('selectedImage').src = defaultImageURL;
     </script>
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+      {% if messages %}
+      {% for message in messages %}
+      var messageType = "{{ message.tags }}";
+      var messageText = "{{ message }}";
+
+      if (messageType == "error") {
+          Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: messageText,
+              footer: '<a href="#">Why do I have this issue?</a>'
+          });
+      } else if (messageType == "success") {
+          Swal.fire({
+              position: "center",
+              icon: "success",
+              title: messageText,
+              showConfirmButton: false,
+              timer: 1500
+          });
+      }
+      {% endfor %}
+      {% endif %}
+  });
+</script>
+  
     </main>
     {% endblock content %}

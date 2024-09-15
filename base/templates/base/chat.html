@@ -295,14 +295,14 @@
         newMessage.className = 'replies';
         newMessage.innerHTML = `
           <img src="${data.avatar_url}" alt="${data.username}"  />
-          <p>${data.message}</p>
-          ${mediaContent}
+          <p>${data.message} ${mediaContent}</p>
+          
         `;
       } else {
         newMessage.className = 'sent';
         newMessage.innerHTML = `
-          <p>${data.message}</p>
-          ${mediaContent}
+          <p>${data.message} ${mediaContent}</p>
+          
         `;
       }
 

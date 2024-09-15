@@ -7,6 +7,8 @@ from .models import Room ,User, Event ,Store,Product,Order,MessageReport
 
 
 class MyUserCreationForm(UserCreationForm):
+    email = forms.EmailField(required=True, widget=forms.EmailInput(attrs={'class': 'form-control'}))
+
     class Meta:
         model = User
         fields = ['name', 'username', 'email', 'password1', 'password2']
@@ -18,6 +20,10 @@ class MyUserCreationForm(UserCreationForm):
         # Kiểm tra mật khẩu 1 và 2 phải giống nhau
         if password1 and password2 and password1 != password2:
             raise ValidationError("Passwords do not match.")
+
+        # Kiểm tra độ dài của mật khẩu phải ít nhất là 6 kí tự
+        if len(password1) < 6:
+            raise ValidationError("Password must be at least 6 characters long.")
 
         # Kiểm tra mật khẩu có ít nhất một ký tự viết hoa
         if not re.search(r'[A-Z]', password1):
@@ -60,18 +66,23 @@ class EventsForm(ModelForm):
         }
 
 
-class StoreForm(ModelForm):
+class StoreForm(forms.ModelForm):
     class Meta:
         model = Store
-        fields = '__all__'
-        exclude =['owner','liker','status']
+        fields = ['name', 'description', 'address', 'phone', 'img']
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 4}),
+        }
 
 
 
-class ProductForm(ModelForm):
+class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ['name', 'quantity', 'description', 'price', 'image']
+        fields = ['name', 'quantity','description', 'price', 'image']
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 4}),
+        }
     def clean_price(self):
         price = self.cleaned_data.get('price')
         if price <= 0:

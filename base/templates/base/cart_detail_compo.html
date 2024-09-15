@@ -1,4 +1,4 @@
-<section class="container-fluid col-md-9 mx-2 " style=" margin-right: 0;">
+<section class="container-fluid col-md-9 " style=" margin-right: 0;">
     <div class="container py-5 h-100" >
       <div class="row d-flex justify-content-center align-items-center h-100">
         <div class="col">
@@ -28,7 +28,7 @@
                           </div>
                           <div class="ms-3">
                             <h5>{{ c.product.name }}</h5>
-                            <p class="small mb-0">256GB, Navy Blue</p>
+                            
                           </div>
                         </div>
                         <div class="d-flex flex-row align-items-center">
@@ -104,3 +104,27 @@
       </div>
     </div>
   </section>
+  {% if error_message %}
+  <script>
+      Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "{{ error_message }}",
+          footer: '<a href="#">Why do I have this issue?</a>'
+      });
+  </script>
+  {% endif %}
+
+
+  {% if insufficient_stock %}
+<script>
+    Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "The following items have insufficient stock: {{ insufficient_stock|join:', ' }}",
+        footer: '<a href="#">Why do I have this issue?</a>'
+    });
+</script>
+{% endif %}
+  
+  

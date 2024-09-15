@@ -604,7 +604,7 @@
         messageContent += `<div class="media-content"><img src="${data.media.data}" alt="image" class="img-thumbnail" style="border-radius: 0 !important; height: 100% !important; width: 100% !important;" /></div>`;
       }
       if (data.media && data.media.type.startsWith('video/')) {
-        messageContent += `<video controls width ="90%"><source src="${data.media.data}" type="video/mp4">Your browser does not support the video tag.</video>`;
+        messageContent += `<video controls width ="90%" class="media-content"><source src="${data.media.data}" type="video/mp4">Your browser does not support the video tag.</video>`;
       }
 
       newMessage.innerHTML = messageContent;

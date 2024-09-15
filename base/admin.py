@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Room ,Topic,Message,User,Friendship,Chat,Product,Order,OrderDetail,Cart, CartItem,Event,Invitation,Store,ChatRoom,MessageReport,Post,Comment,Share
+from .models import Room ,Topic,Message,User,Friendship,Chat,Product,Order,OrderDetail,Cart, CartItem,Event,Invitation,Store,ChatRoom,MessageReport,Post,Comment,Share,JoinRequest
 
 admin.site.register(Room)
 admin.site.register(Chat)
@@ -11,6 +11,8 @@ admin.site.register(Store)
 admin.site.register(ChatRoom)
 admin.site.register(MessageReport)
 admin.site.register(Share)
+admin.site.register(JoinRequest)
+
 
 
 admin.site.register(Post)

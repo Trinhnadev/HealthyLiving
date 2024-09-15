@@ -187,7 +187,6 @@
         </div>
     </div>
 </div>
-
 <script>
     $(document).ready(function () {
         $('#updateProfilePicInput').change(function () {
@@ -203,20 +202,35 @@
                 contentType: false,
                 success: function (response) {
                     if (response.status === 'success') {
-                        alert(response.message);
-                        location.reload();  // Reload the page to show the updated avatar
+                        Swal.fire({
+                            position: "center",
+                            icon: "success",
+                            title: "Your profile picture has been updated",
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(() => {
+                            location.reload();  // Reload the page to show the updated avatar
+                        });
                     } else {
-                        alert(response.message);
+                        Swal.fire({
+                            position: "center",
+                            icon: "error",
+                            title: response.message,
+                            showConfirmButton: true
+                        });
                     }
                 },
                 error: function () {
-                    alert('An error occurred while updating the avatar.');
+                    Swal.fire({
+                        position: "center",
+                        icon: "error",
+                        title: "An error occurred while updating the avatar.",
+                        showConfirmButton: true
+                    });
                 }
             });
         });
     });
-
-
 
     $(document).ready(function () {
         $('#updateCoverPicInput').change(function () {
@@ -232,17 +246,35 @@
                 contentType: false,
                 success: function (response) {
                     if (response.status === 'success') {
-                        alert(response.message);
-                        location.reload();  // Reload the page to show the updated cover photo
+                        Swal.fire({
+                            position: "center",
+                            icon: "success",
+                            title: "Your cover photo has been updated",
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(() => {
+                            location.reload();  // Reload the page to show the updated cover photo
+                        });
                     } else {
-                        alert(response.message);
+                        Swal.fire({
+                            position: "center",
+                            icon: "error",
+                            title: response.message,
+                            showConfirmButton: true
+                        });
                     }
                 },
                 error: function () {
-                    alert('An error occurred while updating the cover photo.');
+                    Swal.fire({
+                        position: "center",
+                        icon: "error",
+                        title: "An error occurred while updating the cover photo.",
+                        showConfirmButton: true
+                    });
                 }
             });
         });
     });
 </script>
+
 {% endblock content %}

@@ -1,41 +1,56 @@
 {%load static%}
-  
-  
-  <div class="col-md-3 newsfeed-left-side sticky-top shadow-sm" id="sidebar-wrapper">
+
+
+<div class="col-md-3 newsfeed-left-side sticky-top shadow-sm" id="sidebar-wrapper">
     <div class="card newsfeed-user-card h-100">
         <ul class="list-group list-group-flush newsfeed-left-sidebar">
             <li class="list-group-item">
                 <h6>Home</h6>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-center sd-active">
-                <a href="{%url 'home'%}" class="sidebar-item"><img src="{% static 'assets/images/icons/left-sidebar/newsfeed.png' %}" alt="newsfeed"> News Feed</a>
+                <a href="{%url 'home'%}" class="sidebar-item"><img
+                        src="{% static 'assets/images/icons/left-sidebar/newsfeed.png' %}" alt="newsfeed"> News Feed</a>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-center">
-                <a href="{%url 'chat'%}" class="sidebar-item"><img src="{% static 'assets/images/icons/left-sidebar/message.png' %}" alt="message"> Messages</a>
+                <a href="{%url 'chat'%}" class="sidebar-item"><img
+                        src="{% static 'assets/images/icons/left-sidebar/message.png' %}" alt="message"> Messages</a>
 
             </li>
 
             <li class="list-group-item d-flex justify-content-between align-items-center">
-                <a href="{%url 'event'%}" class="sidebar-item"><img src="{% static 'assets/images/icons/left-sidebar/event.png' %}" alt="event"> Events</a>
+                <a href="{%url 'event'%}" class="sidebar-item"><img
+                        src="{% static 'assets/images/icons/left-sidebar/event.png' %}" alt="event"> Events</a>
 
             </li>
-        
+
             <li class="list-group-item d-flex justify-content-between align-items-center">
-                <a href="{% url 'all-friend'%}" class="sidebar-item"><img src="{% static 'assets/images/icons/left-sidebar/find-friends.png' %}" alt="find-friends"> Find Friends</a>
+                <a href="{% url 'all-friend'%}" class="sidebar-item"><img
+                        src="{% static 'assets/images/icons/left-sidebar/find-friends.png' %}" alt="find-friends"> Find
+                    Friends</a>
 
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-center">
-                <a href="{%url 'shop'%}" class="sidebar-item"><img src="{% static 'assets/images/icons/left-sidebar/market.png' %}" alt="find-friends"> Marketplace</a>
+                <a href="{%url 'shop'%}" class="sidebar-item"><img
+                        src="{% static 'assets/images/icons/left-sidebar/market.png' %}" alt="find-friends">
+                    Marketplace</a>
+                    <span class="badge badge-primary badge-pill">{{ total_cart_quantity }}</span>
+
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+                <a href="{%url 'my-rooms'%}" class="sidebar-item"><img
+                        src="{% static 'assets/images/icons/left-sidebar/group1.png' %}" alt="find-friends"> My Room</a>
+                {% if total_pending_requests > 0 %}
+                <span class="badge badge-primary badge-pill">{{ total_pending_requests }}</span>
+                {% endif %}
 
             </li>
 
 
 
-           
+
+
         </ul>
 
-        
+
     </div>
 </div>
-
-  
