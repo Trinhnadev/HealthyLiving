@@ -209,7 +209,6 @@
     passwordInput.type = passwordType;
   }
 </script>
-
 <script>
   function showAlert(message, type = 'error') {
     var alertContainer = document.getElementById('alert-container');
@@ -232,9 +231,12 @@
     }, 5000);
   }
 
-  // Check if there's a login_result from the server
-  {% if login_result %}
+  // Check if there's a login_result from the server and the page is either 'login' or 'sign'
+  {% if login_result and page == 'login' %}
+      showAlert('{{ login_result }}');
+  {% elif login_result and page == 'sign' %}
       showAlert('{{ login_result }}');
   {% endif %}
 </script>
+
 {% endblock content %}

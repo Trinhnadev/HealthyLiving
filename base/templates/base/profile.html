@@ -99,7 +99,7 @@
                             {% elif friendship.status == 'accepted' %}
                             <a href="{% url 'open_chat' chat_room.id %}" class="btn btn-follow mr-3"><i
                                     class='bx bxs-message-rounded'></i> Chat</a>
-                            <a type="{%url 'reject' user.id%}" class="btn btn-follow mr-3"><svg
+                            <a href="{%url 'reject' user.id%}" class="btn btn-follow mr-3"><svg
                                     xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                     class="bi bi-person-fill-dash" viewBox="0 0 16 16">
                                     <path

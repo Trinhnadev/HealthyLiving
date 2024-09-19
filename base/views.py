@@ -542,7 +542,7 @@ def manage_join_requests(request, room_id):
 
 #can dang nhap moi dung dc
 @login_required(login_url='login')
-@login_required(login_url='login')
+
 def createRoom(request):
     form = RoomForm()
     topics = Topic.objects.all()
@@ -557,7 +557,7 @@ def createRoom(request):
 
         # Kiểm tra nếu bất kỳ trường nào bị bỏ trống
         if not topic_name or not room_name or not room_description or is_private is None:
-            messages.error(request, 'All fields are required. Please fill out the form completely.')
+            messages.error(request, 'All fields are required. Please fill out the form completely.', extra_tags='room_error')
             return render(request, 'base/room_form.html', {'form': form, 'topics': topics, 'sent': sent})
 
         # Tạo hoặc lấy Topic
@@ -796,7 +796,9 @@ def reject(request, pk):
         (Q(sender=sender, receiver=request.user) | Q(sender=request.user, receiver=sender)),
         status__in=['pending', 'accepted']
     ).first()
-    chat_room = ChatRoom.objects.filter(members__in=[sender, request.user]).distinct().first()
+    chat_room = ChatRoom.objects.filter(members=sender).filter(members=request.user).distinct().first()
+
+    print(chat_room)
     if friendship_request:
         # If the status is 'accepted', update it to 'rejected'
         if friendship_request.status == 'accepted':

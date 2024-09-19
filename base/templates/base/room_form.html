@@ -273,7 +273,9 @@
 {% if messages %}
     <div class="alert-message" id="alert-message">
         {% for message in messages %}
-            <p>{{ message }}</p>
+            {% if 'room_error' in message.tags %}
+                <p>{{ message }}</p>
+            {% endif %}
         {% endfor %}
     </div>
 {% endif %}
@@ -299,7 +301,7 @@
           }, 5500); // Sau 5.5 giây, thông báo biến mất hoàn toàn
       }
   });
-  </script>
+</script>
   
 
 {% endblock content %}
