@@ -71,9 +71,9 @@ def countdown_to_end(event_end_time, event_title, event):
         remaining_time = time_to_delete - current_time
         minutes_left = remaining_time.total_seconds() // 60  # Calculate the remaining minutes
 
-        print(f"END [{current_time.strftime('%Y-%m-%d %H:%M:%S')}] Event '{event_title}' - End time: {event_end_time.strftime('%Y-%m-%d %H:%M:%S')} - Minutes left before deletion: {int(minutes_left)} phút", flush=True)
+        print(f"END [{current_time.strftime('%Y-%m-%d %H:%M:%S')}] Event '{event_title}' - End time: {event_end_time.strftime('%Y-%m-%d %H:%M:%S')} - Minutes left before deletion: {int(minutes_left)} minutes", flush=True)
 
-        if minutes_left == 1 and not warning_email_sent:
+        if minutes_left == 30 and not warning_email_sent:
             print(f"[{current_time.strftime('%Y-%m-%d %H:%M:%S')}] Event '{event_title}' - 1 minute left before the event is deleted. Sending email to host.", flush=True)
             send_event_delete_warning_email(event)
             warning_email_sent = True  # Mark that the email has been sent
@@ -94,9 +94,9 @@ def countdown_timer(event_start_time, event_title, event):
         remaining_time = time_to_wait - current_time
         minutes_left = remaining_time.total_seconds() // 60  # Calculate the remaining minutes
 
-        print(f"START [{current_time.strftime('%Y-%m-%d %H:%M:%S')}] Event '{event_title}' - Start time: {event_start_time.strftime('%Y-%m-%d %H:%M:%S')} - Minutes left: {int(minutes_left)} phút", flush=True)
+        print(f"START [{current_time.strftime('%Y-%m-%d %H:%M:%S')}] Event '{event_title}' - Start time: {event_start_time.strftime('%Y-%m-%d %H:%M:%S')} - Minutes left: {int(minutes_left)} minutes", flush=True)
 
-        if minutes_left == 1 and not reminder_email_sent:
+        if minutes_left == 30 and not reminder_email_sent:
             print(f"START [{current_time.strftime('%Y-%m-%d %H:%M:%S')}] Event '{event_title}' - 1 minute left before the event starts. Sending email reminders.", flush=True)
             send_reminder_email(event)
             reminder_email_sent = True  # Mark that the email has been sent

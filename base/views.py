@@ -779,7 +779,7 @@ def acceptRequest(request,pk):
             # Nếu không, tạo ChatRoom mới
             chat_room = ChatRoom.objects.create()
             chat_room.members.add(sender, request.user)
-        messages.success(request, f'You are now friends with {sender.username}.')
+        
         
     else:
         messages.warning(request, 'No pending friend request found.')
@@ -805,13 +805,13 @@ def reject(request, pk):
             friendship_request.delete()
             if chat_room:
                 chat_room.delete()
-                messages.success(request, f'Friendship with {sender.username} has been ended and the chat room has been deleted.')
+                
             else:
                 messages.success(request, f'Friendship with {sender.username} has been ended.')
         # If the status is 'pending', delete the friend request
         elif friendship_request.status == 'pending':
             friendship_request.delete()
-            messages.success(request, f'Friend request from {sender.username} rejected.')
+            
     else:
         messages.warning(request, 'No pending or accepted friend request found with this user.')
 
