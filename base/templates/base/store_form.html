@@ -283,31 +283,7 @@
 
 
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-      {% if messages %}
-      {% for message in messages %}
-      var messageType = "{{ message.tags }}";
-      var messageText = "{{ message }}";
-
-      if (messageType == "error") {
-          Swal.fire({
-              icon: "error",
-              title: "Oops...",
-              text: messageText,
-              footer: '<a href="#">Why do I have this issue?</a>'
-          });
-      } else if (messageType == "success") {
-          Swal.fire({
-              position: "center",
-              icon: "success",
-              title: messageText,
-              showConfirmButton: false,
-              timer: 1500
-          });
-      }
-      {% endfor %}
-      {% endif %}
-  });
+  
 </script>
   
     </main>

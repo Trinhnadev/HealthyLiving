@@ -1609,11 +1609,15 @@ def update_event(request, pk):
 
 
 #Xóa một event
+@csrf_exempt  # Đảm bảo rằng bạn sử dụng đúng CSRF token khi gửi yêu cầu từ JavaScript
 def delete_event(request, pk):
     event = get_object_or_404(Event, id=pk, host=request.user)  # Đảm bảo chỉ host mới có thể xóa
+
     if request.method == 'POST':
         event.delete()
-        return redirect('event')
+        return JsonResponse({'success': True})  # Trả về phản hồi JSON thành công
+    else:
+        return JsonResponse({'success': False, 'error': 'Invalid request method.'})
     
 
 
