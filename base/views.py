@@ -5,6 +5,7 @@ import re
 import random
 import threading
 import time
+from django.conf import settings
 from django.forms import FloatField
 from django.shortcuts import render,redirect
 from django.contrib import messages
@@ -215,7 +216,8 @@ def userProfile(request, pk):
     # Query for rooms, posts, and shares associated with the user profile
     rooms = Room.objects.filter(host=user_profile)
     posts = Post.objects.filter(author=user_profile)
-    shares = Post.objects.filter(user=user_profile).select_related('post')
+    shares = Share.objects.filter(user=user_profile).select_related('post')
+
     print(shares)
 
     # Combine the rooms, posts, and shares into a single queryset, ordered by creation time
@@ -1358,11 +1360,31 @@ def dashboard(request, store_id):
     month = request.GET.get('month')
     if month and month != 'all':
         month = datetime.strptime(month, '%Y-%m')
-        orders = Order.objects.filter(orderdetail__product__store=store, order_date__year=month.year, order_date__month=month.month).distinct().order_by('-order_date').prefetch_related('orderdetail_set__product__store')
-        top_products = OrderDetail.objects.filter(product__store=store, order__order_date__year=month.year, order__order_date__month=month.month).values('product__name', 'product__image').annotate(total_sold=Sum('quantity'), total_revenue=Sum('subtotal')).order_by('-total_sold')[:5]
+        orders = Order.objects.filter(
+            orderdetail__product__store=store,
+            order_date__year=month.year,
+            order_date__month=month.month
+        ).distinct().order_by('-order_date').prefetch_related('orderdetail_set__product__store')
+        
+        top_products = OrderDetail.objects.filter(
+            product__store=store,
+            order__order_date__year=month.year,
+            order__order_date__month=month.month
+        ).values('product__name', 'product__image').annotate(
+            total_sold=Sum('quantity'),
+            total_revenue=Sum('subtotal')
+        ).order_by('-total_sold')[:5]
     else:
-        orders = Order.objects.filter(orderdetail__product__store=store).distinct().order_by('-order_date').prefetch_related('orderdetail_set__product__store')
-        top_products = OrderDetail.objects.filter(product__store=store).values('product__name', 'product__image').annotate(total_sold=Sum('quantity'), total_revenue=Sum('subtotal')).order_by('-total_sold')[:5]
+        orders = Order.objects.filter(
+            orderdetail__product__store=store
+        ).distinct().order_by('-order_date').prefetch_related('orderdetail_set__product__store')
+        
+        top_products = OrderDetail.objects.filter(
+            product__store=store
+        ).values('product__name', 'product__image').annotate(
+            total_sold=Sum('quantity'),
+            total_revenue=Sum('subtotal')
+        ).order_by('-total_sold')[:5]
 
     store_orders = defaultdict(lambda: {'orders': [], 'total': 0, 'details': defaultdict(list)})
 
@@ -1374,29 +1396,40 @@ def dashboard(request, store_id):
                 store_orders[product_store]['details'][order].append(detail)
                 store_orders[product_store]['total'] += float(detail.subtotal)
 
-    store_orders = dict((store, {'orders': data['orders'], 'total': data['total'], 'details': dict(data['details'])}) for store, data in store_orders.items())
+    store_orders = dict((store, {
+        'orders': data['orders'],
+        'total': data['total'],
+        'details': dict(data['details'])
+    }) for store, data in store_orders.items())
+
     product_names = [product['product__name'] for product in top_products]
     product_sales = [product['total_sold'] for product in top_products]
     product_revenues = [product['total_revenue'] for product in top_products]
     
     total_orders = orders.count()
-    store_revenue = sum(order.orderdetail_set.filter(product__store=store).aggregate(total=Sum('subtotal'))['total'] for order in orders)
+    store_revenue = sum(order.orderdetail_set.filter(
+        product__store=store
+    ).aggregate(total=Sum('subtotal'))['total'] for order in orders)
 
     current_year = datetime.now().year
-    month_list = [('all', 'All Months')] + [(f"{current_year}-{str(m).zfill(2)}", datetime(current_year, m, 1).strftime('%B')) for m in range(1, 13)]
+    month_list = [('all', 'All Months')] + [
+        (f"{current_year}-{str(m).zfill(2)}", datetime(current_year, m, 1).strftime('%B'))
+        for m in range(1, 13)
+    ]
 
-    # Create a list of product data for template context
+    # Create a list of product data with full image URLs for template context
     top_products_data = []
     for product in top_products:
         name = product['product__name']
         image = product['product__image']
+        image_url = f"{settings.MEDIA_URL}{image}" if image else None
         orders_count = product['total_sold']
         revenue = product['total_revenue']
         orders_percentage = (orders_count / total_orders * 100) if total_orders else 0
         revenue_percentage = (revenue / store_revenue * 100) if store_revenue else 0
         top_products_data.append({
             'name': name,
-            'image': image,
+            'image_url': image_url,
             'orders_count': orders_count,
             'orders_percentage': orders_percentage,
             'revenue': revenue,
