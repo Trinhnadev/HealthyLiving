@@ -9,10 +9,16 @@
     max-height: 720px; */
     background: #E6EAEA;
   }
+  @media screen and (max-width: 768px) {
+    #frame {
+      width: 100%;
+      height: 90%;
+    }
+  }
   @media screen and (max-width: 360px) {
     #frame {
       width: 100%;
-      /* height: 100vh; */
+      height: 90%;
     }
   }
   #frame #sidepanel {

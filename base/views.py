@@ -1058,15 +1058,27 @@ def product_update(request, store_id, product_id):
 @require_POST
 def update_product_quantity(request):
     product_id = request.POST.get('product_id')
-    quantity = int(request.POST.get('quantity'))
+    quantity = request.POST.get('quantity')
 
-    product = get_object_or_404(Product, id=product_id)
+    # Kiểm tra nếu `product_id` hoặc `quantity` bị thiếu
+    if not product_id or not quantity:
+        # Chuyển hướng với thông báo lỗi nếu thiếu dữ liệu
+        return redirect(request.META.get('HTTP_REFERER', '/'))
 
-    if quantity > 0:
-        product.quantity += quantity
-        product.save()
-
-    return redirect('store_products', store_id=product.store.id)
+    try:
+        quantity = int(quantity)  # Chuyển đổi quantity thành số nguyên
+        product = get_object_or_404(Product, id=product_id)
+        if quantity > 0:
+            product.quantity += quantity
+            product.save()
+        # Chuyển hướng về trang hiện tại sau khi cập nhật thành công
+        return redirect(request.META.get('HTTP_REFERER', '/'))
+    except ValueError:
+        # Chuyển hướng với thông báo lỗi nếu `quantity` không hợp lệ
+        return redirect(request.META.get('HTTP_REFERER', '/'))
+    except Exception as e:
+        # Chuyển hướng với thông báo lỗi tổng quát
+        return redirect(request.META.get('HTTP_REFERER', '/'))
 
 @login_required(login_url='login')
 

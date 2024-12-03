@@ -179,7 +179,7 @@
               </thead>
               <tbody>
                 {% for p in products %}
-                <tr>
+                <tr data-product-id="{{ p.id }}">
                   <td><img src="{{ p.image.url }}" alt="{{ p.name }}" class="img-thumbnail" style="width: 50px; height: auto;"></td>
                   <td>{{ p.name }}</td>
                   <td>${{ p.price }}</td>
@@ -351,13 +351,13 @@
     }
 
     document.querySelectorAll('.add-quantity').forEach(function (button) {
-      button.addEventListener('click', function (event) {
+    button.addEventListener('click', function (event) {
         event.preventDefault();
-        const productId = this.getAttribute('data-product-id');
-        document.getElementById('product_id').value = productId;
-        modal.style.display = "block";
-      });
+        const productId = this.closest('tr').getAttribute('data-product-id'); // Lấy từ thuộc tính `data-product-id` của <tr>
+        document.getElementById('product_id').value = productId; // Gán vào input hidden
+        modal.style.display = "block"; // Hiển thị modal
     });
+});
   });
 </script>
 {% endblock %}
