@@ -20,6 +20,7 @@
 
 
 <div class="row profile-right-side-content">
+    
     <div class="user-profile">
         <div class="profile-header-background">
             <a href="#" class="profile-cover">
@@ -33,7 +34,7 @@
                 {% endif %}
             </a>
         </div>
-
+        
         {% if request.user == user %}
         <form id="updateCoverPicForm" method="post" enctype="multipart/form-data" style="display:none;">
             {% csrf_token %}

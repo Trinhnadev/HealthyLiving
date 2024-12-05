@@ -183,7 +183,10 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'nguyenanhtrinh05@gmail.com'  # Thay thế bằng email Gmail của bạn
-EMAIL_HOST_PASSWORD = 'azmsffbcrfwvwysl'  # Thay thế bằng mật khẩu của bạn
+EMAIL_HOST_PASSWORD = 'azmsffbcrfwvwysl'  # Thay thế bằng mật khẩu ứng dụng của bạn
+DEFAULT_FROM_EMAIL = 'nguyenanhtrinh05@gmail.com'  # Đặt địa chỉ gửi email mặc định
+SERVER_EMAIL = 'nguyenanhtrinh05@gmail.com'
+
 
 
 
